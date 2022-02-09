@@ -2,6 +2,8 @@ import {Module} from '@nestjs/common';
 import {AppController} from './app.controller';
 import {AppService} from './app.service';
 import {TypeOrmModule} from '@nestjs/typeorm';
+import {Upload} from './uploads/upload.entity'
+import {UploadsModule} from './uploads/uploads.module';
 
 @Module({
   imports: [
@@ -12,8 +14,10 @@ import {TypeOrmModule} from '@nestjs/typeorm';
         rejectUnauthorized: false // Heroku uses self-signed certs
       } : false, // This is a bit messy; I want SSL for Heroku and not locally 
       migrations: ["dist/migration/*.js"],
-      migrationsRun: true
-    })
+      migrationsRun: true,
+      entities: [Upload]
+    }),
+    UploadsModule
   ],
   controllers: [AppController],
   providers: [AppService],
