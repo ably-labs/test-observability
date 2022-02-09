@@ -7,7 +7,9 @@ import {TypeOrmModule} from '@nestjs/typeorm';
   imports: [
     TypeOrmModule.forRoot({
       type: "postgres",
-      url: process.env.DATABASE_URL || 'postgresql:///test_observation'
+      url: process.env.DATABASE_URL || 'postgresql:///test_observation',
+      migrations: ["dist/migration/*.js"],
+      migrationsRun: true
     })
   ],
   controllers: [AppController],
