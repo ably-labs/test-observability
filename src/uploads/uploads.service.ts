@@ -11,8 +11,9 @@ export class UploadsService {
     return this.uploadsRepository.find()
   }
 
-  create(): Promise<Upload> {
+  create(params: Omit<Upload, 'id' | 'createdAt'>): Promise<Upload> {
     const upload = new Upload()
+    Object.assign(upload, params)
     return this.uploadsRepository.save(upload)
   }
 }
