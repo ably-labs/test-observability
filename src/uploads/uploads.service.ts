@@ -10,4 +10,9 @@ export class UploadsService {
   findAll(): Promise<Upload[]> {
     return this.uploadsRepository.find()
   }
+
+  create(): Promise<Upload> {
+    const upload = new Upload()
+    return this.uploadsRepository.save(upload)
+  }
 }
