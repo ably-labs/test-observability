@@ -1,4 +1,8 @@
 {
+  "type": "postgres",
+  "url": "postgresql:///test_observation",
+  "entities": ["dist/src/**/*.entity.js"],
+
   "cli": {
     "migrationsDir": "migration"
   }
