@@ -1,1 +1,5 @@
-There are {{ uploads | length }} uploads.
+{% extends "../base.njk" %}
+
+{% block pageBody %}
+    There are {{ uploads | length }} uploads.
+{% endblock %}
