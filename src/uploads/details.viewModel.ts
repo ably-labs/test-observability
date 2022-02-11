@@ -7,8 +7,9 @@ export class ReportDetailsViewModel {
   readonly title = `Details of upload ${this.report.upload.id}`
 
   readonly failuresTable: TableViewModel = {
-    headers: ['Test case', 'Message'],
+    headers: ['Test class', 'Test case', 'Message'],
     rows: this.report.junitReport.failures.map(failure => [
+      {type: "text", text: failure.testClassName},
       {type: "text", text: failure.testCaseName},
       {type: "text", text: failure.message},
     ])
