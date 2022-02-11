@@ -7,5 +7,11 @@
 
     <p>There are {{ viewModel.table.rows | length }} uploads.</p>
 
+    <h2>All uploads</h2>
+
     {{ table(viewModel.table) }}
+
+    <h2>Occurrences of failures</h2>
+
+    {{ table(viewModel.failureOccurrencesTable) }}
 {% endblock %}

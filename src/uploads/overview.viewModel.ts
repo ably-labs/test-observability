@@ -1,4 +1,5 @@
 import {TableViewModel} from "../utils/view/table"
+import {MultiReport} from "./multiReport"
 import {Report} from "./report"
 
 export class OverviewViewModel {
@@ -22,5 +23,16 @@ export class OverviewViewModel {
         {type: "text", text: String(report.junitReport.numberOfFailures)}
       ]
     })
+  }
+
+  private readonly multiReport = new MultiReport(this.reports)
+
+  readonly failureOccurrencesTable: TableViewModel = {
+    headers: ['Test class', 'Test case', 'Number of occurrences'],
+    rows: this.multiReport.failuresByDescendingOccurrenceOrder.map(failure => [
+      {type: "text", text: failure.failure.testClassName},
+      {type: "text", text: failure.failure.testCaseName},
+      {type: "text", text: String(failure.occurrenceCount)},
+    ])
   }
 }

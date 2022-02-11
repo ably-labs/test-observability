@@ -1,7 +1,7 @@
 import {Upload} from "./upload.entity";
 import {parse, TestSuites} from 'junit2json'
 
-interface Failure {
+export interface Failure {
   testClassName: string
   testCaseName: string
   message: string
