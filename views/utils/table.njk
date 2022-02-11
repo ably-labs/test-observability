@@ -1,0 +1,23 @@
+{% macro table(viewModel) %}
+    <table>
+        <tr>
+            {% for header in viewModel.headers %}
+                <th scope="column">{{ header }}</th>
+            {% endfor %}
+        </tr>
+
+        {% for row in viewModel.rows %}
+            <tr>
+                {% for item in row %}
+                    <td>
+                        {% if item.type == 'text' %}
+                            {{ item.text }}
+                        {% elif item.type == 'link' %}
+                            <a href="{{ item.href }}">{{ item.text }}</a>
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+{% endmacro %}
