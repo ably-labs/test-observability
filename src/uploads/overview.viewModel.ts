@@ -27,7 +27,7 @@ export class OverviewViewModel {
   readonly tableRows: TableItem[][] = this.reports.map(report => {
     return [
       {type: "link", text: report.upload.id, href: `/uploads/${report.upload.id}`},
-      {type: "text", text: String(report.upload.createdAt)},
+      {type: "text", text: report.upload.createdAt.toISOString()},
       {type: "text", text: String(report.upload.iteration)},
       {type: "text", text: String(report.junitReport.numberOfTests)},
       {type: "text", text: String(report.junitReport.numberOfFailures)}
