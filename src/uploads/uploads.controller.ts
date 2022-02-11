@@ -1,4 +1,4 @@
-import {Controller, Get, Post, Headers, Body} from '@nestjs/common';
+import {Controller, Get, Post, Headers, Body, Render} from '@nestjs/common';
 import {UploadsService} from './uploads.service';
 
 @Controller('uploads')
@@ -6,9 +6,10 @@ export class UploadsController {
   constructor(private readonly uploadsService: UploadsService) {}
 
   @Get()
-  async all(): Promise<string> {
+  @Render('uploads/overview')
+  async overview(): Promise<Record<string, unknown>> {
     const uploads = await this.uploadsService.findAll()
-    return `There are ${uploads.length} uploads`
+    return {uploads}
   }
 
   @Post()
