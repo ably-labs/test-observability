@@ -1,4 +1,6 @@
 import {Controller, Get, Post, Headers, Body, Render} from '@nestjs/common';
+import {JUnitReport} from './junitReport';
+import {OverviewViewModel} from './overview.viewModel';
 import {UploadsService} from './uploads.service';
 
 @Controller('uploads')
@@ -7,9 +9,13 @@ export class UploadsController {
 
   @Get()
   @Render('uploads/overview')
-  async overview(): Promise<Record<string, unknown>> {
+  async overview(): Promise<{viewModel: OverviewViewModel}> {
     const uploads = await this.uploadsService.findAll()
-    return {uploads}
+    const reportPromises = uploads.map(upload => JUnitReport.createFromUpload(upload).then(junitReport => ({junitReport, upload})))
+    const reports = await Promise.all(reportPromises)
+
+    const viewModel = new OverviewViewModel(reports)
+    return {viewModel}
   }
 
   @Post()

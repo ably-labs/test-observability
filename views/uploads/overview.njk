@@ -1,5 +1,23 @@
 {% extends "../base.njk" %}
 
 {% block pageBody %}
-    There are {{ uploads | length }} uploads.
+    <h1>Overview of uploads</h1>
+
+    <p>There are {{ viewModel.tableRows | length }} uploads.</p>
+
+    <table>
+        <tr>
+            {% for heading in viewModel.tableHeadings %}
+                <th scope="column">{{ heading }}</th>
+            {% endfor %}
+        </tr>
+
+        {% for row in viewModel.tableRows %}
+            <tr>
+                {% for item in row %}
+                    <td>{{ item }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}
