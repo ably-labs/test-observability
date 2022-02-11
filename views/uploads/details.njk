@@ -1,5 +1,15 @@
 {% extends "../base.njk" %}
 
+{% from '../utils/table.njk' import table %}
+
 {% block pageBody %}
     <h1>{{ viewModel.title }}</h1>
+
+    <h2>Test failures</h2>
+
+    {% if viewModel.failuresTable.rows | length %}
+        {{ table(viewModel.failuresTable) }}
+    {% else %}
+        No tests failed.
+    {% endif %}
 {% endblock %}
