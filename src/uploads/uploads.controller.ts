@@ -1,4 +1,5 @@
-import {Controller, Get, Post, Headers, Body, Render} from '@nestjs/common';
+import {Controller, Get, Post, Headers, Body, Render, Param} from '@nestjs/common';
+import {ReportDetailsViewModel} from './details.viewModel';
 import {JUnitReport} from './junitReport';
 import {OverviewViewModel} from './overview.viewModel';
 import {UploadsService} from './uploads.service';
@@ -15,6 +16,16 @@ export class UploadsController {
     const reports = await Promise.all(reportPromises)
 
     const viewModel = new OverviewViewModel(reports)
+    return {viewModel}
+  }
+
+  @Get(':id')
+  @Render('uploads/details')
+  async details(@Param() params): Promise<{viewModel: ReportDetailsViewModel}> {
+    const upload = await this.uploadsService.find(params.id)
+    const junitReport = await JUnitReport.createFromUpload(upload)
+
+    const viewModel = new ReportDetailsViewModel({upload, junitReport})
     return {viewModel}
   }
 

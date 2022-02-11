@@ -1,27 +1,36 @@
-import {Upload} from "./upload.entity";
-import {JUnitReport} from "./junitReport";
+import {Report} from "./report"
 
-interface Report {
-  upload: Upload
-  junitReport: JUnitReport
+interface TextTableItem {
+  type: 'text'
+  text: string
 }
+
+interface LinkTableItem {
+  type: 'link'
+  text: string
+  href: string
+}
+
+type TableItem = TextTableItem | LinkTableItem
 
 export class OverviewViewModel {
   constructor(private readonly reports: Report[]) {}
 
   readonly tableHeadings = [
+    'ID',
     'Uploaded at',
     'Iteration',
     'Total number of tests',
     'Number of failures',
   ]
 
-  readonly tableRows = this.reports.map(report => {
+  readonly tableRows: TableItem[][] = this.reports.map(report => {
     return [
-      report.upload.createdAt,
-      report.upload.iteration,
-      report.junitReport.numberOfTests,
-      report.junitReport.numberOfFailures
+      {type: "link", text: report.upload.id, href: `/uploads/${report.upload.id}`},
+      {type: "text", text: String(report.upload.createdAt)},
+      {type: "text", text: String(report.upload.iteration)},
+      {type: "text", text: String(report.junitReport.numberOfTests)},
+      {type: "text", text: String(report.junitReport.numberOfFailures)}
     ]
   })
 }

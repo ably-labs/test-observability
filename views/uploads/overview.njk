@@ -15,7 +15,13 @@
         {% for row in viewModel.tableRows %}
             <tr>
                 {% for item in row %}
-                    <td>{{ item }}</td>
+                    <td>
+                        {% if item.type == 'text' %}
+                            {{ item.text }}
+                        {% elif item.type == 'link' %}
+                            <a href="{{ item.href }}">{{ item.text }}</a>
+                        {% endif %}
+                    </td>
                 {% endfor %}
             </tr>
         {% endfor %}

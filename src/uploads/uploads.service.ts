@@ -11,6 +11,11 @@ export class UploadsService {
     return this.uploadsRepository.find()
   }
 
+  async find(id: string): Promise<Upload> {
+    const results = await this.uploadsRepository.find({id})
+    return results[0]
+  }
+
   create(params: Omit<Upload, 'id' | 'createdAt'>): Promise<Upload> {
     const upload = new Upload()
     Object.assign(upload, params)
