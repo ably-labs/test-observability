@@ -1,10 +1,11 @@
-import {Controller, Get, Post, Headers, Body, Render, Param, Query} from '@nestjs/common';
+import {Controller, Get, Post, Headers, Body, Render, Param, Query, Header, Res} from '@nestjs/common';
 import {ReportDetailsViewModel} from './details.viewModel';
 import {FailureDetailsViewModel} from './failureDetails.viewModel';
 import {JUnitReport} from './junitReport';
 import {MultiReport} from './multiReport';
 import {OverviewViewModel} from './overview.viewModel';
 import {UploadsService} from './uploads.service';
+import {Response} from 'express'
 
 @Controller('uploads')
 export class UploadsController {
@@ -36,6 +37,14 @@ export class UploadsController {
     const testCaseName = query.test_case_name
 
     return {viewModel: new FailureDetailsViewModel(multiReport, testClassName, testCaseName)}
+  }
+
+  @Get(':id/junit_report_xml')
+  @Header('Content-Type', 'text/xml')
+  async junitReportXml(@Param() params, @Res({passthrough: true}) res: Response): Promise<string> {
+    const upload = await this.uploadsService.find(params.id)
+    res.header('Content-Disposition', `inline; filename="junit_report_${upload.id}.xml"`)
+    return upload.junitReportXml
   }
 
   @Get(':id')
