@@ -1,9 +1,12 @@
 {% extends "../base.njk" %}
 
+{% from '../utils/descriptionList.njk' import descriptionList %}
 {% from '../utils/table.njk' import table %}
 
 {% block pageBody %}
     <h1>{{ viewModel.title }}</h1>
+
+    {{ descriptionList(viewModel.metadataDescriptionList) }}
 
     <h2>Test failures</h2>
 

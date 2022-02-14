@@ -1,0 +1,10 @@
+{% from './dataItem.njk' import dataItem %}
+
+{% macro descriptionList(viewModel) %}
+    <dl>
+        {% for item in viewModel.items %}
+            <dt>{{ item.term }}</dt>
+            <dd>{{ dataItem(item.description) }}</dd>
+        {% endfor %}
+    </dl>
+{% endmacro %}
