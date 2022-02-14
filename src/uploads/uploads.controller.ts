@@ -1,6 +1,8 @@
-import {Controller, Get, Post, Headers, Body, Render, Param} from '@nestjs/common';
+import {Controller, Get, Post, Headers, Body, Render, Param, Query} from '@nestjs/common';
 import {ReportDetailsViewModel} from './details.viewModel';
+import {FailureDetailsViewModel} from './failureDetails.viewModel';
 import {JUnitReport} from './junitReport';
+import {MultiReport} from './multiReport';
 import {OverviewViewModel} from './overview.viewModel';
 import {UploadsService} from './uploads.service';
 
@@ -8,15 +10,32 @@ import {UploadsService} from './uploads.service';
 export class UploadsController {
   constructor(private readonly uploadsService: UploadsService) {}
 
-  @Get()
-  @Render('uploads/overview')
-  async overview(): Promise<{viewModel: OverviewViewModel}> {
+  private async createMultiReport(): Promise<MultiReport> {
     const uploads = await this.uploadsService.findAll()
     const reportPromises = uploads.map(upload => JUnitReport.createFromUpload(upload).then(junitReport => ({junitReport, upload})))
     const reports = await Promise.all(reportPromises)
 
-    const viewModel = new OverviewViewModel(reports)
+    return new MultiReport(reports)
+  }
+
+  @Get()
+  @Render('uploads/overview')
+  async overview(): Promise<{viewModel: OverviewViewModel}> {
+    const multiReport = await this.createMultiReport()
+    const viewModel = new OverviewViewModel(multiReport)
     return {viewModel}
+  }
+
+  // TODO move to another controller (with a better URL) and service once I understand Nest.js better
+  @Get('failure')
+  @Render('uploads/failure')
+  async failureDetails(@Query() query): Promise<{viewModel: FailureDetailsViewModel}> {
+    const multiReport = await this.createMultiReport()
+
+    const testClassName = query.test_class_name
+    const testCaseName = query.test_case_name
+
+    return {viewModel: new FailureDetailsViewModel(multiReport, testClassName, testCaseName)}
   }
 
   @Get(':id')

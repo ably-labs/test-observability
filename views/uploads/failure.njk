@@ -1,0 +1,9 @@
+{% extends "../base.njk" %}
+
+{% from '../utils/table.njk' import table %}
+
+{% block pageBody %}
+    <h1>{{ viewModel.heading }}</h1>
+
+    {{ table(viewModel.occurrencesTable) }}
+{% endblock %}

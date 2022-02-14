@@ -10,8 +10,14 @@ export class ReportDetailsViewModel {
     headers: ['Test class', 'Test case', 'Message'],
     rows: this.report.junitReport.failures.map(failure => [
       {type: "text", text: failure.testClassName},
-      {type: "text", text: failure.testCaseName},
+      {type: "link", text: failure.testCaseName, href: this.hrefForFailureDetails(failure.testClassName, failure.testCaseName)},
       {type: "text", text: failure.message},
     ])
+  }
+
+  // TODO DRY up with overview view model
+  private hrefForFailureDetails(testClassName: string, testCaseName: string) {
+    // TODO escape
+    return `/uploads/failure?test_class_name=${testClassName}&test_case_name=${testCaseName}`
   }
 }

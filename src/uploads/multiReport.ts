@@ -8,6 +8,13 @@ interface FailureReport {
   lastSeenIn: Upload
 }
 
+interface TestCaseFailuresReportEntry {
+  upload: Upload
+  message: string
+}
+
+type TestCaseFailuresReport = TestCaseFailuresReportEntry[]
+
 export class MultiReport {
   constructor(readonly reports: Report[]) {}
 
@@ -42,6 +49,16 @@ export class MultiReport {
 
   get failuresByDescendingOccurrenceOrder(): FailureReport[] {
     return this.failuresWithOccurrenceCount.sort((a, b) => b.occurrenceCount - a.occurrenceCount)
+  }
+
+  failuresForTestCase(testClassName: string, testCaseName: string): TestCaseFailuresReport {
+    return this.reports.flatMap(
+      report => report.junitReport.failures.map(
+        failure => ({failure, upload: report.upload})
+      ).filter(
+        val => val.failure.testClassName == testClassName && val.failure.testCaseName == testCaseName
+      ).map(val => ({upload: val.upload, message: val.failure.message}))
+    )
   }
 }
 
