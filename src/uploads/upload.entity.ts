@@ -28,8 +28,14 @@ export class Upload {
   githubAction: string
 
   // "GITHUB_RUN_NUMBER - A unique number for each run of a particular workflow in a repository. This number begins at 1 for the workflow's first run, and increments with each new run. This number does not change if you re-run the workflow run. For example, 3."
+  // OK, so this is not the "attempt", it's the 20 in the page heading "1279 run tests in loop Integration Test: iOS 14.4 #20"
   @Column({name: 'github_run_number'})
   githubRunNumber: number
+
+  // "GITHUB_RUN_ATTEMPT" – A unique number for each attempt of a particular workflow run in a repository. This number begins at 1 for the workflow run's first attempt, and increments with each re-run. For example, 3.
+  // This is nullable because I forgot to include it in the original schema, so there are some records without it captured. But we expect it to be non-null for new records.
+  @Column({name: 'github_run_attempt', nullable: true})
+  githubRunAttempt: number
 
   // "GITHUB_RUN_ID - A unique number for each workflow run within a repository. This number does not change if you re-run the workflow run. For example, 1658821493."
   @Column({name: 'github_run_id'})
