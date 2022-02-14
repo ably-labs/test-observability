@@ -41,6 +41,23 @@ export class Upload {
   @Column({name: 'github_run_id'})
   githubRunId: string
 
+  // "GITHUB_BASE_REF" – The name of the base ref or target branch of the pull request in a workflow run.This is only set when the event that triggers a workflow run is either pull_request or pull_request_target. For example, main.
+  // This is nullable because I forgot to include it in the original schema, so there are some records without it captured. And it may also be null for new records that don’t come from a pull request.
+  // TODO validations / normalisations
+  @Column({name: 'github_base_ref', nullable: true})
+  githubBaseRef: string
+
+  // "GITHUB_HEAD_REF" – The head ref or source branch of the pull request in a workflow run. This property is only set when the event that triggers a workflow run is either pull_request or pull_request_target. For example, feature-branch-1.
+  // This is nullable because I forgot to include it in the original schema, so there are some records without it captured. And it may also be null for new records that don’t come from a pull request.
+  // TODO validations / normalisations - are we using null or empty string? It's probably gonna be empty string for simplicity's sake for now
+  @Column({name: 'github_head_ref', nullable: true})
+  githubHeadRef: string
+
+  // "GITHUB_JOB" – The job_id of the current job. For example, greeting_job.
+  // This is nullable because I forgot to include it in the original schema, so there are some records without it captured. But we expect it to be non-null for new records.
+  @Column({name: 'github_job', nullable: true})
+  githubJob: string
+
   // If running the tests multiple times inside a single CI job, this is the number of the current iteration.
   @Column()
   iteration: number

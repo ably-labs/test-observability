@@ -31,6 +31,14 @@ export class ReportDetailsViewModel {
         description: {type: "link", text: this.report.upload.githubSha.substring(0, 7), href: this.hrefForGitHubCommit(this.report.upload.githubSha)}
       },
       {
+        term: "Pull request base ref",
+        description: {type: "text", text: this.report.upload.githubBaseRef?.length ? this.report.upload.githubHeadRef : "Not known"}
+      },
+      {
+        term: "Pull request head ref",
+        description: {type: "text", text: this.report.upload.githubHeadRef?.length ? this.report.upload.githubHeadRef : "Not known"}
+      },
+      {
         term: "Branch / tag name",
         description: {type: "text", text: this.report.upload.githubRefName}
       },
@@ -53,6 +61,10 @@ export class ReportDetailsViewModel {
       {
         term: "GitHub run number",
         description: {type: "text", text: this.report.upload.githubRunNumber.toString()}
+      },
+      {
+        term: "GitHub job",
+        description: {type: "text", text: this.report.upload.githubJob?.length ? this.report.upload.githubJob : "Not known"}
       },
       {
         term: "Loop iteration",
