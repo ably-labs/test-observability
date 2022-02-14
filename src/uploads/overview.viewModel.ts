@@ -16,7 +16,7 @@ export class OverviewViewModel {
 
     rows: this.reports.map(report => {
       return [
-        {type: "link", text: report.upload.id, href: `/uploads/${report.upload.id}`},
+        {type: "link", text: report.upload.id, href: this.hrefForUploadDetails(report.upload.id)},
         {type: "text", text: report.upload.createdAt.toISOString()},
         {type: "text", text: String(report.upload.iteration)},
         {type: "text", text: String(report.junitReport.numberOfTests)},
@@ -28,11 +28,16 @@ export class OverviewViewModel {
   private readonly multiReport = new MultiReport(this.reports)
 
   readonly failureOccurrencesTable: TableViewModel = {
-    headers: ['Test class', 'Test case', 'Number of occurrences'],
+    headers: ['Test class', 'Test case', 'Number of occurrences', 'Last seen'],
     rows: this.multiReport.failuresByDescendingOccurrenceOrder.map(failure => [
       {type: "text", text: failure.failure.testClassName},
       {type: "text", text: failure.failure.testCaseName},
       {type: "text", text: String(failure.occurrenceCount)},
+      {type: "link", text: failure.lastSeenIn.createdAt.toISOString(), href: this.hrefForUploadDetails(failure.lastSeenIn.id)}
     ])
+  }
+
+  private hrefForUploadDetails(id: string) {
+    return `/uploads/${id}`
   }
 }
