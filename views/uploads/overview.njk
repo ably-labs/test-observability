@@ -5,13 +5,15 @@
 {% block pageBody %}
     <h1>Overview of uploads</h1>
 
-    <p>There are {{ viewModel.table.rows | length }} uploads.</p>
-
     <h2>All uploads</h2>
+
+    <p>There are {{ viewModel.table.rows | length }} uploads.</p>
 
     {{ table(viewModel.table) }}
 
     <h2>Occurrences of failures</h2>
+
+    <p>There are {{ viewModel.failureOccurrencesTable.rows | length }} test cases with recorded failures.</p>
 
     {{ table(viewModel.failureOccurrencesTable) }}
 {% endblock %}
