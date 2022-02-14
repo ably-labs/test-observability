@@ -1,17 +1,6 @@
-interface TextTableItemViewModel {
-  type: 'text'
-  text: string
-}
+import {DataItemViewModel} from "./dataItem";
 
-interface LinkTableItemViewModel {
-  type: 'link'
-  text: string
-  href: string
-}
-
-type TableItemViewModel = TextTableItemViewModel | LinkTableItemViewModel
-
-type TableRowsViewModel = TableItemViewModel[][]
+type TableRowsViewModel = DataItemViewModel[][]
 
 export interface TableViewModel {
   headers: string[]

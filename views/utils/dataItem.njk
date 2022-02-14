@@ -1,0 +1,7 @@
+{% macro dataItem(viewModel) %}
+    {% if viewModel.type == 'text' %}
+        {{ viewModel.text }}
+    {% elif viewModel.type == 'link' %}
+        <a href="{{ viewModel.href }}">{{ viewModel.text }}</a>
+    {% endif %}
+{% endmacro %}

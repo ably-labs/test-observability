@@ -1,3 +1,5 @@
+{% from './dataItem.njk' import dataItem %}
+
 {% macro table(viewModel) %}
     <table>
         <tr>
@@ -10,11 +12,7 @@
             <tr>
                 {% for item in row %}
                     <td>
-                        {% if item.type == 'text' %}
-                            {{ item.text }}
-                        {% elif item.type == 'link' %}
-                            <a href="{{ item.href }}">{{ item.text }}</a>
-                        {% endif %}
+                        {{ dataItem(item) }}
                     </td>
                 {% endfor %}
             </tr>
