@@ -25,6 +25,12 @@ export class UploadsService {
     // I'm saving this so that I have an ID for the failures?
     await this.uploadsRepository.save(upload)
 
+    await this.populateFailuresForUpload(upload)
+
+    return upload
+  }
+
+  async populateFailuresForUpload(upload: Upload): Promise<void> {
     const junitReport = await JUnitReport.createFromUpload(upload)
 
     // TODO how to avoid n+1 here
@@ -35,7 +41,6 @@ export class UploadsService {
       const junitReportFailure = junitReport.failures[i]
 
       let testCase = (await this.testCasesRepository.find({testClassName: junitReportFailure.testClassName, testCaseName: junitReportFailure.testCaseName}))[0]
-      console.log("Got test case:", testCase)
       if (!testCase) {
         testCase = new TestCase()
         testCase.testClassName = junitReportFailure.testClassName
@@ -51,7 +56,19 @@ export class UploadsService {
 
       await this.failuresRepository.save(failure)
     }
+  }
 
-    return upload
+  // This is only used in a one-off script.
+  async populateMissingUploadFailures(): Promise<void> {
+    const uploadsWithoutFailures = (await this.uploadsRepository.find({relations: ["failures"]})).filter(upload => upload.failures.length == 0)
+
+    console.log(`Found ${uploadsWithoutFailures.length} uploads without failures.`)
+
+    while (uploadsWithoutFailures.length > 0) {
+      const upload = uploadsWithoutFailures[0]
+      console.log("Populating failures for ", upload)
+      await this.populateFailuresForUpload(upload)
+      uploadsWithoutFailures.shift()
+    }
   }
 }
