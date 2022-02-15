@@ -5,6 +5,7 @@ import {TypeOrmModule} from '@nestjs/typeorm';
 import {Upload} from './uploads/upload.entity'
 import {UploadsModule} from './uploads/uploads.module';
 import {Failure} from './uploads/failure.entity';
+import {TestCase} from './uploads/testCase.entity';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import {Failure} from './uploads/failure.entity';
       } : false, // This is a bit messy; I want SSL for Heroku and not locally 
       migrations: ["dist/migration/*.js"],
       migrationsRun: true,
-      entities: [Upload, Failure]
+      entities: [Upload, Failure, TestCase]
     }),
     UploadsModule
   ],
