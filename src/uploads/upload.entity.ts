@@ -1,4 +1,5 @@
-import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn} from 'typeorm'
+import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
+import {Failure} from './failure.entity'
 
 @Entity({name: "uploads"})
 export class Upload {
@@ -61,5 +62,8 @@ export class Upload {
   // If running the tests multiple times inside a single CI job, this is the number of the current iteration.
   @Column()
   iteration: number
+
+  @OneToMany(() => Failure, failure => failure.upload)
+  failures: Failure[]
 }
 
