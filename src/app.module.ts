@@ -17,7 +17,10 @@ import {TestCase} from './uploads/testCase.entity';
       } : false, // This is a bit messy; I want SSL for Heroku and not locally 
       migrations: ["dist/migration/*.js"],
       migrationsRun: true,
-      entities: [Upload, Failure, TestCase]
+      entities: [Upload, Failure, TestCase],
+      // TODO use Nest logger
+      logging: "all",
+      logger: "advanced-console"
     }),
     UploadsModule
   ],
