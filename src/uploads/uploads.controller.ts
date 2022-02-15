@@ -70,7 +70,7 @@ export class UploadsController {
     const junitReportXml = Buffer.from(junitReportXmlBase64, 'base64').toString('utf8')
 
     const upload = await this.uploadsService.create({
-      junitReportXml, githubSha, githubRefName, githubRetentionDays, githubAction, githubRunNumber, githubRunAttempt, githubRunId, githubBaseRef, githubHeadRef, githubJob, iteration, failures: []
+      junitReportXml, githubSha, githubRefName, githubRetentionDays, githubAction, githubRunNumber, githubRunAttempt, githubRunId, githubBaseRef, githubHeadRef, githubJob, iteration
     })
     return {id: upload.id}
   }
