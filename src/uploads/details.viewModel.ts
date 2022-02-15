@@ -1,17 +1,17 @@
 import {DescriptionListViewModel} from "src/utils/view/descriptionList";
 import {TableViewModel} from "../utils/view/table";
-import {Report} from "./report";
+import {Upload} from "./upload.entity";
 
-export class ReportDetailsViewModel {
-  constructor(private readonly report: Report) {}
+export class UploadDetailsViewModel {
+  constructor(private readonly upload: Upload) {}
 
-  readonly title = `Details of upload ${this.report.upload.id}`
+  readonly title = `Details of upload ${this.upload.id}`
 
   readonly failuresTable: TableViewModel = {
     headers: ['Test class', 'Test case', 'Message'],
-    rows: this.report.junitReport.failures.map(failure => [
-      {type: "text", text: failure.testClassName},
-      {type: "link", text: failure.testCaseName, href: this.hrefForFailureDetails(failure.testClassName, failure.testCaseName)},
+    rows: this.upload.failures.map(failure => [
+      {type: "text", text: failure.testCase.testClassName},
+      {type: "link", text: failure.testCase.testCaseName, href: this.hrefForTestCase(failure.testCase.id)},
       {type: "text", text: failure.message},
     ])
   }
@@ -20,63 +20,63 @@ export class ReportDetailsViewModel {
     items: [
       {
         term: "Created at",
-        description: {type: "text", text: this.report.upload.createdAt.toISOString()}
+        description: {type: "text", text: this.upload.createdAt.toISOString()}
       },
       {
         term: "JUnit report XML",
-        description: {type: "link", text: "View report", href: this.hrefForJunitReportXml(this.report.upload.id)}
+        description: {type: "link", text: "View report", href: this.hrefForJunitReportXml(this.upload.id)}
       },
       {
         term: "Commit SHA",
-        description: {type: "link", text: this.report.upload.githubSha.substring(0, 7), href: this.hrefForGitHubCommit(this.report.upload.githubSha)}
+        description: {type: "link", text: this.upload.githubSha.substring(0, 7), href: this.hrefForGitHubCommit(this.upload.githubSha)}
       },
       {
         term: "Pull request base ref",
-        description: {type: "text", text: this.report.upload.githubBaseRef?.length ? this.report.upload.githubHeadRef : "Not known"}
+        description: {type: "text", text: this.upload.githubBaseRef?.length ? this.upload.githubHeadRef : "Not known"}
       },
       {
         term: "Pull request head ref",
-        description: {type: "text", text: this.report.upload.githubHeadRef?.length ? this.report.upload.githubHeadRef : "Not known"}
+        description: {type: "text", text: this.upload.githubHeadRef?.length ? this.upload.githubHeadRef : "Not known"}
       },
       {
         term: "Branch / tag name",
-        description: {type: "text", text: this.report.upload.githubRefName}
+        description: {type: "text", text: this.upload.githubRefName}
       },
       {
         term: "Workflow asset retention period",
-        description: {type: "text", text: `${this.report.upload.githubRetentionDays} days`}
+        description: {type: "text", text: `${this.upload.githubRetentionDays} days`}
       },
       {
         term: "GitHub action",
-        description: {type: "text", text: this.report.upload.githubAction}
+        description: {type: "text", text: this.upload.githubAction}
       },
       {
         term: "GitHub run ID",
-        description: {type: "link", text: this.report.upload.githubRunId, href: `https://github.com/ably/ably-cocoa/actions/runs/${this.report.upload.githubRunId}`}
+        description: {type: "link", text: this.upload.githubRunId, href: `https://github.com/ably/ably-cocoa/actions/runs/${this.upload.githubRunId}`}
       },
       {
         term: "GitHub run attempt",
-        description: this.report.upload.githubRunAttempt == null ? {type: "text", text: "Not known"} : {type: "link", text: this.report.upload.githubRunAttempt.toString(), href: `https://github.com/ably/ably-cocoa/actions/runs/${this.report.upload.githubRunId}/attempts/${this.report.upload.githubRunAttempt}`}
+        description: this.upload.githubRunAttempt == null ? {type: "text", text: "Not known"} : {type: "link", text: this.upload.githubRunAttempt.toString(), href: `https://github.com/ably/ably-cocoa/actions/runs/${this.upload.githubRunId}/attempts/${this.upload.githubRunAttempt}`}
       },
       {
         term: "GitHub run number",
-        description: {type: "text", text: this.report.upload.githubRunNumber.toString()}
+        description: {type: "text", text: this.upload.githubRunNumber.toString()}
       },
       {
         term: "GitHub job",
-        description: {type: "text", text: this.report.upload.githubJob?.length ? this.report.upload.githubJob : "Not known"}
+        description: {type: "text", text: this.upload.githubJob?.length ? this.upload.githubJob : "Not known"}
       },
       {
         term: "Loop iteration",
-        description: {type: "text", text: this.report.upload.iteration.toString()}
+        description: {type: "text", text: this.upload.iteration.toString()}
       },
     ]
   }
 
   // TODO DRY up with overview view model
-  private hrefForFailureDetails(testClassName: string, testCaseName: string) {
+  private hrefForTestCase(id: string) {
     // TODO escape
-    return `/uploads/failure?test_class_name=${testClassName}&test_case_name=${testCaseName}`
+    return `/uploads/test_cases/${id}`
   }
 
   private hrefForGitHubCommit(sha: string) {

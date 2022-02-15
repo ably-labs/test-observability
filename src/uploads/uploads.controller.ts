@@ -1,42 +1,32 @@
 import {Controller, Get, Post, Headers, Body, Render, Param, Query, Header, Res} from '@nestjs/common';
-import {ReportDetailsViewModel} from './details.viewModel';
-import {FailureDetailsViewModel} from './failureDetails.viewModel';
-import {JUnitReport} from './junitReport';
-import {MultiReport} from './multiReport';
+import {UploadDetailsViewModel} from './details.viewModel';
+import {TestCaseViewModel} from './testCase.viewModel';
+import {ReportsService} from './reports.service';
 import {OverviewViewModel} from './overview.viewModel';
 import {UploadsService} from './uploads.service';
 import {Response} from 'express'
+import {TestCasesService} from './testCases.service';
 
 @Controller('uploads')
 export class UploadsController {
-  constructor(private readonly uploadsService: UploadsService) {}
-
-  private async createMultiReport(): Promise<MultiReport> {
-    const uploads = await this.uploadsService.findAll()
-    const reportPromises = uploads.map(upload => JUnitReport.createFromUpload(upload).then(junitReport => ({junitReport, upload})))
-    const reports = await Promise.all(reportPromises)
-
-    return new MultiReport(reports)
-  }
+  constructor(private readonly uploadsService: UploadsService, private readonly testCasesService: TestCasesService, private readonly reportsService: ReportsService) {}
 
   @Get()
   @Render('uploads/overview')
   async overview(): Promise<{viewModel: OverviewViewModel}> {
-    const multiReport = await this.createMultiReport()
-    const viewModel = new OverviewViewModel(multiReport)
+    const [uploadsReport, failuresOverviewReport] = await Promise.all([this.reportsService.createUploadsReport(), this.reportsService.createFailuresOverviewReport()])
+
+    const viewModel = new OverviewViewModel(uploadsReport, failuresOverviewReport)
     return {viewModel}
   }
 
   // TODO move to another controller (with a better URL) and service once I understand Nest.js better
-  @Get('failure')
+  @Get('test_cases/:id')
   @Render('uploads/failure')
-  async failureDetails(@Query() query): Promise<{viewModel: FailureDetailsViewModel}> {
-    const multiReport = await this.createMultiReport()
+  async failureDetails(@Param() params): Promise<{viewModel: TestCaseViewModel}> {
+    const testCase = await this.testCasesService.find(params.id)
 
-    const testClassName = query.test_class_name
-    const testCaseName = query.test_case_name
-
-    return {viewModel: new FailureDetailsViewModel(multiReport, testClassName, testCaseName)}
+    return {viewModel: new TestCaseViewModel(testCase)}
   }
 
   @Get(':id/junit_report_xml')
@@ -49,11 +39,10 @@ export class UploadsController {
 
   @Get(':id')
   @Render('uploads/details')
-  async details(@Param() params): Promise<{viewModel: ReportDetailsViewModel}> {
+  async details(@Param() params): Promise<{viewModel: UploadDetailsViewModel}> {
     const upload = await this.uploadsService.find(params.id)
-    const junitReport = await JUnitReport.createFromUpload(upload)
 
-    const viewModel = new ReportDetailsViewModel({upload, junitReport})
+    const viewModel = new UploadDetailsViewModel(upload)
     return {viewModel}
   }
 

@@ -12,6 +12,10 @@ export class Failure {
   @JoinColumn({name: "upload_id"})
   upload: Upload
 
+  // For the times that I want to access this ID without loading the relation.
+  @Column({name: "upload_id"})
+  uploadId: string
+
   @ManyToOne(() => TestCase, testCase => testCase.failures, {nullable: false})
   @JoinColumn({name: "test_case_id"})
   testCase: TestCase

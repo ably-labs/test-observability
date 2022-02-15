@@ -14,8 +14,9 @@ export class UploadsService {
     return this.uploadsRepository.find()
   }
 
+  // Includes failures
   async find(id: string): Promise<Upload> {
-    const results = await this.uploadsRepository.find({id})
+    const results = await this.uploadsRepository.find({where: {id}, relations: ['failures', 'failures.testCase']})
     return results[0]
   }
 

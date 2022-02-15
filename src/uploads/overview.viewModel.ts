@@ -1,8 +1,8 @@
 import {TableViewModel} from "../utils/view/table"
-import {MultiReport} from "./multiReport"
+import {UploadsReport, FailuresOverviewReport} from "./reports.service"
 
 export class OverviewViewModel {
-  constructor(private readonly multiReport: MultiReport) {}
+  constructor(private readonly uploadsReport: UploadsReport, private readonly failuresOverviewReport: FailuresOverviewReport) {}
 
   readonly table: TableViewModel = {
     headers: [
@@ -13,24 +13,24 @@ export class OverviewViewModel {
       'Number of failures',
     ],
 
-    rows: this.multiReport.reports.map(report => {
+    rows: this.uploadsReport.map(entry => {
       return [
-        {type: "link", text: report.upload.id, href: this.hrefForUploadDetails(report.upload.id)},
-        {type: "text", text: report.upload.createdAt.toISOString()},
-        {type: "text", text: String(report.upload.iteration)},
-        {type: "text", text: String(report.junitReport.numberOfTests)},
-        {type: "text", text: String(report.junitReport.numberOfFailures)}
+        {type: "link", text: entry.upload.id, href: this.hrefForUploadDetails(entry.upload.id)},
+        {type: "text", text: entry.upload.createdAt.toISOString()},
+        {type: "text", text: String(entry.upload.iteration)},
+        {type: "text", text: String(entry.numberOfTests)},
+        {type: "text", text: String(entry.numberOfFailures)}
       ]
     })
   }
 
   readonly failureOccurrencesTable: TableViewModel = {
     headers: ['Test class', 'Test case', 'Number of occurrences', 'Last seen'],
-    rows: this.multiReport.failuresByDescendingOccurrenceOrder.map(failure => [
-      {type: "text", text: failure.failure.testClassName},
-      {type: "link", text: failure.failure.testCaseName, href: this.hrefForFailureDetails(failure.failure.testClassName, failure.failure.testCaseName)},
-      {type: "text", text: String(failure.occurrenceCount)},
-      {type: "link", text: failure.lastSeenIn.createdAt.toISOString(), href: this.hrefForUploadDetails(failure.lastSeenIn.id)}
+    rows: this.failuresOverviewReport.map(entry => [
+      {type: "text", text: entry.testCase.testClassName},
+      {type: "link", text: entry.testCase.testCaseName, href: this.hrefForTestCase(entry.testCase.id)},
+      {type: "text", text: String(entry.occurrenceCount)},
+      {type: "link", text: entry.lastSeenIn.createdAt.toISOString(), href: this.hrefForUploadDetails(entry.lastSeenIn.id)}
     ])
   }
 
@@ -38,8 +38,8 @@ export class OverviewViewModel {
     return `/uploads/${id}`
   }
 
-  private hrefForFailureDetails(testClassName: string, testCaseName: string) {
+  private hrefForTestCase(id: string) {
     // TODO escape
-    return `/uploads/failure?test_class_name=${testClassName}&test_case_name=${testCaseName}`
+    return `/uploads/test_cases/${id}`
   }
 }
