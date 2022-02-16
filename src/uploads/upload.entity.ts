@@ -67,7 +67,7 @@ export class Upload {
   failures: Failure[]
 
   // The total number of tests executed.
-  @Column({name: "number_of_tests", nullable: true /* This is temporary until we backfill */})
+  @Column({name: "number_of_tests"})
   numberOfTests: number
 }
 
