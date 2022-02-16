@@ -19,20 +19,22 @@ export class UploadsService {
     return results[0]
   }
 
-  async create(params: Omit<Upload, 'id' | 'createdAt' | 'failures'>): Promise<Upload> {
+  async create(params: Omit<Upload, 'id' | 'createdAt' | 'failures' | 'numberOfTests'>): Promise<Upload> {
     const upload = new Upload()
     Object.assign(upload, params)
+
+    const junitReport = await JUnitReport.createFromUpload(upload)
+    upload.numberOfTests = junitReport.numberOfTests
+
     // I'm saving this so that I have an ID for the failures?
     await this.uploadsRepository.save(upload)
 
-    await this.populateFailuresForUpload(upload)
+    await this.populateFailuresForUpload(upload, junitReport)
 
     return upload
   }
 
-  async populateFailuresForUpload(upload: Upload): Promise<void> {
-    const junitReport = await JUnitReport.createFromUpload(upload)
-
+  async populateFailuresForUpload(upload: Upload, junitReport: JUnitReport): Promise<void> {
     // TODO how to avoid n+1 here
     // TODO a transaction – no idea how to do that, since you apparently need to directly use a connection / entity manager
     // TODO race issues for the find-or-create?
@@ -67,8 +69,26 @@ export class UploadsService {
     while (uploadsWithoutFailures.length > 0) {
       const upload = uploadsWithoutFailures[0]
       console.log("Populating failures for ", upload)
-      await this.populateFailuresForUpload(upload)
+      const junitReport = await JUnitReport.createFromUpload(upload)
+      await this.populateFailuresForUpload(upload, junitReport)
       uploadsWithoutFailures.shift()
+    }
+  }
+
+  // This is only used in a one-off script.
+  async populateMissingNumberOfTests(): Promise<void> {
+    // https://github.com/typeorm/typeorm/issues/828 I don't really understand this 'upload' alias
+    const uploadsWithoutNumberOfTests = await this.uploadsRepository.createQueryBuilder('upload').select(["upload.id"]).where({numberOfTests: null}).getMany()
+
+    console.log(`Found ${uploadsWithoutNumberOfTests.length} uploads with null numberOfTests.`)
+
+    for (let i = 0; i < uploadsWithoutNumberOfTests.length; i++) {
+      const upload = uploadsWithoutNumberOfTests[i]
+      const fullUpload = await this.uploadsRepository.findOneOrFail({id: upload.id})
+      console.log("Populating numberOfTests for ", fullUpload)
+      const junitReport = await JUnitReport.createFromUpload(fullUpload)
+      fullUpload.numberOfTests = junitReport.numberOfTests
+      await this.uploadsRepository.save(fullUpload)
     }
   }
 }
