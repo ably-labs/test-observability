@@ -1,15 +1,13 @@
 import {Controller, Get, Post, Headers, Body, Render, Param, Query, Header, Res} from '@nestjs/common';
 import {UploadDetailsViewModel} from './details.viewModel';
-import {TestCaseViewModel} from './testCase.viewModel';
 import {ReportsService} from './reports.service';
 import {OverviewViewModel} from './overview.viewModel';
 import {UploadsService} from './uploads.service';
 import {Response} from 'express'
-import {TestCasesService} from './testCases.service';
 
 @Controller('uploads')
 export class UploadsController {
-  constructor(private readonly uploadsService: UploadsService, private readonly testCasesService: TestCasesService, private readonly reportsService: ReportsService) {}
+  constructor(private readonly uploadsService: UploadsService, private readonly reportsService: ReportsService) {}
 
   @Get()
   @Render('uploads/overview')
@@ -18,15 +16,6 @@ export class UploadsController {
 
     const viewModel = new OverviewViewModel(uploadsReport, failuresOverviewReport)
     return {viewModel}
-  }
-
-  // TODO move to another controller (with a better URL) and service once I understand Nest.js better
-  @Get('test_cases/:id')
-  @Render('uploads/failure')
-  async failureDetails(@Param() params): Promise<{viewModel: TestCaseViewModel}> {
-    const testCase = await this.testCasesService.find(params.id)
-
-    return {viewModel: new TestCaseViewModel(testCase)}
   }
 
   @Get(':id/junit_report_xml')

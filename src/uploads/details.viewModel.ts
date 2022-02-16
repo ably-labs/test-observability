@@ -76,7 +76,7 @@ export class UploadDetailsViewModel {
   // TODO DRY up with overview view model
   private hrefForTestCase(id: string) {
     // TODO escape
-    return `/uploads/test_cases/${id}`
+    return `/test_cases/${id}`
   }
 
   private hrefForGitHubCommit(sha: string) {

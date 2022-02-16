@@ -1,5 +1,5 @@
-import {TestCase} from './testCase.entity'
-import {TableViewModel} from "src/utils/view/table";
+import {TestCase} from '../uploads/testCase.entity'
+import {TableViewModel} from "../utils/view/table";
 
 export class TestCaseViewModel {
   constructor(private readonly testCase: TestCase) {}

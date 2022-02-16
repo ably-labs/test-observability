@@ -40,6 +40,6 @@ export class OverviewViewModel {
 
   private hrefForTestCase(id: string) {
     // TODO escape
-    return `/uploads/test_cases/${id}`
+    return `/test_cases/${id}`
   }
 }
