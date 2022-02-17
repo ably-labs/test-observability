@@ -4,6 +4,8 @@ import {UploadsReport, FailuresOverviewReport} from "./reports.service"
 export class OverviewViewModel {
   constructor(private readonly uploadsReport: UploadsReport, private readonly failuresOverviewReport: FailuresOverviewReport) {}
 
+  private readonly numberOfUploadsWithFailures = this.uploadsReport.filter(upload => upload.numberOfFailures > 0).length
+
   readonly table: TableViewModel = {
     headers: [
       'ID',
@@ -23,6 +25,8 @@ export class OverviewViewModel {
       ]
     })
   }
+
+  readonly tableIntroText = `There are ${this.table.rows.length} uploads. ${this.numberOfUploadsWithFailures} of them (${(100 * this.numberOfUploadsWithFailures / this.table.rows.length).toFixed(1)}%) have at least one failed test.`
 
   readonly failureOccurrencesTable: TableViewModel = {
     headers: ['Test class', 'Test case', 'Number of occurrences', 'Last seen'],
