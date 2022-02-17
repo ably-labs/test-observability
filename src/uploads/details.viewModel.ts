@@ -32,7 +32,7 @@ export class UploadDetailsViewModel {
       },
       {
         term: "Pull request base ref",
-        description: {type: "text", text: this.upload.githubBaseRef?.length ? this.upload.githubHeadRef : "Not known"}
+        description: {type: "text", text: this.upload.githubBaseRef?.length ? this.upload.githubBaseRef : "Not known"}
       },
       {
         term: "Pull request head ref",
