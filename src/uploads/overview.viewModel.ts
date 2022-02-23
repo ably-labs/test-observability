@@ -10,6 +10,7 @@ export class OverviewViewModel {
     headers: [
       'ID',
       'Uploaded at',
+      'Pull request head ref',
       'Iteration',
       'Total number of tests',
       'Number of failures',
@@ -19,6 +20,7 @@ export class OverviewViewModel {
       return [
         {type: "link", text: entry.upload.id, href: this.hrefForUploadDetails(entry.upload.id)},
         {type: "text", text: entry.upload.createdAt.toISOString()},
+        {type: "text", text: entry.upload.githubHeadRef?.length ? entry.upload.githubHeadRef : "Not known"},
         {type: "text", text: String(entry.upload.iteration)},
         {type: "text", text: String(entry.numberOfTests)},
         {type: "text", text: String(entry.numberOfFailures)}

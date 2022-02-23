@@ -5,7 +5,7 @@ import {TestCase} from "./testCase.entity";
 import {Upload} from "./upload.entity";
 
 type UploadsReportEntry = {
-  upload: Pick<Upload, 'id' | 'createdAt' | 'iteration'>
+  upload: Pick<Upload, 'id' | 'createdAt' | 'githubHeadRef' | 'iteration'>
   numberOfTests: number
   numberOfFailures: number
 }
@@ -27,6 +27,7 @@ export class ReportsService {
     const sql = `SELECT
     uploads.id,
     uploads.created_at,
+    uploads.github_head_ref,
     uploads.iteration,
     uploads.number_of_tests,
     COUNT(failures.id) AS number_of_failures
@@ -55,6 +56,7 @@ ORDER BY
       upload: {
         id: row['id'],
         createdAt: row['created_at'],
+        githubHeadRef: row['github_head_ref'],
         iteration: row['iteration'],
       },
       numberOfTests: row['number_of_tests'],
