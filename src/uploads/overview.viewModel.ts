@@ -8,13 +8,25 @@ export class OverviewViewModel {
   private readonly numberOfUploadsWithFailures = this.uploadsReport.filter(upload => upload.numberOfFailures > 0).length
 
   get filterSummary() {
-    const branches = this?.filter?.branches
+    let components: string[] = []
 
-    if (!branches?.length) {
+    if (this.filter == null) {
       return ''
     }
 
-    return `You are currently only viewing uploads from branch(es) ${branches.join(', ')}.`
+    if (this.filter.branches.length > 0) {
+      components.push(`from branch(es) ${this.filter.branches.join(', ')}`)
+    }
+
+    if (this.filter.createdAfter !== null) {
+      components.push(`created after ${this.filter.createdAfter.toISOString()}`)
+    }
+
+    if (components.length == 0) {
+      return ''
+    }
+
+    return `You are currently only viewing uploads ${components.join(' and ')}.`
   }
 
   readonly filterLinkText = this.filter ? "Change filter" : "Filter results"

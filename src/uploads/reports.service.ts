@@ -25,13 +25,30 @@ export class ReportsService {
   constructor(@InjectRepository(Upload) private uploadsRepository: Repository<Upload>, @InjectRepository(TestCase) private testCasesRepository: Repository<TestCase>) {}
 
   // OK, now I really wish I were using the ORM
-  private createWhereClause(filter: UploadsFilter | null): {clause: string | null, params: string[][]} {
-    if (!filter?.branches?.length) {
+  private createWhereClause(filter: UploadsFilter | null): {clause: string | null, params: unknown[]} {
+    let subClauses: string[] = []
+    let params: unknown[] = []
+
+    let parameterCount = 0
+
+    if (filter?.branches?.length) {
+      parameterCount += 1
+      // https://github.com/brianc/node-postgres/wiki/FAQ#11-how-do-i-build-a-where-foo-in--query-to-find-rows-matching-an-array-of-values
+      subClauses.push(`uploads.github_head_ref = ANY ($${parameterCount})`)
+      params.push(filter.branches)
+    }
+
+    if (filter?.createdAfter) {
+      parameterCount += 1
+      subClauses.push(`uploads.created_at > $${parameterCount}`)
+      params.push(filter.createdAfter)
+    }
+
+    if (subClauses.length == 0) {
       return {clause: null, params: []}
     }
 
-    // https://github.com/brianc/node-postgres/wiki/FAQ#11-how-do-i-build-a-where-foo-in--query-to-find-rows-matching-an-array-of-values
-    return {clause: "WHERE uploads.github_head_ref = ANY ($1)", params: [filter.branches]}
+    return {clause: `WHERE ${subClauses.join(' AND ')}`, params: params}
   }
 
   async createUploadsReport(filter: UploadsFilter | null): Promise<UploadsReport> {

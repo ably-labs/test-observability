@@ -12,6 +12,13 @@
 
         {{ checkboxes(viewModel.branchOptions) }}
 
+        <h2>Upload date</h2>
+
+        <fieldset>
+            <label for="createdAfter">Only show uploads created after (ISO 8601 format)</label>
+            <input type="text" id="createdAfter" name="createdAfter">
+        </fieldset>
+
         <button type="submit">Apply filter</button>
     </form>
 {% endblock %}
