@@ -6,8 +6,8 @@ import {NestExpressApplication} from '@nestjs/platform-express';
 import {configure} from 'nunjucks';
 
 async function bootstrap() {
-  if (!process.env.TEST_OBSERVABILITY_SECRET) {
-    throw new Error("The TEST_OBSERVABILITY_SECRET environment variable must be set.")
+  if (!process.env.TEST_OBSERVABILITY_AUTH_KEY) {
+    throw new Error("The TEST_OBSERVABILITY_AUTH_KEY environment variable must be set.")
   }
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
