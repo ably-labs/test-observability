@@ -23,6 +23,6 @@ async function bootstrap() {
 
   app.setViewEngine('njk');
 
-  await app.listen(parseInt(process.env.PORT, 10) || 3000);
+  await app.listen(parseInt(process.env.PORT ?? "3000", 10))
 }
 bootstrap();
