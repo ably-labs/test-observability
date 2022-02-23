@@ -1,10 +1,15 @@
 import {TableViewModel} from "../utils/view/table"
 import {UploadsReport, FailuresOverviewReport} from "./reports.service"
+import {UploadsFilter} from "./uploads.service"
 
 export class OverviewViewModel {
-  constructor(private readonly uploadsReport: UploadsReport, private readonly failuresOverviewReport: FailuresOverviewReport) {}
+  constructor(private readonly uploadsReport: UploadsReport, private readonly failuresOverviewReport: FailuresOverviewReport, private readonly filter: UploadsFilter | null) {}
 
   private readonly numberOfUploadsWithFailures = this.uploadsReport.filter(upload => upload.numberOfFailures > 0).length
+
+  readonly filterSummary = this.filter?.branches?.length > 0 ? `You are currently only viewing uploads from branch(es) ${this.filter.branches.join(', ')}.` : ''
+
+  readonly filterLinkText = this.filter ? "Change filter" : "Filter results"
 
   readonly table: TableViewModel = {
     headers: [

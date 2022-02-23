@@ -5,6 +5,14 @@
 {% block pageBody %}
     <h1>Overview of uploads</h1>
 
+    <p>
+    <strong>{{viewModel.filterSummary}}</strong>
+    </p>
+
+    <p>
+    <a href="/uploads/filter">{{viewModel.filterLinkText}}</a>
+    </p>
+
     <h2>All uploads</h2>
 
     <p>{{ viewModel.tableIntroText }}</p>

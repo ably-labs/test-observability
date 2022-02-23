@@ -2,19 +2,39 @@ import {Controller, Get, Post, Headers, Body, Render, Param, Query, Header, Res}
 import {UploadDetailsViewModel} from './details.viewModel';
 import {ReportsService} from './reports.service';
 import {OverviewViewModel} from './overview.viewModel';
-import {UploadsService} from './uploads.service';
+import {UploadsFilter, UploadsService} from './uploads.service';
 import {Response} from 'express'
+import {FilterViewModel} from './filter.viewModel';
 
 @Controller('uploads')
 export class UploadsController {
   constructor(private readonly uploadsService: UploadsService, private readonly reportsService: ReportsService) {}
 
+  private createFilterFromQuery(branches: string[] | undefined): UploadsFilter | null {
+    if (branches === undefined) {
+      return null
+    }
+
+    return {
+      branches: branches
+    }
+  }
+
   @Get()
   @Render('uploads/overview')
-  async overview(): Promise<{viewModel: OverviewViewModel}> {
-    const [uploadsReport, failuresOverviewReport] = await Promise.all([this.reportsService.createUploadsReport(), this.reportsService.createFailuresOverviewReport()])
+  async overview(@Query('branches') branches: string[] | undefined): Promise<{viewModel: OverviewViewModel}> {
+    const filter = this.createFilterFromQuery(branches)
+    const [uploadsReport, failuresOverviewReport] = await Promise.all([this.reportsService.createUploadsReport(filter), this.reportsService.createFailuresOverviewReport(filter)])
 
-    const viewModel = new OverviewViewModel(uploadsReport, failuresOverviewReport)
+    const viewModel = new OverviewViewModel(uploadsReport, failuresOverviewReport, filter)
+    return {viewModel}
+  }
+
+  @Get('filter')
+  @Render('uploads/filter')
+  async filter(): Promise<{viewModel: FilterViewModel}> {
+    const branches = await this.reportsService.fetchSeenBranchNames()
+    const viewModel = new FilterViewModel({branches: []}, branches)
     return {viewModel}
   }
 

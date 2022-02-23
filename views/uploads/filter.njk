@@ -1,0 +1,17 @@
+{% extends "../base.njk" %}
+
+{% from '../utils/checkboxes.njk' import checkboxes %}
+
+{% block pageBody %}
+    <h1>Filter uploads</h1>
+
+    <form action="/uploads">
+        <h2>Branches</h2>
+
+        <p>If no boxes are checked, then the uploads will not be filtered by branch.</p>
+
+        {{ checkboxes(viewModel.branchOptions) }}
+
+        <button type="submit">Apply filter</button>
+    </form>
+{% endblock %}

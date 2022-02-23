@@ -3,6 +3,7 @@ import {Repository} from "typeorm";
 import {Failure} from "./failure.entity";
 import {TestCase} from "./testCase.entity";
 import {Upload} from "./upload.entity";
+import {UploadsFilter} from "./uploads.service";
 
 type UploadsReportEntry = {
   upload: Pick<Upload, 'id' | 'createdAt' | 'githubHeadRef' | 'iteration'>
@@ -23,7 +24,19 @@ export type FailuresOverviewReport = FailuresOverviewReportEntry[]
 export class ReportsService {
   constructor(@InjectRepository(Upload) private uploadsRepository: Repository<Upload>, @InjectRepository(TestCase) private testCasesRepository: Repository<TestCase>) {}
 
-  async createUploadsReport(): Promise<UploadsReport> {
+  // OK, now I really wish I were using the ORM
+  private createWhereClause(filter: UploadsFilter | null): {clause: string | null, params: string[][]} {
+    if (!filter?.branches?.length) {
+      return {clause: null, params: []}
+    }
+
+    // https://github.com/brianc/node-postgres/wiki/FAQ#11-how-do-i-build-a-where-foo-in--query-to-find-rows-matching-an-array-of-values
+    return {clause: "WHERE uploads.github_head_ref = ANY ($1)", params: [filter.branches]}
+  }
+
+  async createUploadsReport(filter: UploadsFilter | null): Promise<UploadsReport> {
+    const whereClause = this.createWhereClause(filter)
+
     const sql = `SELECT
     uploads.id,
     uploads.created_at,
@@ -34,13 +47,14 @@ export class ReportsService {
 FROM
     uploads
     LEFT JOIN failures ON (uploads.id = failures.upload_id)
+${whereClause.clause ?? ""}
 GROUP BY
     uploads.id
 ORDER BY
     uploads.created_at ASC`
 
     // See comment in subsequent method about learning how not to do this manually
-    let results: Record<string, any>[] = await this.uploadsRepository.query(sql)
+    let results: Record<string, any>[] = await this.uploadsRepository.query(sql, whereClause.params)
 
     /* The result is an array of objects like this:
        {
@@ -64,7 +78,9 @@ ORDER BY
     }))
   }
 
-  async createFailuresOverviewReport(): Promise<FailuresOverviewReport> {
+  async createFailuresOverviewReport(filter: UploadsFilter | null): Promise<FailuresOverviewReport> {
+    const whereClause = this.createWhereClause(filter)
+
     // I’ve not written SQL for ages and nothing this complicated for even longer, so let’s think this through…
 
     // 1. Get a table of all of the test cases that have at least one failure, along with the occurrence count.
@@ -108,6 +124,8 @@ ORDER BY
           FROM
               test_cases
               JOIN failures ON test_cases.id = failures.test_case_id
+              JOIN uploads ON failures.upload_id = uploads.id
+          ${whereClause.clause ?? ""}
           GROUP BY
               test_cases.id) AS test_cases
           JOIN (
@@ -118,9 +136,11 @@ ORDER BY
                   test_cases
                   JOIN failures ON test_cases.id = failures.test_case_id
                   JOIN uploads ON failures.upload_id = uploads.id
+              ${whereClause.clause ?? ""}
               GROUP BY
                   test_cases.id) AS latest_failing_upload_dates ON test_cases.id = latest_failing_upload_dates.test_case_id
           JOIN uploads ON uploads.created_at = latest_failing_upload_created_at
+      ${whereClause.clause ?? ""}
       ORDER BY
           failure_occurrence_count DESC`
 
@@ -140,7 +160,7 @@ ORDER BY
       TypeORM to run the query / handle the resuts.
     */
 
-    let results: Record<string, any>[] = await this.testCasesRepository.query(sql)
+    let results: Record<string, any>[] = await this.testCasesRepository.query(sql, whereClause.params)
 
     return results.map(row => ({
       testCase: {
@@ -159,6 +179,26 @@ ORDER BY
   async failuresForTestCaseId(id: string): Promise<Failure[]> {
     const testCase = await this.testCasesRepository.findOne({id}, {relations: ['failures']})
     return testCase?.failures ?? []
+  }
+
+  async fetchSeenBranchNames(): Promise<string[]> {
+    const sql = `SELECT DISTINCT
+        uploads.github_head_ref AS branch
+    FROM
+        uploads
+    ORDER BY
+        branch ASC`
+
+    // See comment in subsequent method about learning how not to do this manually
+    let results: Record<string, any>[] = await this.uploadsRepository.query(sql)
+
+    /* The result is an array of objects like this:
+       {
+          branch: 'main'
+       }
+    */
+
+    return results.map(row => row['branch'])
   }
 }
 

@@ -6,6 +6,11 @@ import {JUnitReport} from './junitReport';
 import {TestCase} from './testCase.entity';
 import {Upload} from './upload.entity';
 
+export interface UploadsFilter {
+  // empty implies no branches filter
+  branches: string[]
+}
+
 @Injectable()
 export class UploadsService {
   constructor(@InjectRepository(Upload) private uploadsRepository: Repository<Upload>, @InjectRepository(TestCase) private testCasesRepository: Repository<TestCase>, @InjectRepository(Failure) private failuresRepository: Repository<Failure>) {}
