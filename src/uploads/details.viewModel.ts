@@ -32,11 +32,11 @@ export class UploadDetailsViewModel {
       },
       {
         term: "Pull request base ref",
-        description: {type: "text", text: this.upload.githubBaseRef?.length ? this.upload.githubBaseRef : "Not known"}
+        description: {type: "text", text: this.upload.githubBaseRef}
       },
       {
         term: "Pull request head ref",
-        description: {type: "text", text: this.upload.githubHeadRef?.length ? this.upload.githubHeadRef : "Not known"}
+        description: {type: "text", text: this.upload.githubHeadRef}
       },
       {
         term: "Branch / tag name",
@@ -64,7 +64,7 @@ export class UploadDetailsViewModel {
       },
       {
         term: "GitHub job",
-        description: {type: "text", text: this.upload.githubJob?.length ? this.upload.githubJob : "Not known"}
+        description: {type: "text", text: this.upload.githubJob}
       },
       {
         term: "Loop iteration",

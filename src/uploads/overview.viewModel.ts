@@ -25,7 +25,7 @@ export class OverviewViewModel {
       return [
         {type: "link", text: entry.upload.id, href: this.hrefForUploadDetails(entry.upload.id)},
         {type: "text", text: entry.upload.createdAt.toISOString()},
-        {type: "text", text: entry.upload.githubHeadRef?.length ? entry.upload.githubHeadRef : "Not known"},
+        {type: "text", text: entry.upload.githubHeadRef},
         {type: "text", text: String(entry.upload.iteration)},
         {type: "text", text: String(entry.numberOfTests)},
         {type: "text", text: String(entry.numberOfFailures)}
