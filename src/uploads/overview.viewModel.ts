@@ -8,25 +8,33 @@ export class OverviewViewModel {
   private readonly numberOfUploadsWithFailures = this.uploadsReport.filter(upload => upload.numberOfFailures > 0).length
 
   get filterSummary() {
-    let components: string[] = []
+    let uploadsComponents: string[] = []
+    let failuresComponents: string[] = []
 
     if (this.filter == null) {
       return ''
     }
 
     if (this.filter.branches.length > 0) {
-      components.push(`from branch(es) ${this.filter.branches.join(', ')}`)
+      uploadsComponents.push(`from branch(es) ${this.filter.branches.join(', ')}`)
     }
 
     if (this.filter.createdAfter !== null) {
-      components.push(`created after ${this.filter.createdAfter.toISOString()}`)
+      uploadsComponents.push(`which were uploaded after ${this.filter.createdAfter.toISOString()}`)
     }
 
-    if (components.length == 0) {
+    if (this.filter.failureMessage !== null) {
+      failuresComponents.push(`whose message contains (case-insensitive) "${this.filter.failureMessage}"`)
+    }
+
+    if (uploadsComponents.length == 0 && failuresComponents.length == 0) {
       return ''
     }
 
-    return `You are currently only viewing uploads ${components.join(' and ')}.`
+    let uploadsDescription = uploadsComponents.length > 0 ? `uploads ${uploadsComponents.join(' and ')}` : null
+    let failuresDescription = failuresComponents.length > 0 ? `test failures ${failuresComponents.join(' and ')}` : null
+
+    return `You are currently only viewing ${[uploadsDescription, failuresDescription].filter(val => val !== null).join(', and ')}.`
   }
 
   readonly filterLinkText = this.filter ? "Change filter" : "Filter results"

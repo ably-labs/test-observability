@@ -21,12 +21,33 @@ interface FailuresOverviewReportEntry {
 
 export type FailuresOverviewReport = FailuresOverviewReportEntry[]
 
+class WhereClause {
+  constructor(private readonly uploadsSubClauses: string[], private readonly failuresSubClauses: string[], readonly params: unknown[]) {}
+
+  private createClause(subClauses: string[]): string | null {
+    if (subClauses.length == 0) {
+      return null
+    }
+
+    return `WHERE ${subClauses.join(' AND ')}`
+  }
+
+  get uploadsClause(): string | null {
+    return this.createClause(this.uploadsSubClauses)
+  }
+
+  get uploadsAndFailuresClause(): string | null {
+    return this.createClause(this.uploadsSubClauses.concat(this.failuresSubClauses))
+  }
+}
+
 export class ReportsService {
   constructor(@InjectRepository(Upload) private uploadsRepository: Repository<Upload>, @InjectRepository(TestCase) private testCasesRepository: Repository<TestCase>) {}
 
   // OK, now I really wish I were using the ORM
-  private createWhereClause(filter: UploadsFilter | null): {clause: string | null, params: unknown[]} {
-    let subClauses: string[] = []
+  private createWhereClause(filter: UploadsFilter | null): WhereClause {
+    let uploadsSubClauses: string[] = []
+    let failuresSubClauses: string[] = []
     let params: unknown[] = []
 
     let parameterCount = 0
@@ -34,21 +55,25 @@ export class ReportsService {
     if (filter?.branches?.length) {
       parameterCount += 1
       // https://github.com/brianc/node-postgres/wiki/FAQ#11-how-do-i-build-a-where-foo-in--query-to-find-rows-matching-an-array-of-values
-      subClauses.push(`uploads.github_head_ref = ANY ($${parameterCount})`)
+      uploadsSubClauses.push(`uploads.github_head_ref = ANY ($${parameterCount})`)
       params.push(filter.branches)
     }
 
     if (filter?.createdAfter) {
       parameterCount += 1
-      subClauses.push(`uploads.created_at > $${parameterCount}`)
+      uploadsSubClauses.push(`uploads.created_at > $${parameterCount}`)
       params.push(filter.createdAfter)
     }
 
-    if (subClauses.length == 0) {
-      return {clause: null, params: []}
+    if (filter?.failureMessage) {
+      parameterCount += 1
+      // The ::text cast is to avoid an error from Postgres that I don’t really understand: "could not determine data type of parameter $1"
+      failuresSubClauses.push(`failures.message ILIKE CONCAT('%', $${parameterCount}::text, '%')`)
+      const escapedFailureMessage = filter.failureMessage.replace('%', '\\%').replace('_', '\\_')
+      params.push(escapedFailureMessage)
     }
 
-    return {clause: `WHERE ${subClauses.join(' AND ')}`, params: params}
+    return new WhereClause(uploadsSubClauses, failuresSubClauses, params)
   }
 
   async createUploadsReport(filter: UploadsFilter | null): Promise<UploadsReport> {
@@ -64,7 +89,7 @@ export class ReportsService {
 FROM
     uploads
     LEFT JOIN failures ON (uploads.id = failures.upload_id)
-${whereClause.clause ?? ""}
+${whereClause.uploadsAndFailuresClause ?? ""}
 GROUP BY
     uploads.id
 ORDER BY
@@ -142,7 +167,7 @@ ORDER BY
               test_cases
               JOIN failures ON test_cases.id = failures.test_case_id
               JOIN uploads ON failures.upload_id = uploads.id
-          ${whereClause.clause ?? ""}
+          ${whereClause.uploadsAndFailuresClause ?? ""}
           GROUP BY
               test_cases.id) AS test_cases
           JOIN (
@@ -153,11 +178,11 @@ ORDER BY
                   test_cases
                   JOIN failures ON test_cases.id = failures.test_case_id
                   JOIN uploads ON failures.upload_id = uploads.id
-              ${whereClause.clause ?? ""}
+              ${whereClause.uploadsAndFailuresClause ?? ""}
               GROUP BY
                   test_cases.id) AS latest_failing_upload_dates ON test_cases.id = latest_failing_upload_dates.test_case_id
           JOIN uploads ON uploads.created_at = latest_failing_upload_created_at
-      ${whereClause.clause ?? ""}
+      ${whereClause.uploadsClause ?? ""}
       ORDER BY
           failure_occurrence_count DESC`
 

@@ -10,6 +10,8 @@ export interface UploadsFilter {
   // empty implies no branches filter
   branches: string[]
   createdAfter: Date | null
+  // case-insensitive contains
+  failureMessage: string | null
 }
 
 @Injectable()

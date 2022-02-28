@@ -19,6 +19,13 @@
             <input type="text" id="createdAfter" name="createdAfter">
         </fieldset>
 
+        <h2>Test failure message</h2>
+
+        <fieldset>
+            <label for="failureMessage">Only show test failures whose message includes this value (case-insensitive)</label>
+            <input type="text" id="failureMessage" name="failureMessage">
+        </fieldset>
+
         <button type="submit">Apply filter</button>
     </form>
 {% endblock %}
