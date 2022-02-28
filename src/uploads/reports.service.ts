@@ -218,11 +218,6 @@ ORDER BY
     }))
   }
 
-  async failuresForTestCaseId(id: string): Promise<Failure[]> {
-    const testCase = await this.testCasesRepository.findOne({id}, {relations: ['failures']})
-    return testCase?.failures ?? []
-  }
-
   async fetchSeenBranchNames(): Promise<string[]> {
     const sql = `SELECT DISTINCT
         uploads.github_head_ref AS branch
