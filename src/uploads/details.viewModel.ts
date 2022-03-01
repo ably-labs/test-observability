@@ -8,8 +8,9 @@ export class UploadDetailsViewModel {
   readonly title = `Details of upload ${this.upload.id}`
 
   readonly failuresTable: TableViewModel = {
-    headers: ['Test class', 'Test case', 'Message'],
+    headers: ['ID', 'Test class', 'Test case', 'Message'],
     rows: this.upload.failures.map(failure => [
+      {type: "text", text: failure.id},
       {type: "text", text: failure.testCase.testClassName},
       {type: "link", text: failure.testCase.testCaseName, href: this.hrefForTestCase(failure.testCase.id)},
       {type: "text", text: failure.message},
