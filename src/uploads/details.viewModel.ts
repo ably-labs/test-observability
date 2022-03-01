@@ -10,7 +10,7 @@ export class UploadDetailsViewModel {
   readonly failuresTable: TableViewModel = {
     headers: ['ID', 'Test class', 'Test case', 'Message'],
     rows: this.upload.failures.map(failure => [
-      {type: "text", text: failure.id},
+      {type: "link", text: failure.id, href: this.hrefForFailure(failure.id)},
       {type: "text", text: failure.testCase.testClassName},
       {type: "link", text: failure.testCase.testCaseName, href: this.hrefForTestCase(failure.testCase.id)},
       {type: "text", text: failure.message},
@@ -88,5 +88,9 @@ export class UploadDetailsViewModel {
   private hrefForJunitReportXml(id: string) {
     // TODO escape
     return `/uploads/${id}/junit_report_xml`
+  }
+
+  private hrefForFailure(id: string) {
+    return `/failures/${id}`
   }
 }

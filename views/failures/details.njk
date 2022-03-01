@@ -1,0 +1,9 @@
+{% extends "../base.njk" %}
+
+{% from '../utils/descriptionList.njk' import descriptionList %}
+
+{% block pageBody %}
+    <h1>{{ viewModel.title }}</h1>
+
+    {{ descriptionList(viewModel.metadataDescriptionList) }}
+{% endblock %}

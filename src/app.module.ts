@@ -6,6 +6,7 @@ import {UploadsModule} from './uploads/uploads.module';
 import {Failure} from './uploads/failure.entity';
 import {TestCase} from './uploads/testCase.entity';
 import {TestCasesModule} from './testCases/testCases.module';
+import {FailuresModule} from './failures/failures.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import {TestCasesModule} from './testCases/testCases.module';
       logger: "advanced-console"
     }),
     UploadsModule,
-    TestCasesModule
+    TestCasesModule,
+    FailuresModule
   ],
   controllers: [AppController],
 })
