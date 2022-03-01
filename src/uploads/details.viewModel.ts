@@ -32,6 +32,10 @@ export class UploadDetailsViewModel {
         description: {type: "link", text: "View report", href: this.hrefForJunitReportXml(this.upload.id)}
       },
       {
+        term: "GitHub repository",
+        description: {type: "link", text: this.upload.githubRepository, href: this.hrefForGitHubRepository(this.upload.githubRepository)}
+      },
+      {
         term: "Commit SHA",
         description: {type: "link", text: this.upload.githubSha.substring(0, 7), href: this.hrefForGitHubCommit(this.upload.githubSha)}
       },
@@ -82,6 +86,11 @@ export class UploadDetailsViewModel {
   private hrefForTestCase(id: string) {
     // TODO escape
     return `/test_cases/${id}`
+  }
+
+  private hrefForGitHubRepository(repoName: string) {
+    // TODO escape
+    return `https://github.com/${repoName}`
   }
 
   private hrefForGitHubCommit(sha: string) {
