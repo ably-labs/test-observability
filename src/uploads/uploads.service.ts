@@ -9,6 +9,7 @@ import {Upload} from './upload.entity';
 export interface UploadsFilter {
   // empty implies no branches filter
   branches: string[]
+  createdBefore: Date | null
   createdAfter: Date | null
   // case-insensitive contains
   failureMessage: string | null

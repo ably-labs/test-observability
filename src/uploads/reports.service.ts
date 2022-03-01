@@ -59,6 +59,12 @@ export class ReportsService {
       params.push(filter.branches)
     }
 
+    if (filter?.createdBefore) {
+      parameterCount += 1
+      uploadsSubClauses.push(`uploads.created_at < $${parameterCount}`)
+      params.push(filter.createdBefore)
+    }
+
     if (filter?.createdAfter) {
       parameterCount += 1
       uploadsSubClauses.push(`uploads.created_at > $${parameterCount}`)

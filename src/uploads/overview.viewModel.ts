@@ -19,6 +19,10 @@ export class OverviewViewModel {
       uploadsComponents.push(`from branch(es) ${this.filter.branches.join(', ')}`)
     }
 
+    if (this.filter.createdBefore !== null) {
+      uploadsComponents.push(`which were uploaded before ${this.filter.createdBefore.toISOString()}`)
+    }
+
     if (this.filter.createdAfter !== null) {
       uploadsComponents.push(`which were uploaded after ${this.filter.createdAfter.toISOString()}`)
     }

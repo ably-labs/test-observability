@@ -10,9 +10,14 @@ import {FilterViewModel} from './filter.viewModel';
 export class UploadsController {
   constructor(private readonly uploadsService: UploadsService, private readonly reportsService: ReportsService) {}
 
-  private createFilterFromQuery(branches: string[] | undefined, createdAfter: string | undefined, failureMessage: string | undefined): UploadsFilter | null {
-    if (branches === undefined && (createdAfter?.length ?? 0) == 0 && !failureMessage?.length) {
+  private createFilterFromQuery(branches: string[] | undefined, createdBefore: string | undefined, createdAfter: string | undefined, failureMessage: string | undefined): UploadsFilter | null {
+    if (branches === undefined && (createdBefore?.length ?? 0) == 0 && (createdAfter?.length ?? 0) == 0 && !failureMessage?.length) {
       return null
+    }
+
+    let createdBeforeDate: Date | null = null
+    if (createdBefore !== undefined && createdBefore.length > 0) {
+      createdBeforeDate = new Date(createdBefore)
     }
 
     let createdAfterDate: Date | null = null
@@ -27,6 +32,7 @@ export class UploadsController {
 
     return {
       branches: branches ?? [],
+      createdBefore: createdBeforeDate,
       createdAfter: createdAfterDate,
       failureMessage: failureMessageOrNull
     }
@@ -34,8 +40,8 @@ export class UploadsController {
 
   @Get()
   @Render('uploads/overview')
-  async overview(@Query('branches') branches: string[] | undefined, @Query('createdAfter') createdAfter: string | undefined, @Query('failureMessage') failureMessage: string | undefined): Promise<{viewModel: OverviewViewModel}> {
-    const filter = this.createFilterFromQuery(branches, createdAfter, failureMessage)
+  async overview(@Query('branches') branches: string[] | undefined, @Query('createdBefore') createdBefore: string | undefined, @Query('createdAfter') createdAfter: string | undefined, @Query('failureMessage') failureMessage: string | undefined): Promise<{viewModel: OverviewViewModel}> {
+    const filter = this.createFilterFromQuery(branches, createdBefore, createdAfter, failureMessage)
     const [uploadsReport, failuresOverviewReport] = await Promise.all([this.reportsService.createUploadsReport(filter), this.reportsService.createFailuresOverviewReport(filter)])
 
     const viewModel = new OverviewViewModel(uploadsReport, failuresOverviewReport, filter)
@@ -46,7 +52,7 @@ export class UploadsController {
   @Render('uploads/filter')
   async filter(): Promise<{viewModel: FilterViewModel}> {
     const branches = await this.reportsService.fetchSeenBranchNames()
-    const viewModel = new FilterViewModel({branches: [], createdAfter: null, failureMessage: null}, branches)
+    const viewModel = new FilterViewModel({branches: [], createdBefore: null, createdAfter: null, failureMessage: null}, branches)
     return {viewModel}
   }
 
