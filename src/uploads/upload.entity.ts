@@ -13,8 +13,7 @@ export class Upload {
   junitReportXml: string
 
   // "GITHUB_REPOSITORY - The owner and repository name. For example, octocat/Hello-World."
-  // This is nullable because I forgot to include it in the original schema, so there are some records without it captured. But we expect it to be non-null for new records.
-  @Column({name: 'github_repository', nullable: true})
+  @Column({name: 'github_repository'})
   githubRepository: string
 
   // "GITHUB_SHA - The commit SHA that triggered the workflow. For example, ffac537e6cbbf934b08745a378932722df287a53."
