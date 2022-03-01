@@ -5,14 +5,14 @@ import {Failure} from "./failure.entity";
 @Index(["testClassName", "testCaseName"], {unique: true})
 export class TestCase {
   @PrimaryGeneratedColumn("uuid")
-  id: string
+  id!: string
 
   @Column({name: "test_class_name"})
-  testClassName: string
+  testClassName!: string
 
   @Column({name: "test_case_name"})
-  testCaseName: string
+  testCaseName!: string
 
   @OneToMany(() => Failure, failure => failure.testCase)
-  failures: Failure[]
+  failures!: Failure[]
 }

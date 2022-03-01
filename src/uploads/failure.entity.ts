@@ -6,24 +6,24 @@ import {Upload} from "./upload.entity";
 @Index(["id", "order"], {unique: true})
 export class Failure {
   @PrimaryGeneratedColumn("uuid")
-  id: string
+  id!: string
 
   @ManyToOne(() => Upload, upload => upload.failures, {nullable: false})
   @JoinColumn({name: "upload_id"})
-  upload: Upload
+  upload!: Upload
 
   // For the times that I want to access this ID without loading the relation.
   @Column({name: "upload_id"})
-  uploadId: string
+  uploadId!: string
 
   @ManyToOne(() => TestCase, testCase => testCase.failures, {nullable: false})
   @JoinColumn({name: "test_case_id"})
-  testCase: TestCase
+  testCase!: TestCase
 
   // The position of this failure within the list of the parent Upload’s failures. Starts at 0.
   @Column()
-  order: number
+  order!: number
 
   @Column()
-  message: string
+  message!: string
 }
