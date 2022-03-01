@@ -63,15 +63,20 @@ export class OverviewViewModel {
 
   readonly tableIntroText = `There are ${this.table.rows.length} uploads. ${this.numberOfUploadsWithFailures} of them (${(100 * this.numberOfUploadsWithFailures / this.table.rows.length).toFixed(1)}%) have at least one failed test.`
 
+  private readonly totalFailures = this.failuresOverviewReport.reduce((accum, val) => accum + val.occurrenceCount, 0)
+
   readonly failureOccurrencesTable: TableViewModel = {
-    headers: ['Test class', 'Test case', 'Number of occurrences', 'Last seen'],
+    headers: ['Test class', 'Test case', 'Number of occurrences', 'Percentage of total failures', 'Last seen'],
     rows: this.failuresOverviewReport.map(entry => [
       {type: "text", text: entry.testCase.testClassName},
       {type: "link", text: entry.testCase.testCaseName, href: this.hrefForTestCase(entry.testCase.id)},
       {type: "text", text: String(entry.occurrenceCount)},
+      {type: "text", text: `${(100 * entry.occurrenceCount / this.totalFailures).toFixed(1)}%`},
       {type: "link", text: entry.lastSeenIn.createdAt.toISOString(), href: this.hrefForUploadDetails(entry.lastSeenIn.id)}
     ])
   }
+
+  readonly failureOccurrencesTableIntroText = `There are ${this.totalFailures} recorded failures, across ${this.failureOccurrencesTable.rows.length} test cases.`
 
   private hrefForUploadDetails(id: string) {
     return `/uploads/${id}`

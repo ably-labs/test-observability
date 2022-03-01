@@ -21,7 +21,7 @@
 
     <h2>Occurrences of failures</h2>
 
-    <p>There are {{ viewModel.failureOccurrencesTable.rows | length }} test cases with recorded failures.</p>
+    <p>{{ viewModel.failureOccurrencesTableIntroText }}</p>
 
     {{ table(viewModel.failureOccurrencesTable) }}
 {% endblock %}
