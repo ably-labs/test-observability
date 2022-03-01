@@ -37,7 +37,7 @@ export class UploadDetailsViewModel {
       },
       {
         term: "Commit SHA",
-        description: {type: "link", text: this.upload.githubSha.substring(0, 7), href: this.hrefForGitHubCommit(this.upload.githubSha)}
+        description: {type: "link", text: this.upload.githubSha.substring(0, 7), href: this.hrefForGitHubCommit(this.upload.githubRepository, this.upload.githubSha)}
       },
       {
         term: "Pull request base ref",
@@ -61,11 +61,11 @@ export class UploadDetailsViewModel {
       },
       {
         term: "GitHub run ID",
-        description: {type: "link", text: this.upload.githubRunId, href: `https://github.com/ably/ably-cocoa/actions/runs/${this.upload.githubRunId}`}
+        description: {type: "link", text: this.upload.githubRunId, href: `https://github.com/${this.upload.githubRepository}/actions/runs/${this.upload.githubRunId}`}
       },
       {
         term: "GitHub run attempt",
-        description: this.upload.githubRunAttempt == null ? {type: "text", text: "Not known"} : {type: "link", text: this.upload.githubRunAttempt.toString(), href: `https://github.com/ably/ably-cocoa/actions/runs/${this.upload.githubRunId}/attempts/${this.upload.githubRunAttempt}`}
+        description: this.upload.githubRunAttempt == null ? {type: "text", text: "Not known"} : {type: "link", text: this.upload.githubRunAttempt.toString(), href: `https://github.com/${this.upload.githubRepository}/actions/runs/${this.upload.githubRunId}/attempts/${this.upload.githubRunAttempt}`}
       },
       {
         term: "GitHub run number",
@@ -93,9 +93,9 @@ export class UploadDetailsViewModel {
     return `https://github.com/${repoName}`
   }
 
-  private hrefForGitHubCommit(sha: string) {
+  private hrefForGitHubCommit(repoName: string, sha: string) {
     // TODO escape
-    return `https://github.com/ably/ably-cocoa/commit/${sha}`
+    return `https://github.com/${repoName}/commit/${sha}`
   }
 
   private hrefForJunitReportXml(id: string) {
