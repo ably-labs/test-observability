@@ -24,6 +24,10 @@ export class UploadDetailsViewModel {
         description: {type: "text", text: this.upload.createdAt.toISOString()}
       },
       {
+        term: "Total number of tests",
+        description: {type: "text", text: String(this.upload.numberOfTests)}
+      },
+      {
         term: "JUnit report XML",
         description: {type: "link", text: "View report", href: this.hrefForJunitReportXml(this.upload.id)}
       },
