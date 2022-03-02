@@ -58,7 +58,7 @@ export class UploadsController {
 
   @Get(':id/junit_report_xml')
   @Header('Content-Type', 'text/xml')
-  async junitReportXml(@Param() params, @Res({passthrough: true}) res: Response): Promise<string> {
+  async junitReportXml(@Param() params: any, @Res({passthrough: true}) res: Response): Promise<string> {
     const upload = await this.uploadsService.find(params.id)
     res.header('Content-Disposition', `inline; filename="junit_report_${upload.id}.xml"`)
     return upload.junitReportXml
@@ -66,7 +66,7 @@ export class UploadsController {
 
   @Get(':id')
   @Render('uploads/details')
-  async details(@Param() params): Promise<{viewModel: UploadDetailsViewModel}> {
+  async details(@Param() params: any): Promise<{viewModel: UploadDetailsViewModel}> {
     const upload = await this.uploadsService.find(params.id)
 
     const viewModel = new UploadDetailsViewModel(upload)

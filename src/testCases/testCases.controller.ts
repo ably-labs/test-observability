@@ -8,7 +8,7 @@ export class TestCasesController {
 
   @Get(':id')
   @Render('testCases/details')
-  async failureDetails(@Param() params): Promise<{viewModel: TestCaseViewModel}> {
+  async failureDetails(@Param() params: any): Promise<{viewModel: TestCaseViewModel}> {
     const testCase = await this.testCasesService.find(params.id)
 
     return {viewModel: new TestCaseViewModel(testCase)}

@@ -8,7 +8,7 @@ export class FailuresController {
 
   @Get(':id')
   @Render('failures/details')
-  async failureDetails(@Param() params): Promise<{viewModel: FailureViewModel}> {
+  async failureDetails(@Param() params: any): Promise<{viewModel: FailureViewModel}> {
     const failure = await this.failuresService.find(params.id)
 
     return {viewModel: new FailureViewModel(failure)}
