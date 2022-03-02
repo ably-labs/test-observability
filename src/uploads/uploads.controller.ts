@@ -65,12 +65,16 @@ export class UploadsController {
   }
 
   @Get(':id')
-  @Render('uploads/details')
-  async details(@Param() params: any): Promise<{viewModel: UploadDetailsViewModel}> {
+  async details(@Param() params: any, @Headers("Accept") accept: string | undefined, @Res() res: Response): Promise<void> {
     const upload = await this.uploadsService.find(params.id)
 
-    const viewModel = new UploadDetailsViewModel(upload)
-    return {viewModel}
+    if (accept === 'application/json') {
+      res.header('Content-Type', 'application/json')
+      res.json(upload)
+    } else {
+      const viewModel = new UploadDetailsViewModel(upload)
+      res.render('uploads/details', {viewModel})
+    }
   }
 
   @Post()
