@@ -1,17 +1,12 @@
 {% extends "../base.njk" %}
 
 {% from '../utils/table.njk' import table %}
+{% from '../utils/filterDescription.njk' import filterDescription %}
 
 {% block pageBody %}
     <h1>Overview of uploads</h1>
 
-    <p>
-    <strong>{{viewModel.filterSummary}}</strong>
-    </p>
-
-    <p>
-    <a href="{{viewModel.filterHref}}">{{viewModel.filterLinkText}}</a>
-    </p>
+    {{ filterDescription(viewModel.filterDescription) }}
 
     <h2>All uploads</h2>
 

@@ -8,43 +8,9 @@ import {ViewModelURLHelpers} from "src/utils/viewModel/urlHelpers"
 export class OverviewViewModel {
   constructor(private readonly uploadsReport: UploadsReport, private readonly failuresOverviewReport: FailuresOverviewReport, private readonly filter: UploadsFilter | null) {}
 
+  readonly filterDescription = ViewModelHelpers.viewModelForFilter(this.filter)
+
   private readonly numberOfUploadsWithFailures = this.uploadsReport.filter(upload => upload.numberOfFailures > 0).length
-
-  get filterSummary() {
-    let uploadsComponents: string[] = []
-    let failuresComponents: string[] = []
-
-    if (this.filter == null) {
-      return ''
-    }
-
-    if (this.filter.branches.length > 0) {
-      uploadsComponents.push(`from ${pluralize('branch', this.filter.branches.length)} ${this.filter.branches.join(', ')}`)
-    }
-
-    if (this.filter.createdBefore !== null) {
-      uploadsComponents.push(`which were uploaded before ${this.filter.createdBefore.toISOString()}`)
-    }
-
-    if (this.filter.createdAfter !== null) {
-      uploadsComponents.push(`which were uploaded after ${this.filter.createdAfter.toISOString()}`)
-    }
-
-    if (this.filter.failureMessage !== null) {
-      failuresComponents.push(`whose message contains (case-insensitive) "${this.filter.failureMessage}"`)
-    }
-
-    if (uploadsComponents.length == 0 && failuresComponents.length == 0) {
-      return ''
-    }
-
-    let uploadsDescription = uploadsComponents.length > 0 ? `uploads ${uploadsComponents.join(' and ')}` : null
-    let failuresDescription = failuresComponents.length > 0 ? `test failures ${failuresComponents.join(' and ')}` : null
-
-    return `You are currently only viewing ${[uploadsDescription, failuresDescription].filter(val => val !== null).join(', and ')}.`
-  }
-
-  readonly filterLinkText = this.filter ? "Change filter" : "Filter results"
 
   readonly table: TableViewModel = {
     headers: [
@@ -84,6 +50,4 @@ export class OverviewViewModel {
   }
 
   readonly failureOccurrencesTableIntroText = `There ${this.totalFailures == 1 ? "is" : "are"} ${this.totalFailures} recorded ${pluralize('failure', this.totalFailures)}, across ${this.failureOccurrencesTable.rows.length} ${pluralize("test case", this.failureOccurrencesTable.rows.length)}.`
-
-  readonly filterHref = ViewModelURLHelpers.hrefForFilterOptions(this.filter)
 }

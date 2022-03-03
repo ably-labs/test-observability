@@ -1,0 +1,9 @@
+{% macro filterDescription(viewModel) %}
+    <p>
+    <strong>{{viewModel.summary}}</strong>
+    </p>
+
+    <p>
+    <a href="{{viewModel.filterLink.href}}">{{viewModel.filterLink.text}}</a>
+    </p>
+{% endmacro %}
