@@ -1,5 +1,6 @@
 import pluralize from 'pluralize';
 import {UploadsFilter} from 'src/uploads/uploads.service';
+import {DescriptionListViewModel} from 'src/utils/view/descriptionList';
 import {ViewModelHelpers} from 'src/utils/viewModel/helpers';
 import {ViewModelURLHelpers} from 'src/utils/viewModel/urlHelpers';
 import {TestCase} from '../uploads/testCase.entity'
@@ -11,7 +12,20 @@ export class TestCaseViewModel {
   readonly filterDescription = ViewModelHelpers.viewModelForFilter(this.filter)
 
   get heading(): string {
-    return `Failures in ${this.testCase.testClassName}.${this.testCase.testCaseName}`
+    return `Details of test case ${this.testCase.id}`
+  }
+
+  readonly metadataDescriptionList: DescriptionListViewModel = {
+    items: [
+      {
+        term: "Test class name",
+        description: {type: "text", text: this.testCase.testClassName}
+      },
+      {
+        term: "Test case name",
+        description: {type: "text", text: this.testCase.testCaseName}
+      }
+    ]
   }
 
   readonly tableIntroText = `There ${this.testCase.failures.length == 1 ? "is" : "are"} ${this.testCase.failures.length} recorded ${pluralize("failure", this.testCase.failures.length)} of this test case.`
