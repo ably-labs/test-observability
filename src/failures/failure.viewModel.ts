@@ -1,5 +1,6 @@
 import {DescriptionListViewModel} from "../utils/view/descriptionList";
 import {Failure} from "../uploads/failure.entity";
+import {ViewModelURLHelpers} from "src/utils/viewModel/urlHelpers";
 
 export class FailureViewModel {
   constructor(private readonly failure: Failure) {}
@@ -10,27 +11,16 @@ export class FailureViewModel {
     items: [
       {
         term: "Upload ID",
-        description: {type: "link", text: this.failure.uploadId, href: this.hrefForUploadDetails(this.failure.uploadId)}
+        description: {type: "link", text: this.failure.uploadId, href: ViewModelURLHelpers.hrefForUploadDetails(this.failure.uploadId)}
       },
       {
         term: "Test case ID",
-        description: {type: "link", text: this.failure.testCase.id, href: this.hrefForTestCase(this.failure.testCase.id)}
+        description: {type: "link", text: this.failure.testCase.id, href: ViewModelURLHelpers.hrefForTestCase(this.failure.testCase.id)}
       },
       {
         term: "Message",
         description: {type: "text", text: this.failure.message}
       }
     ]
-  }
-
-  // TODO DRY up with overview view model
-  private hrefForUploadDetails(id: string) {
-    return `/uploads/${id}`
-  }
-
-  // TODO DRY up with overview view model
-  private hrefForTestCase(id: string) {
-    // TODO escape
-    return `/test_cases/${id}`
   }
 }

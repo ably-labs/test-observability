@@ -3,6 +3,7 @@ import {TableViewModel} from "../utils/view/table"
 import {UploadsReport, FailuresOverviewReport} from "./reports.service"
 import {UploadsFilter} from "./uploads.service"
 import {ViewModelHelpers} from '../utils/viewModel/helpers'
+import {ViewModelURLHelpers} from "src/utils/viewModel/urlHelpers"
 
 export class OverviewViewModel {
   constructor(private readonly uploadsReport: UploadsReport, private readonly failuresOverviewReport: FailuresOverviewReport, private readonly filter: UploadsFilter | null) {}
@@ -57,7 +58,7 @@ export class OverviewViewModel {
 
     rows: this.uploadsReport.map(entry => {
       return [
-        {type: "link", text: entry.upload.id, href: this.hrefForUploadDetails(entry.upload.id)},
+        {type: "link", text: entry.upload.id, href: ViewModelURLHelpers.hrefForUploadDetails(entry.upload.id)},
         {type: "text", text: entry.upload.createdAt.toISOString()},
         {type: "text", text: entry.upload.githubHeadRef},
         {type: "text", text: String(entry.upload.iteration)},
@@ -75,31 +76,14 @@ export class OverviewViewModel {
     headers: ['Test class', 'Test case', 'Number of occurrences', 'Percentage of total failures', 'Last seen'],
     rows: this.failuresOverviewReport.map(entry => [
       {type: "text", text: entry.testCase.testClassName},
-      {type: "link", text: entry.testCase.testCaseName, href: this.hrefForTestCase(entry.testCase.id)},
+      {type: "link", text: entry.testCase.testCaseName, href: ViewModelURLHelpers.hrefForTestCase(entry.testCase.id)},
       {type: "text", text: String(entry.occurrenceCount)},
       {type: "text", text: `${ViewModelHelpers.formatPercentage(entry.occurrenceCount, this.totalFailures) ?? ""}`},
-      {type: "link", text: entry.lastSeenIn.createdAt.toISOString(), href: this.hrefForUploadDetails(entry.lastSeenIn.id)}
+      {type: "link", text: entry.lastSeenIn.createdAt.toISOString(), href: ViewModelURLHelpers.hrefForUploadDetails(entry.lastSeenIn.id)}
     ])
   }
 
   readonly failureOccurrencesTableIntroText = `There ${this.totalFailures == 1 ? "is" : "are"} ${this.totalFailures} recorded ${pluralize('failure', this.totalFailures)}, across ${this.failureOccurrencesTable.rows.length} ${pluralize("test case", this.failureOccurrencesTable.rows.length)}.`
 
-  private hrefForUploadDetails(id: string) {
-    return `/uploads/${id}`
-  }
-
-  private hrefForTestCase(id: string) {
-    // TODO escape
-    return `/test_cases/${id}`
-  }
-
-  get filterHref() {
-    const href = `/uploads/filter`
-
-    if (this.filter == null) {
-      return href
-    }
-
-    return `${href}?${ViewModelHelpers.queryFragmentForFilter(this.filter)}`
-  }
+  readonly filterHref = ViewModelURLHelpers.hrefForFilterOptions(this.filter)
 }

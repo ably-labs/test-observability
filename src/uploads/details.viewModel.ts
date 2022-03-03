@@ -1,5 +1,6 @@
 import pluralize from "pluralize";
 import {DescriptionListViewModel} from "src/utils/view/descriptionList";
+import {ViewModelURLHelpers} from "src/utils/viewModel/urlHelpers";
 import {TableViewModel} from "../utils/view/table";
 import {Upload} from "./upload.entity";
 
@@ -13,9 +14,9 @@ export class UploadDetailsViewModel {
   readonly failuresTable: TableViewModel = {
     headers: ['ID', 'Test class', 'Test case', 'Message'],
     rows: this.upload.failures.map(failure => [
-      {type: "link", text: failure.id, href: this.hrefForFailure(failure.id)},
+      {type: "link", text: failure.id, href: ViewModelURLHelpers.hrefForFailure(failure.id)},
       {type: "text", text: failure.testCase.testClassName},
-      {type: "link", text: failure.testCase.testCaseName, href: this.hrefForTestCase(failure.testCase.id)},
+      {type: "link", text: failure.testCase.testCaseName, href: ViewModelURLHelpers.hrefForTestCase(failure.testCase.id)},
       {type: "text", text: failure.message},
     ])
   }
@@ -32,15 +33,15 @@ export class UploadDetailsViewModel {
       },
       {
         term: "JUnit report XML",
-        description: {type: "link", text: "View report", href: this.hrefForJunitReportXml(this.upload.id)}
+        description: {type: "link", text: "View report", href: ViewModelURLHelpers.hrefForJunitReportXml(this.upload.id)}
       },
       {
         term: "GitHub repository",
-        description: {type: "link", text: this.upload.githubRepository, href: this.hrefForGitHubRepository(this.upload.githubRepository)}
+        description: {type: "link", text: this.upload.githubRepository, href: ViewModelURLHelpers.hrefForGitHubRepository(this.upload.githubRepository)}
       },
       {
         term: "Commit SHA",
-        description: {type: "link", text: this.upload.githubSha.substring(0, 7), href: this.hrefForGitHubCommit(this.upload.githubRepository, this.upload.githubSha)}
+        description: {type: "link", text: this.upload.githubSha.substring(0, 7), href: ViewModelURLHelpers.hrefForGitHubCommit(this.upload.githubRepository, this.upload.githubSha)}
       },
       {
         term: "Pull request base ref",
@@ -64,11 +65,11 @@ export class UploadDetailsViewModel {
       },
       {
         term: "GitHub run ID",
-        description: {type: "link", text: this.upload.githubRunId, href: `https://github.com/${this.upload.githubRepository}/actions/runs/${this.upload.githubRunId}`}
+        description: {type: "link", text: this.upload.githubRunId, href: ViewModelURLHelpers.hrefForGitHubRunId(this.upload.githubRepository, this.upload.githubRunId)}
       },
       {
         term: "GitHub run attempt",
-        description: this.upload.githubRunAttempt == null ? {type: "text", text: "Not known"} : {type: "link", text: this.upload.githubRunAttempt.toString(), href: `https://github.com/${this.upload.githubRepository}/actions/runs/${this.upload.githubRunId}/attempts/${this.upload.githubRunAttempt}`}
+        description: this.upload.githubRunAttempt == null ? {type: "text", text: "Not known"} : {type: "link", text: this.upload.githubRunAttempt.toString(), href: ViewModelURLHelpers.hrefForGitHubRunAttempt(this.upload.githubRepository, this.upload.githubRunId, this.upload.githubRunAttempt)}
       },
       {
         term: "GitHub run number",
@@ -83,30 +84,5 @@ export class UploadDetailsViewModel {
         description: {type: "text", text: this.upload.iteration.toString()}
       },
     ]
-  }
-
-  // TODO DRY up with overview view model
-  private hrefForTestCase(id: string) {
-    // TODO escape
-    return `/test_cases/${id}`
-  }
-
-  private hrefForGitHubRepository(repoName: string) {
-    // TODO escape
-    return `https://github.com/${repoName}`
-  }
-
-  private hrefForGitHubCommit(repoName: string, sha: string) {
-    // TODO escape
-    return `https://github.com/${repoName}/commit/${sha}`
-  }
-
-  private hrefForJunitReportXml(id: string) {
-    // TODO escape
-    return `/uploads/${id}/junit_report_xml`
-  }
-
-  private hrefForFailure(id: string) {
-    return `/failures/${id}`
   }
 }

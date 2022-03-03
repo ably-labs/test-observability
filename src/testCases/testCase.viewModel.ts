@@ -1,4 +1,5 @@
 import pluralize from 'pluralize';
+import {ViewModelURLHelpers} from 'src/utils/viewModel/urlHelpers';
 import {TestCase} from '../uploads/testCase.entity'
 import {TableViewModel} from "../utils/view/table";
 
@@ -14,13 +15,8 @@ export class TestCaseViewModel {
   readonly occurrencesTable: TableViewModel = {
     headers: ['Upload ID', 'Message'],
     rows: this.testCase.failures.map(failure => [
-      {type: "link", text: failure.uploadId, href: this.hrefForUploadDetails(failure.uploadId)},
+      {type: "link", text: failure.uploadId, href: ViewModelURLHelpers.hrefForUploadDetails(failure.uploadId)},
       {type: "text", text: failure.message}
     ])
-  }
-
-  // TODO DRY up with overview view model
-  private hrefForUploadDetails(id: string) {
-    return `/uploads/${id}`
   }
 }
