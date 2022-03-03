@@ -67,7 +67,7 @@ export class OverviewViewModel {
     })
   }
 
-  readonly tableIntroText = `There ${this.table.rows.length == 1 ? "is" : "are"} ${this.table.rows.length} ${pluralize("upload", this.table.rows.length)}.` + ((this.table.rows.length == 0) ? '' : ` ${this.numberOfUploadsWithFailures} of them${ViewModelHelpers.formatPercentageAsCountSuffix(this.numberOfUploadsWithFailures, this.table.rows.length)} ${this.table.rows.length == 1 ? "has" : "have"} at least one failed test.`)
+  readonly tableIntroText = `There ${this.table.rows.length == 1 ? "is" : "are"} ${this.table.rows.length} ${pluralize("upload", this.table.rows.length)}.` + ((this.table.rows.length == 0) ? '' : ` ${this.numberOfUploadsWithFailures} of them${this.numberOfUploadsWithFailures == 0 ? '' : ViewModelHelpers.formatPercentageAsCountSuffix(this.numberOfUploadsWithFailures, this.table.rows.length)} ${this.numberOfUploadsWithFailures == 1 ? "has" : "have"} at least one failed test.`)
 
   private readonly totalFailures = this.failuresOverviewReport.reduce((accum, val) => accum + val.occurrenceCount, 0)
 
