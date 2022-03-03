@@ -14,7 +14,7 @@ export class OverviewViewModel {
 
   readonly table: TableViewModel = {
     headers: [
-      'ID',
+      'Upload ID',
       'Uploaded at',
       'Pull request head ref',
       'Iteration',

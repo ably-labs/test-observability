@@ -12,7 +12,7 @@ export class UploadDetailsViewModel {
   readonly failuresTableIntroText = `There ${this.upload.failures.length == 1 ? "is" : "are"} ${this.upload.failures.length} ${pluralize("failure", this.upload.failures.length)} in this upload.`
 
   readonly failuresTable: TableViewModel = {
-    headers: ['ID', 'Test class', 'Test case', 'Message'],
+    headers: ['Failure ID', 'Test class', 'Test case', 'Message'],
     rows: this.upload.failures.map(failure => [
       {type: "link", text: failure.id, href: ViewModelURLHelpers.hrefForFailure(failure.id)},
       {type: "text", text: failure.testCase.testClassName},
