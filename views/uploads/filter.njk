@@ -16,19 +16,19 @@
 
         <fieldset>
             <label for="createdBefore">Only show uploads created before (ISO 8601 format)</label>
-            <input type="text" id="createdBefore" name="createdBefore">
+            <input type="text" id="createdBefore" name="createdBefore" value={{viewModel.createdBefore.value}}>
 
             <br>
 
             <label for="createdAfter">Only show uploads created after (ISO 8601 format)</label>
-            <input type="text" id="createdAfter" name="createdAfter">
+            <input type="text" id="createdAfter" name="createdAfter" value={{viewModel.createdAfter.value}}>
         </fieldset>
 
         <h2>Test failure message</h2>
 
         <fieldset>
             <label for="failureMessage">Only show test failures whose message includes this value (case-insensitive)</label>
-            <input type="text" id="failureMessage" name="failureMessage">
+            <input type="text" id="failureMessage" name="failureMessage" value={{viewModel.failureMessage.value}}>
         </fieldset>
 
         <button type="submit">Apply filter</button>

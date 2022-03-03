@@ -92,4 +92,14 @@ export class OverviewViewModel {
     // TODO escape
     return `/test_cases/${id}`
   }
+
+  get filterHref() {
+    const href = `/uploads/filter`
+
+    if (this.filter == null) {
+      return href
+    }
+
+    return `${href}?${ViewModelHelpers.queryFragmentForFilter(this.filter)}`
+  }
 }
