@@ -15,7 +15,7 @@ export class FailureViewModel {
       },
       {
         term: "Test case ID",
-        description: {type: "link", text: this.failure.testCase.id, href: ViewModelURLHelpers.hrefForTestCase(this.failure.testCase.id)}
+        description: {type: "link", text: this.failure.testCase.id, href: ViewModelURLHelpers.hrefForTestCase(this.failure.testCase.id, null)}
       },
       {
         term: "Message",

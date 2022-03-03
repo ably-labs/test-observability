@@ -5,8 +5,8 @@ export class ViewModelURLHelpers {
     return `/uploads/${encodeURIComponent(id)}`
   }
 
-  static hrefForTestCase(id: string) {
-    return `/test_cases/${encodeURIComponent(id)}`
+  static hrefForTestCase(id: string, filter: UploadsFilter | null) {
+    return this.hrefWithFilter(`/test_cases/${encodeURIComponent(id)}`, filter)
   }
 
   private static encodeRepoName(repoName: string) {
@@ -59,13 +59,15 @@ export class ViewModelURLHelpers {
     return components.map(component => `${encodeURIComponent(component.key)}=${encodeURIComponent(component.value)}`).join('&')
   }
 
-  static hrefForFilterOptions(filter: UploadsFilter | null) {
-    const href = `/uploads/filter`
-
+  static hrefWithFilter(href: string, filter: UploadsFilter | null) {
     if (filter == null) {
       return href
     }
 
     return `${href}?${this.queryFragmentForFilter(filter)}`
+  }
+
+  static hrefForFilterOptions(filter: UploadsFilter | null) {
+    return this.hrefWithFilter('/uploads/filter', filter)
   }
 }

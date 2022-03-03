@@ -16,7 +16,7 @@ export class UploadDetailsViewModel {
     rows: this.upload.failures.map(failure => [
       {type: "link", text: failure.id, href: ViewModelURLHelpers.hrefForFailure(failure.id)},
       {type: "text", text: failure.testCase.testClassName},
-      {type: "link", text: failure.testCase.testCaseName, href: ViewModelURLHelpers.hrefForTestCase(failure.testCase.id)},
+      {type: "link", text: failure.testCase.testCaseName, href: ViewModelURLHelpers.hrefForTestCase(failure.testCase.id, null)},
       {type: "text", text: failure.message},
     ])
   }
