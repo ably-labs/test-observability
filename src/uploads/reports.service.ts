@@ -1,4 +1,5 @@
 import {InjectRepository} from "@nestjs/typeorm";
+import {UploadsFilterWhereClause} from "src/utils/database/uploadsFilterWhereClause";
 import {Repository} from "typeorm";
 import {Failure} from "./failure.entity";
 import {TestCase} from "./testCase.entity";
@@ -21,69 +22,11 @@ interface FailuresOverviewReportEntry {
 
 export type FailuresOverviewReport = FailuresOverviewReportEntry[]
 
-class WhereClause {
-  constructor(private readonly uploadsSubClauses: string[], private readonly failuresSubClauses: string[], readonly params: unknown[]) {}
-
-  private createClause(subClauses: string[]): string | null {
-    if (subClauses.length == 0) {
-      return null
-    }
-
-    return `WHERE ${subClauses.join(' AND ')}`
-  }
-
-  get uploadsClause(): string | null {
-    return this.createClause(this.uploadsSubClauses)
-  }
-
-  get uploadsAndFailuresClause(): string | null {
-    return this.createClause(this.uploadsSubClauses.concat(this.failuresSubClauses))
-  }
-}
-
 export class ReportsService {
   constructor(@InjectRepository(Upload) private uploadsRepository: Repository<Upload>, @InjectRepository(TestCase) private testCasesRepository: Repository<TestCase>) {}
 
-  // OK, now I really wish I were using the ORM
-  private createWhereClause(filter: UploadsFilter | null): WhereClause {
-    let uploadsSubClauses: string[] = []
-    let failuresSubClauses: string[] = []
-    let params: unknown[] = []
-
-    let parameterCount = 0
-
-    if (filter?.branches?.length) {
-      parameterCount += 1
-      // https://github.com/brianc/node-postgres/wiki/FAQ#11-how-do-i-build-a-where-foo-in--query-to-find-rows-matching-an-array-of-values
-      uploadsSubClauses.push(`uploads.github_head_ref = ANY ($${parameterCount})`)
-      params.push(filter.branches)
-    }
-
-    if (filter?.createdBefore) {
-      parameterCount += 1
-      uploadsSubClauses.push(`uploads.created_at < $${parameterCount}`)
-      params.push(filter.createdBefore)
-    }
-
-    if (filter?.createdAfter) {
-      parameterCount += 1
-      uploadsSubClauses.push(`uploads.created_at > $${parameterCount}`)
-      params.push(filter.createdAfter)
-    }
-
-    if (filter?.failureMessage) {
-      parameterCount += 1
-      // The ::text cast is to avoid an error from Postgres that I don’t really understand: "could not determine data type of parameter $1"
-      failuresSubClauses.push(`failures.message ILIKE CONCAT('%', $${parameterCount}::text, '%')`)
-      const escapedFailureMessage = filter.failureMessage.replace('%', '\\%').replace('_', '\\_')
-      params.push(escapedFailureMessage)
-    }
-
-    return new WhereClause(uploadsSubClauses, failuresSubClauses, params)
-  }
-
   async createUploadsReport(filter: UploadsFilter | null): Promise<UploadsReport> {
-    const whereClause = this.createWhereClause(filter)
+    const whereClause = UploadsFilterWhereClause.createFromFilter(filter)
 
     const sql = `SELECT
     uploads.id,
@@ -95,7 +38,7 @@ export class ReportsService {
 FROM
     uploads
     LEFT JOIN failures ON (uploads.id = failures.upload_id)
-${whereClause.uploadsAndFailuresClause ?? ""}
+${whereClause.uploadsAndFailuresClause({includeWhereKeyword: true}) ?? ""}
 GROUP BY
     uploads.id
 ORDER BY
@@ -127,7 +70,7 @@ ORDER BY
   }
 
   async createFailuresOverviewReport(filter: UploadsFilter | null): Promise<FailuresOverviewReport> {
-    const whereClause = this.createWhereClause(filter)
+    const whereClause = UploadsFilterWhereClause.createFromFilter(filter)
 
     // I’ve not written SQL for ages and nothing this complicated for even longer, so let’s think this through…
 
@@ -173,7 +116,7 @@ ORDER BY
               test_cases
               JOIN failures ON test_cases.id = failures.test_case_id
               JOIN uploads ON failures.upload_id = uploads.id
-          ${whereClause.uploadsAndFailuresClause ?? ""}
+          ${whereClause.uploadsAndFailuresClause({includeWhereKeyword: true}) ?? ""}
           GROUP BY
               test_cases.id) AS test_cases
           JOIN (
@@ -184,11 +127,11 @@ ORDER BY
                   test_cases
                   JOIN failures ON test_cases.id = failures.test_case_id
                   JOIN uploads ON failures.upload_id = uploads.id
-              ${whereClause.uploadsAndFailuresClause ?? ""}
+              ${whereClause.uploadsAndFailuresClause({includeWhereKeyword: true}) ?? ""}
               GROUP BY
                   test_cases.id) AS latest_failing_upload_dates ON test_cases.id = latest_failing_upload_dates.test_case_id
           JOIN uploads ON uploads.created_at = latest_failing_upload_created_at
-      ${whereClause.uploadsClause ?? ""}
+      ${whereClause.uploadsClause({includeWhereKeyword: true}) ?? ""}
       ORDER BY
           failure_occurrence_count DESC`
 

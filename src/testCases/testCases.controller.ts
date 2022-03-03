@@ -10,8 +10,8 @@ export class TestCasesController {
   @Get(':id')
   @Render('testCases/details')
   async failureDetails(@Param() params: any, @Query('branches') branches: string[] | undefined, @Query('createdBefore') createdBefore: string | undefined, @Query('createdAfter') createdAfter: string | undefined, @Query('failureMessage') failureMessage: string | undefined): Promise<{viewModel: TestCaseViewModel}> {
-    const testCase = await this.testCasesService.find(params.id)
     const filter = ControllerUtils.createFilterFromQuery(branches, createdBefore, createdAfter, failureMessage)
+    const testCase = await this.testCasesService.find(params.id, filter)
 
     return {viewModel: new TestCaseViewModel(testCase, filter)}
   }
