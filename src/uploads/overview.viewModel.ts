@@ -2,6 +2,7 @@ import pluralize from "pluralize"
 import {TableViewModel} from "../utils/view/table"
 import {UploadsReport, FailuresOverviewReport} from "./reports.service"
 import {UploadsFilter} from "./uploads.service"
+import {ViewModelHelpers} from '../utils/viewModel/helpers'
 
 export class OverviewViewModel {
   constructor(private readonly uploadsReport: UploadsReport, private readonly failuresOverviewReport: FailuresOverviewReport, private readonly filter: UploadsFilter | null) {}
@@ -66,7 +67,7 @@ export class OverviewViewModel {
     })
   }
 
-  readonly tableIntroText = `There ${this.table.rows.length == 1 ? "is" : "are"} ${this.table.rows.length} ${pluralize("upload", this.table.rows.length)}. ${this.numberOfUploadsWithFailures} of them (${(100 * this.numberOfUploadsWithFailures / this.table.rows.length).toFixed(1)}%) ${this.table.rows.length == 1 ? "has" : "have"} at least one failed test.`
+  readonly tableIntroText = `There ${this.table.rows.length == 1 ? "is" : "are"} ${this.table.rows.length} ${pluralize("upload", this.table.rows.length)}.` + ((this.table.rows.length == 0) ? '' : ` ${this.numberOfUploadsWithFailures} of them${ViewModelHelpers.formatPercentageAsCountSuffix(this.numberOfUploadsWithFailures, this.table.rows.length)} ${this.table.rows.length == 1 ? "has" : "have"} at least one failed test.`)
 
   private readonly totalFailures = this.failuresOverviewReport.reduce((accum, val) => accum + val.occurrenceCount, 0)
 
@@ -76,7 +77,7 @@ export class OverviewViewModel {
       {type: "text", text: entry.testCase.testClassName},
       {type: "link", text: entry.testCase.testCaseName, href: this.hrefForTestCase(entry.testCase.id)},
       {type: "text", text: String(entry.occurrenceCount)},
-      {type: "text", text: `${(100 * entry.occurrenceCount / this.totalFailures).toFixed(1)}%`},
+      {type: "text", text: `${ViewModelHelpers.formatPercentage(entry.occurrenceCount, this.totalFailures) ?? ""}`},
       {type: "link", text: entry.lastSeenIn.createdAt.toISOString(), href: this.hrefForUploadDetails(entry.lastSeenIn.id)}
     ])
   }
