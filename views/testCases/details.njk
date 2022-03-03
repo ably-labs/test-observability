@@ -5,7 +5,7 @@
 {% block pageBody %}
     <h1>{{ viewModel.heading }}</h1>
 
-    <p>There are {{ viewModel.occurrencesTable.rows | length }} recorded failures of this test case.</p>
+    <p>{{ viewModel.tableIntroText }}</p>
 
     {{ table(viewModel.occurrencesTable) }}
 {% endblock %}

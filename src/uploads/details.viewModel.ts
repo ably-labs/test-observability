@@ -1,3 +1,4 @@
+import pluralize from "pluralize";
 import {DescriptionListViewModel} from "src/utils/view/descriptionList";
 import {TableViewModel} from "../utils/view/table";
 import {Upload} from "./upload.entity";
@@ -6,6 +7,8 @@ export class UploadDetailsViewModel {
   constructor(private readonly upload: Upload) {}
 
   readonly title = `Details of upload ${this.upload.id}`
+
+  readonly failuresTableIntroText = `There ${this.upload.failures.length == 1 ? "is" : "are"} ${this.upload.failures.length} ${pluralize("failure", this.upload.failures.length)} in this upload.`
 
   readonly failuresTable: TableViewModel = {
     headers: ['ID', 'Test class', 'Test case', 'Message'],

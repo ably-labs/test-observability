@@ -1,3 +1,4 @@
+import pluralize from "pluralize"
 import {TableViewModel} from "../utils/view/table"
 import {UploadsReport, FailuresOverviewReport} from "./reports.service"
 import {UploadsFilter} from "./uploads.service"
@@ -16,7 +17,7 @@ export class OverviewViewModel {
     }
 
     if (this.filter.branches.length > 0) {
-      uploadsComponents.push(`from branch(es) ${this.filter.branches.join(', ')}`)
+      uploadsComponents.push(`from ${pluralize('branch', this.filter.branches.length)} ${this.filter.branches.join(', ')}`)
     }
 
     if (this.filter.createdBefore !== null) {
@@ -65,7 +66,7 @@ export class OverviewViewModel {
     })
   }
 
-  readonly tableIntroText = `There are ${this.table.rows.length} uploads. ${this.numberOfUploadsWithFailures} of them (${(100 * this.numberOfUploadsWithFailures / this.table.rows.length).toFixed(1)}%) have at least one failed test.`
+  readonly tableIntroText = `There ${this.table.rows.length == 1 ? "is" : "are"} ${this.table.rows.length} ${pluralize("upload", this.table.rows.length)}. ${this.numberOfUploadsWithFailures} of them (${(100 * this.numberOfUploadsWithFailures / this.table.rows.length).toFixed(1)}%) ${this.table.rows.length == 1 ? "has" : "have"} at least one failed test.`
 
   private readonly totalFailures = this.failuresOverviewReport.reduce((accum, val) => accum + val.occurrenceCount, 0)
 
@@ -80,7 +81,7 @@ export class OverviewViewModel {
     ])
   }
 
-  readonly failureOccurrencesTableIntroText = `There are ${this.totalFailures} recorded failures, across ${this.failureOccurrencesTable.rows.length} test cases.`
+  readonly failureOccurrencesTableIntroText = `There ${this.totalFailures == 1 ? "is" : "are"} ${this.totalFailures} recorded ${pluralize('failure', this.totalFailures)}, across ${this.failureOccurrencesTable.rows.length} ${pluralize("test case", this.failureOccurrencesTable.rows.length)}.`
 
   private hrefForUploadDetails(id: string) {
     return `/uploads/${id}`

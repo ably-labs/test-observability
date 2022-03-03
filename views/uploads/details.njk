@@ -11,7 +11,7 @@
     <h2>Test failures</h2>
 
     {% if viewModel.failuresTable.rows | length %}
-        <p>There are {{ viewModel.failuresTable.rows | length }} failures in this upload.</p>
+        <p>{{ viewModel.failuresTableIntroText }}</p>
         {{ table(viewModel.failuresTable) }}
     {% else %}
         No tests failed.
