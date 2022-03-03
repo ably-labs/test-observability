@@ -5,6 +5,8 @@
                 <label for="{{viewModel.idPrefix}}-{{loop.index}}">{{checkbox.label}}</label>
                 {% if checkbox.checked %}
                     {% set checked=" checked" %}
+                {% else %}
+                    {% set checked="" %}
                 {% endif %}
                 {# autocomplete="off" is for Firefox to stop it persisting user’s choice #}
                 <input id="{{viewModel.idPrefix}}-{{loop.index}}" type="checkbox" name="{{viewModel.name}}" value="{{checkbox.value}}" autocomplete="off"{{checked}}>
