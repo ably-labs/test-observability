@@ -2,46 +2,19 @@ import {Controller, Get, Post, Headers, Body, Render, Param, Query, Header, Res}
 import {UploadDetailsViewModel} from './details.viewModel';
 import {ReportsService} from './reports.service';
 import {OverviewViewModel} from './overview.viewModel';
-import {UploadsFilter, UploadsService} from './uploads.service';
+import {UploadsService} from './uploads.service';
 import {Response} from 'express'
 import {FilterViewModel} from './filter.viewModel';
+import {ControllerUtils} from 'src/utils/controller/utils';
 
 @Controller('uploads')
 export class UploadsController {
   constructor(private readonly uploadsService: UploadsService, private readonly reportsService: ReportsService) {}
 
-  private createFilterFromQuery(branches: string[] | undefined, createdBefore: string | undefined, createdAfter: string | undefined, failureMessage: string | undefined): UploadsFilter | null {
-    if (branches === undefined && (createdBefore?.length ?? 0) == 0 && (createdAfter?.length ?? 0) == 0 && !failureMessage?.length) {
-      return null
-    }
-
-    let createdBeforeDate: Date | null = null
-    if (createdBefore !== undefined && createdBefore.length > 0) {
-      createdBeforeDate = new Date(createdBefore)
-    }
-
-    let createdAfterDate: Date | null = null
-    if (createdAfter !== undefined && createdAfter.length > 0) {
-      createdAfterDate = new Date(createdAfter)
-    }
-
-    let failureMessageOrNull: string | null = null
-    if (failureMessage !== undefined && failureMessage.length > 0) {
-      failureMessageOrNull = failureMessage
-    }
-
-    return {
-      branches: branches ?? [],
-      createdBefore: createdBeforeDate,
-      createdAfter: createdAfterDate,
-      failureMessage: failureMessageOrNull
-    }
-  }
-
   @Get()
   @Render('uploads/overview')
   async overview(@Query('branches') branches: string[] | undefined, @Query('createdBefore') createdBefore: string | undefined, @Query('createdAfter') createdAfter: string | undefined, @Query('failureMessage') failureMessage: string | undefined): Promise<{viewModel: OverviewViewModel}> {
-    const filter = this.createFilterFromQuery(branches, createdBefore, createdAfter, failureMessage)
+    const filter = ControllerUtils.createFilterFromQuery(branches, createdBefore, createdAfter, failureMessage)
     const [uploadsReport, failuresOverviewReport] = await Promise.all([this.reportsService.createUploadsReport(filter), this.reportsService.createFailuresOverviewReport(filter)])
 
     const viewModel = new OverviewViewModel(uploadsReport, failuresOverviewReport, filter)
@@ -51,7 +24,7 @@ export class UploadsController {
   @Get('filter')
   @Render('uploads/filter')
   async filter(@Query('branches') branches: string[] | undefined, @Query('createdBefore') createdBefore: string | undefined, @Query('createdAfter') createdAfter: string | undefined, @Query('failureMessage') failureMessage: string | undefined): Promise<{viewModel: FilterViewModel}> {
-    const filter = this.createFilterFromQuery(branches, createdBefore, createdAfter, failureMessage)
+    const filter = ControllerUtils.createFilterFromQuery(branches, createdBefore, createdAfter, failureMessage)
     const seenBranchNames = await this.reportsService.fetchSeenBranchNames()
     const viewModel = new FilterViewModel(filter, seenBranchNames)
     return {viewModel}
