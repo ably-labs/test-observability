@@ -39,10 +39,11 @@ export class OverviewViewModel {
   private readonly totalFailures = this.failuresOverviewReport.reduce((accum, val) => accum + val.occurrenceCount, 0)
 
   readonly failureOccurrencesTable: TableViewModel = {
-    headers: ['Test class', 'Test case', 'Number of occurrences', 'Percentage of total failures', 'Last seen'],
+    headers: ['Test case ID', 'Test class', 'Test case', 'Number of occurrences', 'Percentage of total failures', 'Last seen'],
     rows: this.failuresOverviewReport.map(entry => [
+      {type: "link", text: entry.testCase.id, href: ViewModelURLHelpers.hrefForTestCase(entry.testCase.id, this.filter)},
       {type: "text", text: entry.testCase.testClassName},
-      {type: "link", text: entry.testCase.testCaseName, href: ViewModelURLHelpers.hrefForTestCase(entry.testCase.id, this.filter)},
+      {type: "text", text: entry.testCase.testCaseName},
       {type: "text", text: String(entry.occurrenceCount)},
       {type: "text", text: `${ViewModelHelpers.formatPercentage(entry.occurrenceCount, this.totalFailures) ?? ""}`},
       {type: "link", text: entry.lastSeenIn.createdAt.toISOString(), href: ViewModelURLHelpers.hrefForUploadDetails(entry.lastSeenIn.id)}
