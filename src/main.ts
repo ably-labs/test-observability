@@ -14,7 +14,7 @@ async function bootstrap() {
 
   app.use(json({limit: '5mb'}))
 
-  app.useStaticAssets(join(__dirname, '..', 'public'))
+  app.useStaticAssets(join(__dirname, '..', '..', 'public'))
 
   configure(join(__dirname, '..', '..', 'views') /* This code is running from the `dist` dir */, {
     autoescape: true,
