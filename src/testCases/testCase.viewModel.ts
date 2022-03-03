@@ -17,9 +17,10 @@ export class TestCaseViewModel {
   readonly tableIntroText = `There ${this.testCase.failures.length == 1 ? "is" : "are"} ${this.testCase.failures.length} recorded ${pluralize("failure", this.testCase.failures.length)} of this test case.`
 
   readonly occurrencesTable: TableViewModel = {
-    headers: ['Upload ID', 'Message'],
+    headers: ['Upload ID', 'Uploaded at', 'Message'],
     rows: this.testCase.failures.map(failure => [
       {type: "link", text: failure.uploadId, href: ViewModelURLHelpers.hrefForUploadDetails(failure.uploadId)},
+      {type: "text", text: failure.upload.createdAt.toISOString()},
       {type: "text", text: failure.message}
     ])
   }

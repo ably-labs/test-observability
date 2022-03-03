@@ -9,7 +9,8 @@ import {TestCase} from '../uploads/testCase.entity';
 export class TestCasesService {
   constructor(@InjectRepository(TestCase) private testCasesRepository: Repository<TestCase>) {}
 
-  // Includes failures, but not their uploads.
+  // Includes failures, but not their uploads (except for createdAt).
+  // TODO find a good way to represent this in the type system
   async find(id: string, failuresFilter: UploadsFilter | null): Promise<TestCase> {
     const whereClause = UploadsFilterWhereClause.createFromFilter(failuresFilter)
 
@@ -17,6 +18,8 @@ export class TestCasesService {
       .where("testCase.id = :id", {id})
       .leftJoinAndSelect("testCase.failures", "failures")
       .innerJoin("failures.upload", "uploads")
+      .addSelect("uploads.createdAt")
+      .orderBy("uploads.createdAt", "ASC")
 
     const fragment = whereClause.uploadsAndFailuresClause({includeWhereKeyword: false})
     if (fragment !== null) {
