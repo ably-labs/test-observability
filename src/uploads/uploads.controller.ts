@@ -115,8 +115,8 @@ export class UploadsController {
     @Body('github_run_number') githubRunNumber: number,
     @Body('github_run_attempt') githubRunAttempt: number,
     @Body('github_run_id') githubRunId: string,
-    @Body('github_base_ref') githubBaseRef: string,
-    @Body('github_head_ref') githubHeadRef: string,
+    @Body('github_base_ref') githubBaseRef: string | null,
+    @Body('github_head_ref') githubHeadRef: string | null,
     @Body('github_job') githubJob: string,
     @Body('iteration') iteration: number,
   ): Promise<{ id: string }> {
