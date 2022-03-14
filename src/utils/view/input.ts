@@ -1,3 +1,3 @@
 export interface InputViewModel {
-  value: string
+  value: string;
 }

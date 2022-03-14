@@ -1,7 +1,7 @@
 export interface FilterDescriptionViewModel {
-  summary: string
+  summary: string;
   filterLink: {
-    text: string
-    href: string
-  }
+    text: string;
+    href: string;
+  };
 }

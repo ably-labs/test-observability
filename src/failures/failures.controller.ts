@@ -1,6 +1,6 @@
-import {Controller, Get, Param, Render} from "@nestjs/common"
-import {FailureViewModel} from "./failure.viewModel"
-import {FailuresService} from "./failures.service"
+import { Controller, Get, Param, Render } from '@nestjs/common';
+import { FailureViewModel } from './failure.viewModel';
+import { FailuresService } from './failures.service';
 
 @Controller('failures')
 export class FailuresController {
@@ -8,9 +8,11 @@ export class FailuresController {
 
   @Get(':id')
   @Render('failures/details')
-  async failureDetails(@Param() params: any): Promise<{viewModel: FailureViewModel}> {
-    const failure = await this.failuresService.find(params.id)
+  async failureDetails(
+    @Param() params: any,
+  ): Promise<{ viewModel: FailureViewModel }> {
+    const failure = await this.failuresService.find(params.id);
 
-    return {viewModel: new FailureViewModel(failure)}
+    return { viewModel: new FailureViewModel(failure) };
   }
 }
