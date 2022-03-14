@@ -47,14 +47,12 @@ export class Upload {
   githubRunId!: string
 
   // "GITHUB_BASE_REF" – The name of the base ref or target branch of the pull request in a workflow run.This is only set when the event that triggers a workflow run is either pull_request or pull_request_target. For example, main.
-  // TODO validations / normalisations
-  @Column({name: 'github_base_ref'})
-  githubBaseRef!: string
+  @Column({name: 'github_base_ref', nullable: true, type: "varchar"})
+  githubBaseRef!: string | null
 
   // "GITHUB_HEAD_REF" – The head ref or source branch of the pull request in a workflow run. This property is only set when the event that triggers a workflow run is either pull_request or pull_request_target. For example, feature-branch-1.
-  // TODO validations / normalisations - are we using null or empty string? It's probably gonna be empty string for simplicity's sake for now
-  @Column({name: 'github_head_ref'})
-  githubHeadRef!: string
+  @Column({name: 'github_head_ref', nullable: true, type: "varchar"})
+  githubHeadRef!: string | null
 
   // "GITHUB_JOB" – The job_id of the current job. For example, greeting_job.
   @Column({name: 'github_job'})

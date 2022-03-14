@@ -46,11 +46,11 @@ export class UploadDetailsViewModel {
       },
       {
         term: "Pull request base ref",
-        description: {type: "text", text: this.upload.githubBaseRef}
+        description: {type: "text", text: this.upload.githubBaseRef ?? "Not specified"}
       },
       {
         term: "Pull request head ref",
-        description: {type: "text", text: this.upload.githubHeadRef}
+        description: {type: "text", text: this.upload.githubHeadRef ?? "Not specified"}
       },
       {
         term: "Branch / tag name",
