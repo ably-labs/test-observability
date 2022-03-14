@@ -78,7 +78,7 @@ export class UploadsService {
         await this.testCasesRepository.save(testCase);
       }
 
-      let failure = new Failure();
+      const failure = new Failure();
       failure.upload = upload;
       failure.testCase = testCase;
       failure.order = i;

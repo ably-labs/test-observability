@@ -34,7 +34,7 @@ export class TestCasesService {
     });
     if (fragment !== null) {
       // This is very hacky - the UploadsFilterWhereClause is written with positional parameters in mind, but QueryBuilder requires us to use named parameters. So we substitute the $1, $2 etc in the fragment with :uploadsFilterParam1, :uploadsFilterParam2 etc.
-      let paramsObject: Record<string, any> = {};
+      const paramsObject: Record<string, any> = {};
       let modifiedFragment = fragment;
 
       whereClause.params.forEach((param, index) => {

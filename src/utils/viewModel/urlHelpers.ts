@@ -48,7 +48,7 @@ export class ViewModelURLHelpers {
   }
 
   static queryFragmentForFilter(filter: UploadsFilter): string {
-    let components: { key: string; value: string }[] = [];
+    const components: { key: string; value: string }[] = [];
 
     filter.branches.forEach((branchName) => {
       components.push({ key: 'branches[]', value: branchName });

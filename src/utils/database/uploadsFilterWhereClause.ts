@@ -12,9 +12,9 @@ export class UploadsFilterWhereClause {
   ) {}
 
   static createFromFilter(filter: UploadsFilter | null) {
-    let uploadsSubClauses: string[] = [];
-    let failuresSubClauses: string[] = [];
-    let params: unknown[] = [];
+    const uploadsSubClauses: string[] = [];
+    const failuresSubClauses: string[] = [];
+    const params: unknown[] = [];
 
     let parameterCount = 0;
 

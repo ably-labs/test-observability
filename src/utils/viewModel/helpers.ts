@@ -35,8 +35,8 @@ export class ViewModelHelpers {
   }
 
   private static summaryForFilter(filter: UploadsFilter | null) {
-    let uploadsComponents: string[] = [];
-    let failuresComponents: string[] = [];
+    const uploadsComponents: string[] = [];
+    const failuresComponents: string[] = [];
 
     if (filter == null) {
       return '';
@@ -73,11 +73,11 @@ export class ViewModelHelpers {
       return '';
     }
 
-    let uploadsDescription =
+    const uploadsDescription =
       uploadsComponents.length > 0
         ? `uploads ${uploadsComponents.join(' and ')}`
         : null;
-    let failuresDescription =
+    const failuresDescription =
       failuresComponents.length > 0
         ? `test failures ${failuresComponents.join(' and ')}`
         : null;

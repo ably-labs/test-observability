@@ -51,7 +51,7 @@ ORDER BY
     uploads.created_at ASC`;
 
     // See comment in subsequent method about learning how not to do this manually
-    let results: Record<string, any>[] = await this.uploadsRepository.query(
+    const results: Record<string, any>[] = await this.uploadsRepository.query(
       sql,
       whereClause.params,
     );
@@ -169,7 +169,7 @@ ORDER BY
       TypeORM to run the query / handle the resuts.
     */
 
-    let results: Record<string, any>[] = await this.testCasesRepository.query(
+    const results: Record<string, any>[] = await this.testCasesRepository.query(
       sql,
       whereClause.params,
     );
@@ -197,7 +197,7 @@ ORDER BY
         branch ASC`;
 
     // See comment in subsequent method about learning how not to do this manually
-    let results: Record<string, any>[] = await this.uploadsRepository.query(
+    const results: Record<string, any>[] = await this.uploadsRepository.query(
       sql,
     );
 
