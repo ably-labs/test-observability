@@ -1,7 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { UploadsFilterWhereClause } from 'src/utils/database/uploadsFilterWhereClause';
 import { Repository } from 'typeorm';
-import { Failure } from './failure.entity';
 import { TestCase } from './testCase.entity';
 import { Upload } from './upload.entity';
 import { UploadsFilter } from './uploads.service';
