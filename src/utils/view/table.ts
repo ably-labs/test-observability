@@ -1,8 +1,8 @@
-import {DataItemViewModel} from "./dataItem";
+import { DataItemViewModel } from './dataItem';
 
-type TableRowsViewModel = DataItemViewModel[][]
+type TableRowsViewModel = DataItemViewModel[][];
 
 export interface TableViewModel {
-  headers: string[]
-  rows: TableRowsViewModel
+  headers: string[];
+  rows: TableRowsViewModel;
 }
