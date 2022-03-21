@@ -22,7 +22,7 @@ export class UploadsFilterWhereClause {
       parameterCount += 1;
       // https://github.com/brianc/node-postgres/wiki/FAQ#11-how-do-i-build-a-where-foo-in--query-to-find-rows-matching-an-array-of-values
       uploadsSubClauses.push(
-        `uploads.github_head_ref = ANY ($${parameterCount})`,
+        `uploads.github_ref_name = ANY ($${parameterCount}) OR uploads.github_head_ref = ANY ($${parameterCount})`,
       );
       params.push(filter.branches);
     }

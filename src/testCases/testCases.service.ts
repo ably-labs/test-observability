@@ -39,7 +39,7 @@ export class TestCasesService {
 
       whereClause.params.forEach((param, index) => {
         const paramName = `uploadsFilterParam${index + 1}`;
-        modifiedFragment = modifiedFragment.replace(
+        modifiedFragment = modifiedFragment.replaceAll(
           `$${index + 1}`,
           `:${paramName}`,
         );
