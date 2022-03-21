@@ -188,8 +188,9 @@ ORDER BY
   }
 
   async fetchSeenBranchNames(): Promise<string[]> {
+    // We want github_head_ref if not null, else github_ref_name
     const sql = `SELECT DISTINCT
-        uploads.github_head_ref AS branch
+        COALESCE(uploads.github_head_ref, uploads.github_ref_name) AS branch
     FROM
         uploads
     ORDER BY
