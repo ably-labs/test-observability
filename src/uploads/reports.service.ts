@@ -6,7 +6,10 @@ import { Upload } from './upload.entity';
 import { UploadsFilter } from './uploads.service';
 
 type UploadsReportEntry = {
-  upload: Pick<Upload, 'id' | 'createdAt' | 'githubHeadRef' | 'iteration'>;
+  upload: Pick<
+    Upload,
+    'id' | 'createdAt' | 'githubHeadRef' | 'githubRefName' | 'iteration'
+  >;
   numberOfTests: number;
   numberOfFailures: number;
 };
@@ -37,6 +40,7 @@ export class ReportsService {
     uploads.id,
     uploads.created_at,
     uploads.github_head_ref,
+    uploads.github_ref_name,
     uploads.iteration,
     uploads.number_of_tests,
     COUNT(failures.id) AS number_of_failures
@@ -70,6 +74,7 @@ ORDER BY
         id: row['id'],
         createdAt: row['created_at'],
         githubHeadRef: row['github_head_ref'],
+        githubRefName: row['github_ref_name'],
         iteration: row['iteration'],
       },
       numberOfTests: row['number_of_tests'],
