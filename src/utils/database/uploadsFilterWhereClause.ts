@@ -62,9 +62,9 @@ export class UploadsFilterWhereClause {
       return null;
     }
 
-    return `${options.includeWhereKeyword ? 'WHERE ' : ''}${subClauses.join(
-      ' AND ',
-    )}`;
+    const condition = subClauses.map((clause) => `(${clause})`).join(' AND ');
+
+    return `${options.includeWhereKeyword ? 'WHERE ' : ''}${condition}`;
   }
 
   uploadsClause(options: ClauseCreationOptions): string | null {
