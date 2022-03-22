@@ -201,18 +201,21 @@ ORDER BY
     }));
   }
 
-  async fetchSeenBranchNames(): Promise<string[]> {
+  async fetchSeenBranchNames(filter: UploadsFilter): Promise<string[]> {
     // We want github_head_ref if not null, else github_ref_name
     const sql = `SELECT DISTINCT
         COALESCE(uploads.github_head_ref, uploads.github_ref_name) AS branch
     FROM
         uploads
+    WHERE
+        uploads.github_repository = $1
     ORDER BY
         branch ASC`;
 
     // See comment in subsequent method about learning how not to do this manually
     const results: Record<string, any>[] = await this.uploadsRepository.query(
       sql,
+      [filter.owner + '/' + filter.repo],
     );
 
     /* The result is an array of objects like this:
@@ -268,5 +271,21 @@ ORDER BY
         return strippedUpload;
       })(),
     }));
+  }
+
+  async fetchRepos(): Promise<string[]> {
+    // We want github_head_ref if not null, else github_ref_name
+    const sql = `SELECT DISTINCT
+        uploads.github_repository as github_repository
+    FROM
+        uploads
+    ORDER BY
+        github_repository ASC`;
+
+    const results: Record<string, any>[] = await this.uploadsRepository.query(
+      sql,
+    );
+
+    return results.map((row) => row['github_repository']);
   }
 }

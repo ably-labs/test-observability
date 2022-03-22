@@ -3,7 +3,7 @@ import { DescriptionListViewModel } from 'src/utils/view/descriptionList';
 import { ViewModelURLHelpers } from 'src/utils/viewModel/urlHelpers';
 import { TableViewModel } from '../utils/view/table';
 import { Upload } from './upload.entity';
-import {UploadsFilter} from './uploads.service';
+import { UploadsFilter } from './uploads.service';
 
 export class UploadDetailsViewModel {
   constructor(

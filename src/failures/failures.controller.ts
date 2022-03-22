@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query, Render } from '@nestjs/common';
-import {ControllerUtils} from 'src/utils/controller/utils';
+import { ControllerUtils } from 'src/utils/controller/utils';
 import { FailureViewModel } from './failure.viewModel';
 import { FailuresService } from './failures.service';
 

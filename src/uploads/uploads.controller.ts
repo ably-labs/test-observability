@@ -17,6 +17,7 @@ import { UploadsService } from './uploads.service';
 import { Response } from 'express';
 import { FilterViewModel } from './filter.viewModel';
 import { ControllerUtils } from 'src/utils/controller/utils';
+import { IndexViewModel } from './index.viewModel';
 
 @Controller('uploads')
 export class UploadsController {
@@ -24,6 +25,14 @@ export class UploadsController {
     private readonly uploadsService: UploadsService,
     private readonly reportsService: ReportsService,
   ) {}
+
+  @Get()
+  @Render('uploads/index')
+  async index(): Promise<{ viewModel: IndexViewModel }> {
+    const repos = await this.reportsService.fetchRepos();
+    const viewModel = new IndexViewModel(repos);
+    return { viewModel };
+  }
 
   @Get(':owner/:repo')
   @Render('uploads/overview')
@@ -74,7 +83,7 @@ export class UploadsController {
       createdAfter,
       failureMessage,
     );
-    const seenBranchNames = await this.reportsService.fetchSeenBranchNames();
+    const seenBranchNames = await this.reportsService.fetchSeenBranchNames(filter);
     const viewModel = new FilterViewModel(filter, seenBranchNames);
     return { viewModel };
   }

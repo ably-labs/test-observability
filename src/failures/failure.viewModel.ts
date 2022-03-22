@@ -1,7 +1,7 @@
 import { DescriptionListViewModel } from '../utils/view/descriptionList';
 import { Failure } from '../uploads/failure.entity';
 import { ViewModelURLHelpers } from 'src/utils/viewModel/urlHelpers';
-import {UploadsFilter} from 'src/uploads/uploads.service';
+import { UploadsFilter } from 'src/uploads/uploads.service';
 
 export class FailureViewModel {
   constructor(

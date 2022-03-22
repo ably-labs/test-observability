@@ -4,7 +4,7 @@ import { UploadsFilter } from './uploads.service';
 
 export class FilterViewModel {
   constructor(
-    private readonly filter: UploadsFilter | null,
+    private readonly filter: UploadsFilter,
     private readonly availableBranches: string[],
   ) {}
 
@@ -14,19 +14,19 @@ export class FilterViewModel {
     checkboxes: this.availableBranches.map((branch) => ({
       label: branch,
       value: branch,
-      checked: this.filter?.branches.includes(branch) ?? false,
+      checked: this.filter.branches.includes(branch) ?? false,
     })),
   };
 
   createdBefore: InputViewModel = {
-    value: this.filter?.createdBefore?.toISOString() ?? '',
+    value: this.filter.createdBefore?.toISOString() ?? '',
   };
 
   createdAfter: InputViewModel = {
-    value: this.filter?.createdAfter?.toISOString() ?? '',
+    value: this.filter.createdAfter?.toISOString() ?? '',
   };
 
   failureMessage: InputViewModel = {
-    value: this.filter?.failureMessage ?? '',
+    value: this.filter.failureMessage ?? '',
   };
 }
