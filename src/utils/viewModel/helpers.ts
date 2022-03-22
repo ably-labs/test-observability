@@ -23,24 +23,24 @@ export class ViewModelHelpers {
   }
 
   static viewModelForFilter(
-    filter: UploadsFilter | null,
+    filter: UploadsFilter,
   ): FilterDescriptionViewModel {
     return {
       summary: this.summaryForFilter(filter),
       filterLink: {
-        text: filter ? 'Change filter' : 'Filter results',
+        text: 'Filter results',
         href: ViewModelURLHelpers.hrefForFilterOptions(filter),
       },
     };
   }
 
-  private static summaryForFilter(filter: UploadsFilter | null) {
+  private static summaryForFilter(filter: UploadsFilter) {
     const uploadsComponents: string[] = [];
     const failuresComponents: string[] = [];
 
-    if (filter == null) {
-      return '';
-    }
+    uploadsComponents.push(
+        `belonging to the ${filter.repo} repo`,
+    );
 
     if (filter.branches.length > 0) {
       uploadsComponents.push(

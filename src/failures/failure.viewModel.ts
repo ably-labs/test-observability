@@ -1,9 +1,13 @@
 import { DescriptionListViewModel } from '../utils/view/descriptionList';
 import { Failure } from '../uploads/failure.entity';
 import { ViewModelURLHelpers } from 'src/utils/viewModel/urlHelpers';
+import {UploadsFilter} from 'src/uploads/uploads.service';
 
 export class FailureViewModel {
-  constructor(private readonly failure: Failure) {}
+  constructor(
+    private readonly failure: Failure,
+    private readonly filter: UploadsFilter,
+  ) {}
 
   readonly title = `Details of failure ${this.failure.id}`;
 
@@ -14,7 +18,7 @@ export class FailureViewModel {
         description: {
           type: 'link',
           text: this.failure.uploadId,
-          href: ViewModelURLHelpers.hrefForUploadDetails(this.failure.uploadId),
+          href: ViewModelURLHelpers.hrefForUploadDetails(this.failure.uploadId, this.filter),
         },
       },
       {
@@ -24,7 +28,7 @@ export class FailureViewModel {
           text: this.failure.testCase.id,
           href: ViewModelURLHelpers.hrefForTestCase(
             this.failure.testCase.id,
-            null,
+            this.filter,
           ),
         },
       },

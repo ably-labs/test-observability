@@ -39,7 +39,7 @@ export class ReportsService {
   ) {}
 
   async createUploadsReport(
-    filter: UploadsFilter | null,
+    filter: UploadsFilter,
   ): Promise<UploadsReport> {
     const whereClause =
       UploadsFilterWhereClause.createFromFilterUsingPositionalParams(filter);
@@ -91,7 +91,7 @@ ORDER BY
   }
 
   async createFailuresOverviewReport(
-    filter: UploadsFilter | null,
+    filter: UploadsFilter,
   ): Promise<FailuresOverviewReport> {
     const whereClause =
       UploadsFilterWhereClause.createFromFilterUsingPositionalParams(filter);
@@ -226,7 +226,7 @@ ORDER BY
 
   async createTestCaseUploadsReport(
     testCaseId: string,
-    filter: UploadsFilter | null,
+    filter: UploadsFilter,
   ): Promise<TestCaseUploadsReport> {
     const whereClause =
       UploadsFilterWhereClause.createFromFilterUsingNamedParams(filter);

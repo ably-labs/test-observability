@@ -25,15 +25,19 @@ export class UploadsController {
     private readonly reportsService: ReportsService,
   ) {}
 
-  @Get()
+  @Get(':owner/:repo')
   @Render('uploads/overview')
   async overview(
+    @Param('owner') owner: string,
+    @Param('repo') repo: string,
     @Query('branches') branches: string[] | undefined,
     @Query('createdBefore') createdBefore: string | undefined,
     @Query('createdAfter') createdAfter: string | undefined,
     @Query('failureMessage') failureMessage: string | undefined,
   ): Promise<{ viewModel: OverviewViewModel }> {
     const filter = ControllerUtils.createFilterFromQuery(
+      owner,
+      repo,
       branches,
       createdBefore,
       createdAfter,
@@ -52,15 +56,19 @@ export class UploadsController {
     return { viewModel };
   }
 
-  @Get('filter')
+  @Get(':owner/:repo/filter')
   @Render('uploads/filter')
   async filter(
+    @Param('owner') owner: string,
+    @Param('repo') repo: string,
     @Query('branches') branches: string[] | undefined,
     @Query('createdBefore') createdBefore: string | undefined,
     @Query('createdAfter') createdAfter: string | undefined,
     @Query('failureMessage') failureMessage: string | undefined,
   ): Promise<{ viewModel: FilterViewModel }> {
     const filter = ControllerUtils.createFilterFromQuery(
+      owner,
+      repo,
       branches,
       createdBefore,
       createdAfter,
@@ -71,13 +79,13 @@ export class UploadsController {
     return { viewModel };
   }
 
-  @Get(':id/junit_report_xml')
+  @Get(':owner/:repo/:id/junit_report_xml')
   @Header('Content-Type', 'text/xml')
   async junitReportXml(
-    @Param() params: any,
+    @Param('id') id: string,
     @Res({ passthrough: true }) res: Response,
   ): Promise<string> {
-    const upload = await this.uploadsService.find(params.id);
+    const upload = await this.uploadsService.find(id);
     res.header(
       'Content-Disposition',
       `inline; filename="junit_report_${upload.id}.xml"`,
@@ -85,19 +93,34 @@ export class UploadsController {
     return upload.junitReportXml;
   }
 
-  @Get(':id')
+  @Get(':owner/:repo/:id')
   async details(
-    @Param() params: any,
+    @Param('id') id: string,
+    @Param('owner') owner: string,
+    @Param('repo') repo: string,
+    @Query('branches') branches: string[] | undefined,
+    @Query('createdBefore') createdBefore: string | undefined,
+    @Query('createdAfter') createdAfter: string | undefined,
+    @Query('failureMessage') failureMessage: string | undefined,
     @Headers('Accept') accept: string | undefined,
     @Res() res: Response,
   ): Promise<void> {
-    const upload = await this.uploadsService.find(params.id);
+    const upload = await this.uploadsService.find(id);
+
+    const filter = ControllerUtils.createFilterFromQuery(
+      owner,
+      repo,
+      branches,
+      createdBefore,
+      createdAfter,
+      failureMessage,
+    );
 
     if (accept === 'application/json') {
       res.header('Content-Type', 'application/json');
       res.json(upload);
     } else {
-      const viewModel = new UploadDetailsViewModel(upload);
+      const viewModel = new UploadDetailsViewModel(upload, filter);
       res.render('uploads/details', { viewModel });
     }
   }

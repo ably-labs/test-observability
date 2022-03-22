@@ -2,20 +2,13 @@ import { UploadsFilter } from 'src/uploads/uploads.service';
 
 export class ControllerUtils {
   static createFilterFromQuery(
+    owner: string,
+    repo: string,
     branches: string[] | undefined,
     createdBefore: string | undefined,
     createdAfter: string | undefined,
     failureMessage: string | undefined,
-  ): UploadsFilter | null {
-    if (
-      branches === undefined &&
-      (createdBefore?.length ?? 0) == 0 &&
-      (createdAfter?.length ?? 0) == 0 &&
-      !failureMessage?.length
-    ) {
-      return null;
-    }
-
+  ): UploadsFilter {
     let createdBeforeDate: Date | null = null;
     if (createdBefore !== undefined && createdBefore.length > 0) {
       createdBeforeDate = new Date(createdBefore);
@@ -32,6 +25,8 @@ export class ControllerUtils {
     }
 
     return {
+      owner: owner,
+      repo: repo,
       branches: branches ?? [],
       createdBefore: createdBeforeDate,
       createdAfter: createdAfterDate,

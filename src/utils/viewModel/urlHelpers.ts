@@ -1,12 +1,16 @@
 import { UploadsFilter } from 'src/uploads/uploads.service';
 
+function repoSlug(filter: UploadsFilter): string {
+  return encodeURIComponent(filter.owner) + '/' + encodeURIComponent(filter.repo);
+}
+
 export class ViewModelURLHelpers {
-  static hrefForUploadDetails(id: string) {
-    return `/uploads/${encodeURIComponent(id)}`;
+  static hrefForUploadDetails(id: string, filter: UploadsFilter) {
+    return `/uploads/${repoSlug(filter)}/${encodeURIComponent(id)}`;
   }
 
-  static hrefForTestCase(id: string, filter: UploadsFilter | null) {
-    return this.hrefWithFilter(`/test_cases/${encodeURIComponent(id)}`, filter);
+  static hrefForTestCase(id: string, filter: UploadsFilter) {
+    return this.hrefWithFilter(`/test_cases/${repoSlug(filter)}/${encodeURIComponent(id)}`, filter);
   }
 
   private static encodeRepoName(repoName: string) {
@@ -39,12 +43,12 @@ export class ViewModelURLHelpers {
     )}/actions/runs/${runId}/attempts/${runAttempt}`;
   }
 
-  static hrefForJunitReportXml(id: string) {
-    return `/uploads/${id}/junit_report_xml`;
+  static hrefForJunitReportXml(id: string, filter: UploadsFilter) {
+    return `/uploads/${repoSlug(filter)}/${id}/junit_report_xml`;
   }
 
-  static hrefForFailure(id: string) {
-    return `/failures/${encodeURIComponent(id)}`;
+  static hrefForFailure(id: string, filter: UploadsFilter) {
+    return `/failures/${repoSlug(filter)}/${encodeURIComponent(id)}`;
   }
 
   static queryFragmentForFilter(filter: UploadsFilter): string {
@@ -82,15 +86,17 @@ export class ViewModelURLHelpers {
       .join('&');
   }
 
-  static hrefWithFilter(href: string, filter: UploadsFilter | null) {
-    if (filter == null) {
-      return href;
-    }
+  static hrefWithFilter(href: string, filter: UploadsFilter) {
+    const query = this.queryFragmentForFilter(filter);
 
-    return `${href}?${this.queryFragmentForFilter(filter)}`;
+    if (query) {
+      return `${href}?${query}`;
+    } else {
+      return `${href}`;
+    }
   }
 
-  static hrefForFilterOptions(filter: UploadsFilter | null) {
-    return this.hrefWithFilter('/uploads/filter', filter);
+  static hrefForFilterOptions(filter: UploadsFilter) {
+    return this.hrefWithFilter(`/uploads/${repoSlug(filter)}/filter`, filter);
   }
 }

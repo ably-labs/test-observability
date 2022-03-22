@@ -24,23 +24,28 @@ export class TestCasesController {
     private readonly reportsService: ReportsService,
   ) {}
 
-  @Get(':id')
+  @Get(':owner/:repo/:id')
+  @Render('testCases/details')
   async failureDetails(
-    @Param() params: any,
-    @Headers('Accept') accept: string | undefined,
-    @Res() res: Response,
+    @Param('owner') owner: string,
+    @Param('repo') repo: string,
+    @Param('id') id: string,
     @Query('branches') branches: string[] | undefined,
     @Query('createdBefore') createdBefore: string | undefined,
     @Query('createdAfter') createdAfter: string | undefined,
     @Query('failureMessage') failureMessage: string | undefined,
+    @Headers('Accept') accept: string | undefined,
+    @Res() res: Response,
   ): Promise<void> {
     const filter = ControllerUtils.createFilterFromQuery(
+      owner,
+      repo,
       branches,
       createdBefore,
       createdAfter,
       failureMessage,
     );
-    const testCase = await this.testCasesService.find(params.id, filter);
+    const testCase = await this.testCasesService.find(id, filter);
 
     if (accept === 'application/json') {
       res.header('Content-Type', 'application/json');
@@ -56,13 +61,17 @@ export class TestCasesController {
 
   @Get(':id/uploads')
   async uploads(
-    @Param() params: any,
+    @Param('owner') owner: string,
+    @Param('repo') repo: string,
+    @Param('id') id: string,
     @Query('branches') branches: string[] | undefined,
     @Query('createdBefore') createdBefore: string | undefined,
     @Query('createdAfter') createdAfter: string | undefined,
     @Query('failureMessage') failureMessage: string | undefined,
   ): Promise<TestCaseUploadsReport> {
     const filter = ControllerUtils.createFilterFromQuery(
+      owner,
+      repo,
       branches,
       createdBefore,
       createdAfter,
@@ -70,7 +79,7 @@ export class TestCasesController {
     );
 
     const report = await this.reportsService.createTestCaseUploadsReport(
-      params.id,
+      id,
       filter,
     );
 

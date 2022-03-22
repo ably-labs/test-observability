@@ -16,7 +16,7 @@ export class TestCasesService {
   // TODO find a good way to represent this in the type system
   async find(
     id: string,
-    failuresFilter: UploadsFilter | null,
+    failuresFilter: UploadsFilter,
   ): Promise<TestCase> {
     const whereClause =
       UploadsFilterWhereClause.createFromFilterUsingNamedParams(failuresFilter);
