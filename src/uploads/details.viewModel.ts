@@ -37,7 +37,10 @@ export class UploadDetailsViewModel {
       {
         type: 'link',
         text: failure.testCase.id,
-        href: ViewModelURLHelpers.hrefForTestCase(failure.testCase.id, this.filter),
+        href: ViewModelURLHelpers.hrefForTestCase(
+          failure.testCase.id,
+          this.filter,
+        ),
       },
       { type: 'text', text: failure.testCase.testClassName },
       { type: 'text', text: failure.testCase.testCaseName },
@@ -63,7 +66,10 @@ export class UploadDetailsViewModel {
         description: {
           type: 'link',
           text: 'View report',
-          href: ViewModelURLHelpers.hrefForJunitReportXml(this.upload.id, this.filter),
+          href: ViewModelURLHelpers.hrefForJunitReportXml(
+            this.upload.id,
+            this.filter,
+          ),
         },
       },
       {

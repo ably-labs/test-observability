@@ -74,7 +74,9 @@ export class UploadsController {
       createdAfter,
       failureMessage,
     );
-    const seenBranchNames = await this.reportsService.fetchSeenBranchNames(filter);
+    const seenBranchNames = await this.reportsService.fetchSeenBranchNames(
+      filter,
+    );
     const viewModel = new FilterViewModel(filter, seenBranchNames);
     return { viewModel };
   }

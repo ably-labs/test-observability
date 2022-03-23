@@ -22,9 +22,7 @@ export class ViewModelHelpers {
     return ` (${formattedPercentage})`;
   }
 
-  static viewModelForFilter(
-    filter: UploadsFilter,
-  ): FilterDescriptionViewModel {
+  static viewModelForFilter(filter: UploadsFilter): FilterDescriptionViewModel {
     return {
       summary: this.summaryForFilter(filter),
       filterLink: {
@@ -38,9 +36,7 @@ export class ViewModelHelpers {
     const uploadsComponents: string[] = [];
     const failuresComponents: string[] = [];
 
-    uploadsComponents.push(
-        `belonging to the ${filter.repo} repo`,
-    );
+    uploadsComponents.push(`belonging to the ${filter.repo} repo`);
 
     if (filter.branches.length > 0) {
       uploadsComponents.push(

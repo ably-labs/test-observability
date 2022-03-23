@@ -1,7 +1,9 @@
 import { UploadsFilter } from 'src/uploads/uploads.service';
 
 function repoSlug(filter: UploadsFilter): string {
-  return encodeURIComponent(filter.owner) + '/' + encodeURIComponent(filter.repo);
+  return (
+    encodeURIComponent(filter.owner) + '/' + encodeURIComponent(filter.repo)
+  );
 }
 
 export class ViewModelURLHelpers {
@@ -10,7 +12,10 @@ export class ViewModelURLHelpers {
   }
 
   static hrefForTestCase(id: string, filter: UploadsFilter) {
-    return this.hrefWithFilter(`/repos/${repoSlug(filter)}/test_cases/${encodeURIComponent(id)}`, filter);
+    return this.hrefWithFilter(
+      `/repos/${repoSlug(filter)}/test_cases/${encodeURIComponent(id)}`,
+      filter,
+    );
   }
 
   private static encodeRepoName(repoName: string) {
@@ -97,6 +102,9 @@ export class ViewModelURLHelpers {
   }
 
   static hrefForFilterOptions(filter: UploadsFilter) {
-    return this.hrefWithFilter(`/repos/${repoSlug(filter)}/uploads/filter`, filter);
+    return this.hrefWithFilter(
+      `/repos/${repoSlug(filter)}/uploads/filter`,
+      filter,
+    );
   }
 }

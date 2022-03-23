@@ -49,7 +49,10 @@ export class TestCaseViewModel {
       {
         type: 'link',
         text: failure.uploadId,
-        href: ViewModelURLHelpers.hrefForUploadDetails(failure.uploadId, this.filter),
+        href: ViewModelURLHelpers.hrefForUploadDetails(
+          failure.uploadId,
+          this.filter,
+        ),
       },
       { type: 'text', text: failure.upload.createdAt.toISOString() },
       { type: 'text', text: failure.message },

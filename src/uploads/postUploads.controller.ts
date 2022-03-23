@@ -3,9 +3,7 @@ import { UploadsService } from './uploads.service';
 
 @Controller('uploads')
 export class PostUploadsController {
-  constructor(
-    private readonly uploadsService: UploadsService,
-  ) {}
+  constructor(private readonly uploadsService: UploadsService) {}
 
   @Post()
   async create(

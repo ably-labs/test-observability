@@ -33,7 +33,10 @@ export class OverviewViewModel {
         {
           type: 'link',
           text: entry.upload.id,
-          href: ViewModelURLHelpers.hrefForUploadDetails(entry.upload.id, this.filter),
+          href: ViewModelURLHelpers.hrefForUploadDetails(
+            entry.upload.id,
+            this.filter,
+          ),
         },
         { type: 'text', text: entry.upload.createdAt.toISOString() },
         {
@@ -102,7 +105,10 @@ export class OverviewViewModel {
       {
         type: 'link',
         text: entry.lastSeenIn.createdAt.toISOString(),
-        href: ViewModelURLHelpers.hrefForUploadDetails(entry.lastSeenIn.id, this.filter),
+        href: ViewModelURLHelpers.hrefForUploadDetails(
+          entry.lastSeenIn.id,
+          this.filter,
+        ),
       },
     ]),
   };

@@ -38,9 +38,7 @@ export class ReportsService {
     private testCasesRepository: Repository<TestCase>,
   ) {}
 
-  async createUploadsReport(
-    filter: UploadsFilter,
-  ): Promise<UploadsReport> {
+  async createUploadsReport(filter: UploadsFilter): Promise<UploadsReport> {
     const whereClause =
       UploadsFilterWhereClause.createFromFilterUsingPositionalParams(filter);
 

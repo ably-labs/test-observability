@@ -18,7 +18,10 @@ export class FailureViewModel {
         description: {
           type: 'link',
           text: this.failure.uploadId,
-          href: ViewModelURLHelpers.hrefForUploadDetails(this.failure.uploadId, this.filter),
+          href: ViewModelURLHelpers.hrefForUploadDetails(
+            this.failure.uploadId,
+            this.filter,
+          ),
         },
       },
       {
