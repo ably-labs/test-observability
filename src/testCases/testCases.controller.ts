@@ -17,14 +17,14 @@ import { TestCaseViewModel } from './testCase.viewModel';
 import { TestCasesService } from './testCases.service';
 import { TestCase } from '../uploads/testCase.entity';
 
-@Controller('test_cases')
+@Controller('repos/:owner/:repo/test_cases')
 export class TestCasesController {
   constructor(
     private readonly testCasesService: TestCasesService,
     private readonly reportsService: ReportsService,
   ) {}
 
-  @Get(':owner/:repo/:id')
+  @Get(':id')
   @Render('testCases/details')
   async failureDetails(
     @Param('owner') owner: string,

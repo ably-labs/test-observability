@@ -17,9 +17,8 @@ import { UploadsService } from './uploads.service';
 import { Response } from 'express';
 import { FilterViewModel } from './filter.viewModel';
 import { ControllerUtils } from 'src/utils/controller/utils';
-import { IndexViewModel } from './index.viewModel';
 
-@Controller('uploads')
+@Controller('repos/:owner/:repo/uploads')
 export class UploadsController {
   constructor(
     private readonly uploadsService: UploadsService,
@@ -27,14 +26,6 @@ export class UploadsController {
   ) {}
 
   @Get()
-  @Render('uploads/index')
-  async index(): Promise<{ viewModel: IndexViewModel }> {
-    const repos = await this.reportsService.fetchRepos();
-    const viewModel = new IndexViewModel(repos);
-    return { viewModel };
-  }
-
-  @Get(':owner/:repo')
   @Render('uploads/overview')
   async overview(
     @Param('owner') owner: string,
@@ -65,7 +56,7 @@ export class UploadsController {
     return { viewModel };
   }
 
-  @Get(':owner/:repo/filter')
+  @Get('filter')
   @Render('uploads/filter')
   async filter(
     @Param('owner') owner: string,
@@ -88,7 +79,7 @@ export class UploadsController {
     return { viewModel };
   }
 
-  @Get(':owner/:repo/:id/junit_report_xml')
+  @Get(':id/junit_report_xml')
   @Header('Content-Type', 'text/xml')
   async junitReportXml(
     @Param('id') id: string,
@@ -102,7 +93,7 @@ export class UploadsController {
     return upload.junitReportXml;
   }
 
-  @Get(':owner/:repo/:id')
+  @Get(':id')
   async details(
     @Param('id') id: string,
     @Param('owner') owner: string,

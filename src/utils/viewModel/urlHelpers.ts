@@ -6,11 +6,11 @@ function repoSlug(filter: UploadsFilter): string {
 
 export class ViewModelURLHelpers {
   static hrefForUploadDetails(id: string, filter: UploadsFilter) {
-    return `/uploads/${repoSlug(filter)}/${encodeURIComponent(id)}`;
+    return `/repos/${repoSlug(filter)}/uploads/${encodeURIComponent(id)}`;
   }
 
   static hrefForTestCase(id: string, filter: UploadsFilter) {
-    return this.hrefWithFilter(`/test_cases/${repoSlug(filter)}/${encodeURIComponent(id)}`, filter);
+    return this.hrefWithFilter(`/repos/${repoSlug(filter)}/test_cases/${encodeURIComponent(id)}`, filter);
   }
 
   private static encodeRepoName(repoName: string) {
@@ -44,11 +44,11 @@ export class ViewModelURLHelpers {
   }
 
   static hrefForJunitReportXml(id: string, filter: UploadsFilter) {
-    return `/uploads/${repoSlug(filter)}/${id}/junit_report_xml`;
+    return `/repos/${repoSlug(filter)}/uploads/${id}/junit_report_xml`;
   }
 
   static hrefForFailure(id: string, filter: UploadsFilter) {
-    return `/failures/${repoSlug(filter)}/${encodeURIComponent(id)}`;
+    return `/repos/${repoSlug(filter)}/failures/${encodeURIComponent(id)}`;
   }
 
   static queryFragmentForFilter(filter: UploadsFilter): string {
@@ -97,6 +97,6 @@ export class ViewModelURLHelpers {
   }
 
   static hrefForFilterOptions(filter: UploadsFilter) {
-    return this.hrefWithFilter(`/uploads/${repoSlug(filter)}/filter`, filter);
+    return this.hrefWithFilter(`/repos/${repoSlug(filter)}/uploads/filter`, filter);
   }
 }

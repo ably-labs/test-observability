@@ -3,7 +3,7 @@ import { ControllerUtils } from 'src/utils/controller/utils';
 import { FailureViewModel } from './failure.viewModel';
 import { FailuresService } from './failures.service';
 
-@Controller('failures/:owner/:repo')
+@Controller('repos/:owner/:repo/failures')
 export class FailuresController {
   constructor(private readonly failuresService: FailuresService) {}
 

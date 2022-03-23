@@ -1,4 +1,4 @@
-export class IndexViewModel {
+export class ReposViewModel {
   constructor(
     readonly repos: string[],
   ) {}
