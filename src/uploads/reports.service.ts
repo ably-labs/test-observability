@@ -231,8 +231,17 @@ ORDER BY
     const whereClause =
       UploadsFilterWhereClause.createFromFilterUsingNamedParams(filter);
 
-    let queryBuilder = this.uploadsRepository
-      .createQueryBuilder('upload')
+    let queryBuilder = this.uploadsRepository.createQueryBuilder('upload');
+
+    const uploadsPropertyNamesWithoutReportXml = queryBuilder.connection
+      .getMetadata(Upload)
+      .columns.filter((col) => col.propertyName !== 'junitReportXml')
+      .map((col) => col.propertyName);
+
+    queryBuilder = queryBuilder
+      .select(
+        uploadsPropertyNamesWithoutReportXml.map((col) => `upload.${col}`),
+      )
       .leftJoin(
         'upload.failures',
         'failures',
@@ -253,9 +262,8 @@ ORDER BY
     return uploads.map((upload) => ({
       failed: upload.failures.length > 0,
       upload: (() => {
-        const strippedUpload: Omit<Upload, 'junitReportXml' | 'failures'> &
-          Partial<Pick<Upload, 'junitReportXml' | 'failures'>> = upload;
-        delete strippedUpload['junitReportXml'];
+        const strippedUpload: Omit<Upload, 'failures'> &
+          Partial<Pick<Upload, 'failures'>> = upload;
         delete strippedUpload['failures'];
         return strippedUpload;
       })(),
