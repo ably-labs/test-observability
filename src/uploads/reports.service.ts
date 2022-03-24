@@ -231,7 +231,7 @@ ORDER BY
     const whereClause =
       UploadsFilterWhereClause.createFromFilterUsingNamedParams(filter);
 
-    let queryBuilder = this.uploadsRepository.createQueryBuilder('upload');
+    let queryBuilder = this.uploadsRepository.createQueryBuilder('uploads');
 
     const uploadsPropertyNamesWithoutReportXml = queryBuilder.connection
       .getMetadata(Upload)
@@ -240,17 +240,15 @@ ORDER BY
 
     queryBuilder = queryBuilder
       .select(
-        uploadsPropertyNamesWithoutReportXml.map((col) => `upload.${col}`),
+        uploadsPropertyNamesWithoutReportXml.map((col) => `uploads.${col}`),
       )
       .leftJoin(
-        'upload.failures',
+        'uploads.failures',
         'failures',
         'failures.test_case_id = :testCaseId',
         { testCaseId },
       )
       .addSelect('failures.id');
-
-    const uploads = await queryBuilder.getMany();
 
     const fragment = whereClause.uploadsAndFailuresClause({
       includeWhereKeyword: false,
@@ -258,6 +256,8 @@ ORDER BY
     if (fragment !== null) {
       queryBuilder = queryBuilder.andWhere(fragment, whereClause.params);
     }
+
+    const uploads = await queryBuilder.getMany();
 
     return uploads.map((upload) => ({
       failed: upload.failures.length > 0,
