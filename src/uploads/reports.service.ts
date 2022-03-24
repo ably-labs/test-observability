@@ -24,6 +24,13 @@ interface FailuresOverviewReportEntry {
 
 export type FailuresOverviewReport = FailuresOverviewReportEntry[];
 
+interface TestCaseUploadsReportEntry {
+  upload: Omit<Upload, 'junitReportXml' | 'failures'>;
+  failed: boolean;
+}
+
+export type TestCaseUploadsReport = TestCaseUploadsReportEntry[];
+
 export class ReportsService {
   constructor(
     @InjectRepository(Upload) private uploadsRepository: Repository<Upload>,
@@ -215,5 +222,43 @@ ORDER BY
     */
 
     return results.map((row) => row['branch']);
+  }
+
+  async createTestCaseUploadsReport(
+    testCaseId: string,
+    filter: UploadsFilter | null,
+  ): Promise<TestCaseUploadsReport> {
+    const whereClause =
+      UploadsFilterWhereClause.createFromFilterUsingNamedParams(filter);
+
+    let queryBuilder = this.uploadsRepository
+      .createQueryBuilder('upload')
+      .leftJoin(
+        'upload.failures',
+        'failures',
+        'failures.test_case_id = :testCaseId',
+        { testCaseId },
+      )
+      .addSelect('failures.id');
+
+    const uploads = await queryBuilder.getMany();
+
+    const fragment = whereClause.uploadsAndFailuresClause({
+      includeWhereKeyword: false,
+    });
+    if (fragment !== null) {
+      queryBuilder = queryBuilder.andWhere(fragment, whereClause.params);
+    }
+
+    return uploads.map((upload) => ({
+      failed: upload.failures.length > 0,
+      upload: (() => {
+        const strippedUpload: Omit<Upload, 'junitReportXml' | 'failures'> &
+          Partial<Pick<Upload, 'junitReportXml' | 'failures'>> = upload;
+        delete strippedUpload['junitReportXml'];
+        delete strippedUpload['failures'];
+        return strippedUpload;
+      })(),
+    }));
   }
 }
