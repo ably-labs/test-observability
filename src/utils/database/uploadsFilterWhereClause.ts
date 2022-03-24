@@ -4,17 +4,50 @@ interface ClauseCreationOptions {
   includeWhereKeyword: boolean;
 }
 
-export class UploadsFilterWhereClause {
+export class UploadsFilterWhereClause<Params> {
   constructor(
     private readonly uploadsSubClauses: string[],
     private readonly failuresSubClauses: string[],
-    readonly params: unknown[],
+    readonly params: Params,
   ) {}
 
-  static createFromFilter(filter: UploadsFilter | null) {
+  static createFromFilterUsingPositionalParams(
+    filter: UploadsFilter | null,
+  ): UploadsFilterWhereClause<unknown[]> {
+    return this.createFromFilter<unknown[]>(
+      filter,
+      [],
+      (i) => `$${i}`,
+      (i, val, params) => {
+        params[i - 1] = val;
+        return params;
+      },
+    );
+  }
+
+  static createFromFilterUsingNamedParams(
+    filter: UploadsFilter | null,
+  ): UploadsFilterWhereClause<Record<string, unknown>> {
+    return this.createFromFilter<Record<string, unknown>>(
+      filter,
+      {},
+      (i) => `:uploadsFilterParam${i}`,
+      (i, val, params) => {
+        params[`uploadsFilterParam${i}`] = val;
+        return params;
+      },
+    );
+  }
+
+  private static createFromFilter<Params>(
+    filter: UploadsFilter | null,
+    initialParams: Params,
+    createParamName: (index: number) => string,
+    addParam: (index: number, value: unknown, currentParams: Params) => Params,
+  ) {
     const uploadsSubClauses: string[] = [];
     const failuresSubClauses: string[] = [];
-    const params: unknown[] = [];
+    let params = initialParams;
 
     let parameterCount = 0;
 
@@ -22,33 +55,43 @@ export class UploadsFilterWhereClause {
       parameterCount += 1;
       // https://github.com/brianc/node-postgres/wiki/FAQ#11-how-do-i-build-a-where-foo-in--query-to-find-rows-matching-an-array-of-values
       uploadsSubClauses.push(
-        `uploads.github_ref_name = ANY ($${parameterCount}) OR uploads.github_head_ref = ANY ($${parameterCount})`,
+        `uploads.github_ref_name = ANY (${createParamName(
+          parameterCount,
+        )}) OR uploads.github_head_ref = ANY (${createParamName(
+          parameterCount,
+        )})`,
       );
-      params.push(filter.branches);
+      params = addParam(parameterCount, filter.branches, params);
     }
 
     if (filter?.createdBefore) {
       parameterCount += 1;
-      uploadsSubClauses.push(`uploads.created_at < $${parameterCount}`);
-      params.push(filter.createdBefore);
+      uploadsSubClauses.push(
+        `uploads.created_at < ${createParamName(parameterCount)}`,
+      );
+      params = addParam(parameterCount, filter.createdBefore, params);
     }
 
     if (filter?.createdAfter) {
       parameterCount += 1;
-      uploadsSubClauses.push(`uploads.created_at > $${parameterCount}`);
-      params.push(filter.createdAfter);
+      uploadsSubClauses.push(
+        `uploads.created_at > ${createParamName(parameterCount)}`,
+      );
+      params = addParam(parameterCount, filter.createdAfter, params);
     }
 
     if (filter?.failureMessage) {
       parameterCount += 1;
       // The ::text cast is to avoid an error from Postgres that I don’t really understand: "could not determine data type of parameter $1"
       failuresSubClauses.push(
-        `failures.message ILIKE CONCAT('%', $${parameterCount}::text, '%')`,
+        `failures.message ILIKE CONCAT('%', ${createParamName(
+          parameterCount,
+        )}::text, '%')`,
       );
       const escapedFailureMessage = filter.failureMessage
         .replace('%', '\\%')
         .replace('_', '\\_');
-      params.push(escapedFailureMessage);
+      params = addParam(parameterCount, escapedFailureMessage, params);
     }
 
     return new this(uploadsSubClauses, failuresSubClauses, params);

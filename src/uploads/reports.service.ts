@@ -34,7 +34,8 @@ export class ReportsService {
   async createUploadsReport(
     filter: UploadsFilter | null,
   ): Promise<UploadsReport> {
-    const whereClause = UploadsFilterWhereClause.createFromFilter(filter);
+    const whereClause =
+      UploadsFilterWhereClause.createFromFilterUsingPositionalParams(filter);
 
     const sql = `SELECT
     uploads.id,
@@ -85,7 +86,8 @@ ORDER BY
   async createFailuresOverviewReport(
     filter: UploadsFilter | null,
   ): Promise<FailuresOverviewReport> {
-    const whereClause = UploadsFilterWhereClause.createFromFilter(filter);
+    const whereClause =
+      UploadsFilterWhereClause.createFromFilterUsingPositionalParams(filter);
 
     // I’ve not written SQL for ages and nothing this complicated for even longer, so let’s think this through…
 

@@ -19,7 +19,7 @@ export class TestCasesService {
     failuresFilter: UploadsFilter | null,
   ): Promise<TestCase> {
     const whereClause =
-      UploadsFilterWhereClause.createFromFilter(failuresFilter);
+      UploadsFilterWhereClause.createFromFilterUsingNamedParams(failuresFilter);
 
     let queryBuilder = this.testCasesRepository
       .createQueryBuilder('testCase')
@@ -33,20 +33,7 @@ export class TestCasesService {
       includeWhereKeyword: false,
     });
     if (fragment !== null) {
-      // This is very hacky - the UploadsFilterWhereClause is written with positional parameters in mind, but QueryBuilder requires us to use named parameters. So we substitute the $1, $2 etc in the fragment with :uploadsFilterParam1, :uploadsFilterParam2 etc.
-      const paramsObject: Record<string, any> = {};
-      let modifiedFragment = fragment;
-
-      whereClause.params.forEach((param, index) => {
-        const paramName = `uploadsFilterParam${index + 1}`;
-        modifiedFragment = modifiedFragment.replaceAll(
-          `$${index + 1}`,
-          `:${paramName}`,
-        );
-        paramsObject[paramName] = param;
-      });
-
-      queryBuilder = queryBuilder.andWhere(modifiedFragment, paramsObject);
+      queryBuilder = queryBuilder.andWhere(fragment, whereClause.params);
     }
 
     return await queryBuilder.getOneOrFail();
