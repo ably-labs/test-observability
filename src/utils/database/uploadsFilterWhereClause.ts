@@ -65,7 +65,9 @@ export class UploadsFilterWhereClause<Params> {
     }
 
     parameterCount += 1;
-    uploadsSubClauses.push(`uploads.github_repository = $${parameterCount}`);
+    uploadsSubClauses.push(
+      `uploads.github_repository = ${createParamName(parameterCount)}`,
+    );
     params = addParam(parameterCount, filter.owner + '/' + filter.repo, params);
 
     if (filter.createdBefore) {
