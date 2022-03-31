@@ -5,7 +5,7 @@
 
     <ul>
         {% for repo in viewModel.repos %}
-            <li><a href="/repos/{{repo}}/uploads">{{repo}}</a></li>
+            <li><a href="{{repo.href}}">{{repo.title}}</a></li>
         {% endfor %}
     </ul
 {% endblock %}

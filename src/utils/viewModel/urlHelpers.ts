@@ -7,6 +7,14 @@ function repoSlug(filter: UploadsFilter): string {
 }
 
 export class ViewModelURLHelpers {
+  static repoToUploads(repo: string) {
+    return `/repos/${this.encodeRepoName(repo)}/uploads`;
+  }
+
+  static hrefForUploads(filter: UploadsFilter) {
+    return `/repos/${repoSlug(filter)}/uploads`;
+  }
+
   static hrefForUploadDetails(id: string, filter: UploadsFilter) {
     return `/repos/${repoSlug(filter)}/uploads/${encodeURIComponent(id)}`;
   }

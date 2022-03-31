@@ -10,7 +10,6 @@ export class ReposService {
   ) {}
 
   async fetchRepos(): Promise<string[]> {
-    // We want github_head_ref if not null, else github_ref_name
     const sql = `SELECT DISTINCT
         uploads.github_repository as github_repository
     FROM
