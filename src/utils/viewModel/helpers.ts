@@ -36,7 +36,7 @@ export class ViewModelHelpers {
     const uploadsComponents: string[] = [];
     const failuresComponents: string[] = [];
 
-    uploadsComponents.push(`belonging to the ${filter.repo} repo`);
+    uploadsComponents.push(`belonging to the ${filter.owner}/${filter.repo} repo`);
 
     if (filter.branches.length > 0) {
       uploadsComponents.push(
