@@ -25,7 +25,6 @@ export class TestCasesController {
   ) {}
 
   @Get(':id')
-  @Render('testCases/details')
   async failureDetails(
     @Param('owner') owner: string,
     @Param('repo') repo: string,
