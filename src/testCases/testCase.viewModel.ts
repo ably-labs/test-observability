@@ -9,7 +9,7 @@ import { TableViewModel } from '../utils/view/table';
 export class TestCaseViewModel {
   constructor(
     private readonly testCase: TestCase,
-    private readonly filter: UploadsFilter | null,
+    private readonly filter: UploadsFilter,
   ) {}
 
   readonly filterDescription = ViewModelHelpers.viewModelForFilter(this.filter);
@@ -44,12 +44,15 @@ export class TestCaseViewModel {
       {
         type: 'link',
         text: failure.id,
-        href: ViewModelURLHelpers.hrefForFailure(failure.id),
+        href: ViewModelURLHelpers.hrefForFailure(failure.id, this.filter),
       },
       {
         type: 'link',
         text: failure.uploadId,
-        href: ViewModelURLHelpers.hrefForUploadDetails(failure.uploadId),
+        href: ViewModelURLHelpers.hrefForUploadDetails(
+          failure.uploadId,
+          this.filter,
+        ),
       },
       { type: 'text', text: failure.upload.createdAt.toISOString() },
       { type: 'text', text: failure.message },

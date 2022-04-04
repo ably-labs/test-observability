@@ -28,11 +28,20 @@
 
 ## Installation
 
+Set up postgresql with a role and database named test_observation.
+
+```bash
+$ sudo -u postgres createuser $USER --createdb
+$ createdb test_observation
+```
+
 ```bash
 $ npm install
 ```
 
 ## Running the app
+
+The server will listen on port 3000 by default.
 
 ```bash
 # development

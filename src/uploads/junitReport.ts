@@ -21,11 +21,21 @@ export class JUnitReport {
   }
 
   get numberOfTests(): number {
-    return this.testSuites.tests ?? 0;
+    return (
+      this.testSuites.testsuite?.reduce(
+        (sum, ts) => sum + (ts.tests ?? 0),
+        0,
+      ) ?? 0
+    );
   }
 
   get numberOfFailures(): number {
-    return this.testSuites.failures ?? 0;
+    return (
+      this.testSuites.testsuite?.reduce(
+        (sum, ts) => sum + (ts.failures ?? 0),
+        0,
+      ) ?? 0
+    );
   }
 
   get failures(): Failure[] {

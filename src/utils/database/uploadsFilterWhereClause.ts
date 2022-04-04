@@ -12,7 +12,7 @@ export class UploadsFilterWhereClause<Params> {
   ) {}
 
   static createFromFilterUsingPositionalParams(
-    filter: UploadsFilter | null,
+    filter: UploadsFilter,
   ): UploadsFilterWhereClause<unknown[]> {
     return this.createFromFilter<unknown[]>(
       filter,
@@ -26,7 +26,7 @@ export class UploadsFilterWhereClause<Params> {
   }
 
   static createFromFilterUsingNamedParams(
-    filter: UploadsFilter | null,
+    filter: UploadsFilter,
   ): UploadsFilterWhereClause<Record<string, unknown>> {
     return this.createFromFilter<Record<string, unknown>>(
       filter,
@@ -40,7 +40,7 @@ export class UploadsFilterWhereClause<Params> {
   }
 
   private static createFromFilter<Params>(
-    filter: UploadsFilter | null,
+    filter: UploadsFilter,
     initialParams: Params,
     createParamName: (index: number) => string,
     addParam: (index: number, value: unknown, currentParams: Params) => Params,
@@ -51,7 +51,7 @@ export class UploadsFilterWhereClause<Params> {
 
     let parameterCount = 0;
 
-    if (filter?.branches?.length) {
+    if (filter.branches?.length) {
       parameterCount += 1;
       // https://github.com/brianc/node-postgres/wiki/FAQ#11-how-do-i-build-a-where-foo-in--query-to-find-rows-matching-an-array-of-values
       uploadsSubClauses.push(
@@ -64,7 +64,13 @@ export class UploadsFilterWhereClause<Params> {
       params = addParam(parameterCount, filter.branches, params);
     }
 
-    if (filter?.createdBefore) {
+    parameterCount += 1;
+    uploadsSubClauses.push(
+      `uploads.github_repository = ${createParamName(parameterCount)}`,
+    );
+    params = addParam(parameterCount, filter.owner + '/' + filter.repo, params);
+
+    if (filter.createdBefore) {
       parameterCount += 1;
       uploadsSubClauses.push(
         `uploads.created_at < ${createParamName(parameterCount)}`,
@@ -72,7 +78,7 @@ export class UploadsFilterWhereClause<Params> {
       params = addParam(parameterCount, filter.createdBefore, params);
     }
 
-    if (filter?.createdAfter) {
+    if (filter.createdAfter) {
       parameterCount += 1;
       uploadsSubClauses.push(
         `uploads.created_at > ${createParamName(parameterCount)}`,
@@ -80,7 +86,7 @@ export class UploadsFilterWhereClause<Params> {
       params = addParam(parameterCount, filter.createdAfter, params);
     }
 
-    if (filter?.failureMessage) {
+    if (filter.failureMessage) {
       parameterCount += 1;
       // The ::text cast is to avoid an error from Postgres that I don’t really understand: "could not determine data type of parameter $1"
       failuresSubClauses.push(

@@ -1,12 +1,29 @@
 import { UploadsFilter } from 'src/uploads/uploads.service';
 
+function repoSlug(filter: UploadsFilter): string {
+  return (
+    encodeURIComponent(filter.owner) + '/' + encodeURIComponent(filter.repo)
+  );
+}
+
 export class ViewModelURLHelpers {
-  static hrefForUploadDetails(id: string) {
-    return `/uploads/${encodeURIComponent(id)}`;
+  static repoToUploads(repo: string) {
+    return `/repos/${this.encodeRepoName(repo)}/uploads`;
   }
 
-  static hrefForTestCase(id: string, filter: UploadsFilter | null) {
-    return this.hrefWithFilter(`/test_cases/${encodeURIComponent(id)}`, filter);
+  static hrefForUploads(filter: UploadsFilter) {
+    return `/repos/${repoSlug(filter)}/uploads`;
+  }
+
+  static hrefForUploadDetails(id: string, filter: UploadsFilter) {
+    return `/repos/${repoSlug(filter)}/uploads/${encodeURIComponent(id)}`;
+  }
+
+  static hrefForTestCase(id: string, filter: UploadsFilter) {
+    return this.hrefWithFilter(
+      `/repos/${repoSlug(filter)}/test_cases/${encodeURIComponent(id)}`,
+      filter,
+    );
   }
 
   private static encodeRepoName(repoName: string) {
@@ -39,12 +56,12 @@ export class ViewModelURLHelpers {
     )}/actions/runs/${runId}/attempts/${runAttempt}`;
   }
 
-  static hrefForJunitReportXml(id: string) {
-    return `/uploads/${id}/junit_report_xml`;
+  static hrefForJunitReportXml(id: string, filter: UploadsFilter) {
+    return `/repos/${repoSlug(filter)}/uploads/${id}/junit_report_xml`;
   }
 
-  static hrefForFailure(id: string) {
-    return `/failures/${encodeURIComponent(id)}`;
+  static hrefForFailure(id: string, filter: UploadsFilter) {
+    return `/repos/${repoSlug(filter)}/failures/${encodeURIComponent(id)}`;
   }
 
   static queryFragmentForFilter(filter: UploadsFilter): string {
@@ -82,15 +99,20 @@ export class ViewModelURLHelpers {
       .join('&');
   }
 
-  static hrefWithFilter(href: string, filter: UploadsFilter | null) {
-    if (filter == null) {
-      return href;
-    }
+  static hrefWithFilter(href: string, filter: UploadsFilter) {
+    const query = this.queryFragmentForFilter(filter);
 
-    return `${href}?${this.queryFragmentForFilter(filter)}`;
+    if (query) {
+      return `${href}?${query}`;
+    } else {
+      return `${href}`;
+    }
   }
 
-  static hrefForFilterOptions(filter: UploadsFilter | null) {
-    return this.hrefWithFilter('/uploads/filter', filter);
+  static hrefForFilterOptions(filter: UploadsFilter) {
+    return this.hrefWithFilter(
+      `/repos/${repoSlug(filter)}/uploads/filter`,
+      filter,
+    );
   }
 }

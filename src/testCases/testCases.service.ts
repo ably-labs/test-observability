@@ -14,10 +14,7 @@ export class TestCasesService {
 
   // Includes failures, but not their uploads (except for createdAt).
   // TODO find a good way to represent this in the type system
-  async find(
-    id: string,
-    failuresFilter: UploadsFilter | null,
-  ): Promise<TestCase> {
+  async find(id: string, failuresFilter: UploadsFilter): Promise<TestCase> {
     const whereClause =
       UploadsFilterWhereClause.createFromFilterUsingNamedParams(failuresFilter);
 

@@ -1,0 +1,11 @@
+{% extends "../base.njk" %}
+
+{% block pageBody %}
+    <h1>Repos</h1>
+
+    <ul>
+        {% for repo in viewModel.repos %}
+            <li><a href="{{repo.href}}">{{repo.title}}</a></li>
+        {% endfor %}
+    </ul
+{% endblock %}

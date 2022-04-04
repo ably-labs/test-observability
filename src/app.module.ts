@@ -7,6 +7,7 @@ import { Failure } from './uploads/failure.entity';
 import { TestCase } from './uploads/testCase.entity';
 import { TestCasesModule } from './testCases/testCases.module';
 import { FailuresModule } from './failures/failures.module';
+import { ReposModule } from './repos/repos.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { FailuresModule } from './failures/failures.module';
     UploadsModule,
     TestCasesModule,
     FailuresModule,
+    ReposModule,
   ],
   controllers: [AppController],
 })

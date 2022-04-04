@@ -5,7 +5,7 @@
 {% block pageBody %}
     <h1>Filter uploads</h1>
 
-    <form action="/uploads">
+    <form action="{{viewModel.formAction}}">
         <h2>Branches</h2>
 
         <p>If no boxes are checked, then the uploads will not be filtered by branch.</p>

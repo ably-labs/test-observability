@@ -3,9 +3,13 @@ import { DescriptionListViewModel } from 'src/utils/view/descriptionList';
 import { ViewModelURLHelpers } from 'src/utils/viewModel/urlHelpers';
 import { TableViewModel } from '../utils/view/table';
 import { Upload } from './upload.entity';
+import { UploadsFilter } from './uploads.service';
 
 export class UploadDetailsViewModel {
-  constructor(private readonly upload: Upload) {}
+  constructor(
+    private readonly upload: Upload,
+    private readonly filter: UploadsFilter,
+  ) {}
 
   readonly title = `Details of upload ${this.upload.id}`;
 
@@ -28,12 +32,15 @@ export class UploadDetailsViewModel {
       {
         type: 'link',
         text: failure.id,
-        href: ViewModelURLHelpers.hrefForFailure(failure.id),
+        href: ViewModelURLHelpers.hrefForFailure(failure.id, this.filter),
       },
       {
         type: 'link',
         text: failure.testCase.id,
-        href: ViewModelURLHelpers.hrefForTestCase(failure.testCase.id, null),
+        href: ViewModelURLHelpers.hrefForTestCase(
+          failure.testCase.id,
+          this.filter,
+        ),
       },
       { type: 'text', text: failure.testCase.testClassName },
       { type: 'text', text: failure.testCase.testCaseName },
@@ -59,7 +66,10 @@ export class UploadDetailsViewModel {
         description: {
           type: 'link',
           text: 'View report',
-          href: ViewModelURLHelpers.hrefForJunitReportXml(this.upload.id),
+          href: ViewModelURLHelpers.hrefForJunitReportXml(
+            this.upload.id,
+            this.filter,
+          ),
         },
       },
       {
