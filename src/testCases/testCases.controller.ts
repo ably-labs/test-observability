@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Headers,
-  Param,
-  Query,
-  Render,
-  Res,
-} from '@nestjs/common';
+import { Controller, Get, Headers, Param, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 import {
   ReportsService,
