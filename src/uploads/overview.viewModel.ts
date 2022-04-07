@@ -79,9 +79,10 @@ export class OverviewViewModel {
       'Test case',
       'Number of occurrences',
       'Percentage of total failures',
+      'Cumulative percentage of total failures',
       'Last seen',
     ],
-    rows: this.failuresOverviewReport.map((entry) => [
+    rows: this.failuresOverviewReport.map((entry, index) => [
       {
         type: 'link',
         text: entry.testCase.id,
@@ -98,6 +99,18 @@ export class OverviewViewModel {
         text: `${
           ViewModelHelpers.formatPercentage(
             entry.occurrenceCount,
+            this.totalFailures,
+          ) ?? ''
+        }`,
+      },
+      {
+        type: 'text',
+        text: `${
+          ViewModelHelpers.formatPercentage(
+            this.failuresOverviewReport
+              .map((entry) => entry.occurrenceCount)
+              .slice(0, index + 1)
+              .reduce((a, b) => a + b, 0),
             this.totalFailures,
           ) ?? ''
         }`,
