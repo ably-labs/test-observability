@@ -74,6 +74,7 @@ export class OverviewViewModel {
 
   readonly failureOccurrencesTable: TableViewModel = {
     headers: [
+      'Position',
       'Test case ID',
       'Test class',
       'Test case',
@@ -83,6 +84,7 @@ export class OverviewViewModel {
       'Last seen',
     ],
     rows: this.failuresOverviewReport.map((entry, index) => [
+      { type: 'text', text: String(index + 1) },
       {
         type: 'link',
         text: entry.testCase.id,
