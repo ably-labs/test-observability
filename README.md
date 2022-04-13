@@ -1,82 +1,77 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+# Test observability server
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This is a web application which provides:
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+- an API for uploading JUnit-format unit test results
+- a website for viewing aggregate information about all the uploaded test results
 
-## Description
+You might want to use it to observe trends in your test results — for example, finding out which tests fail most frequently. We’ve been using it for this purpose in https://github.com/ably/ably-cocoa/issues/1279.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Take a look at an example
 
-## Installation
+The Ably SDK team is currently using it for observing the results of the [ably-cocoa SDK](https://github.com/ably/ably-cocoa)’s tests. You can take a look at our instance at https://test-observability.herokuapp.com/.
 
-Set up postgresql with a role and database named test_observation.
+## How it’s built
 
-```bash
-$ sudo -u postgres createuser $USER --createdb
-$ createdb test_observation
-```
+It’s written in [TypeScript](https://www.typescriptlang.org/), and uses the [Nest](https://nestjs.com/) web application framework and [TypeORM](https://github.com/typeorm/typeorm) ORM. It uses a PostgreSQL database for storage.
 
-```bash
-$ npm install
-```
+## How to run it locally
 
-## Running the app
+### Dependencies
 
-The server will listen on port 3000 by default.
+The instructions here are for macOS only, but should be similar on other platforms.
 
-```bash
-# development
-$ npm run start
+- [Node.js](https://nodejs.org/en/) version 16.14.0
+  - install using, for example, [nvm](https://github.com/nvm-sh/nvm) or `brew install node@16`
+- [PostgreSQL server](https://www.postgresql.org/)
+  - install using `brew install postgresql`
 
-# watch mode
-$ npm run start:dev
+### Setup instructions
 
-# production mode
-$ npm run start:prod
-```
+1. If you don’t already have a local PostgreSQL user, create one:
 
-## Test
+   ```bash
+   $ sudo -u postgres createuser $USER --createdb
+   ```
 
-```bash
-# unit tests
-$ npm run test
+2. Create the database:
 
-# e2e tests
-$ npm run test:e2e
+   ```bash
+   $ createdb test_observation
+   ```
 
-# test coverage
-$ npm run test:cov
-```
+3. Install dependencies:
 
-## Support
+   ```bash
+   $ npm install
+   ```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+4. Run the server in development mode (will restart each time you change the code):
 
-## Stay in touch
+   ```bash
+   $ npm run start:dev
+   ```
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+5. You can now access the server at http://localhost:3000.
 
-## License
+## How to deploy it
 
-Nest is [MIT licensed](LICENSE).
+It’s ready to be deployed to [Heroku](https://www.heroku.com). You just need to set a [config var](https://devcenter.heroku.com/articles/config-vars) containing a randomly-generated `TEST_OBSERVABILITY_AUTH_KEY` value.
+
+## How to upload results to it
+
+See the [`local_dev_upload_test_results.sh`](https://github.com/ably/ably-cocoa/blob/main/Scripts/local_dev_upload_test_results.sh) and [`upload_test_results.sh`](https://github.com/ably/ably-cocoa/blob/main/Scripts/upload_test_results.sh) scripts in https://github.com/ably/ably-cocoa for an example.
+
+## Development tips
+
+### How to generate a migration
+
+If you want to modify the database schema (e.g. add columns, change a column from nullable to non-nullable, …), you’ll need to do so using a [TypeORM migration](https://orkhan.gitbook.io/typeorm/docs/migrations). TypeORM is able to generate these migrations automatically from your entity files. Do the following:
+
+1. Update your entity `.ts` files to reflect the new characteristics of the schema.
+2. Generate the migration:
+   ```bash
+   $ npm exec typeorm migration:generate -- -n '<insert a good name for the migration here, e.g. MakeGithubBaseAndHeadRefsNullable>'
+   ```
+
+Migrations are automatically run when the server starts up.
