@@ -63,12 +63,15 @@ export class ViewModelURLHelpers {
     return `/repos/${repoSlug(repo)}/failures/${encodeURIComponent(id)}`;
   }
 
-  static queryFragmentForFilter(filter: UploadsFilter | null): string | null {
+  static queryFragmentForFilter(
+    filter: UploadsFilter | null,
+    { paramPrefix }: { paramPrefix: string | null } = { paramPrefix: null },
+  ): string | null {
     if (!filter) {
       return null;
     }
 
-    const components: { key: string; value: string }[] = [];
+    let components: { key: string; value: string }[] = [];
 
     filter.branches.forEach((branchName) => {
       components.push({ key: 'branches[]', value: branchName });
@@ -92,6 +95,13 @@ export class ViewModelURLHelpers {
       components.push({ key: 'failureMessage', value: filter.failureMessage });
     }
 
+    if (paramPrefix !== null) {
+      components = components.map((component) => ({
+        ...component,
+        key: `${paramPrefix}${component.key}`,
+      }));
+    }
+
     return components
       .map(
         (component) =>
@@ -102,8 +112,12 @@ export class ViewModelURLHelpers {
       .join('&');
   }
 
-  static hrefWithFilter(href: string, filter: UploadsFilter | null) {
-    const query = this.queryFragmentForFilter(filter);
+  static hrefWithFilter(
+    href: string,
+    filter: UploadsFilter | null,
+    { paramPrefix }: { paramPrefix: string | null } = { paramPrefix: null },
+  ) {
+    const query = this.queryFragmentForFilter(filter, { paramPrefix });
 
     if (query) {
       return `${href}?${query}`;
