@@ -98,6 +98,7 @@ export class ViewModelHelpers {
     options: Pick<FilterFormViewModel, 'formAction' | 'submitButton'>,
   ): FilterFormViewModel {
     return {
+      hiddenFields: [],
       ...options,
       branchOptions: {
         idPrefix: 'branches',

@@ -7,6 +7,8 @@ export interface FilterFormViewModel {
     text: string;
   };
 
+  hiddenFields: InputViewModel[];
+
   branchOptions: CheckboxesViewModel;
   createdBefore: InputViewModel;
   createdAfter: InputViewModel;

@@ -2,6 +2,10 @@
 
 {% macro filterForm(viewModel) %}
     <form action="{{viewModel.formAction}}">
+        {% for hiddenField in viewModel.hiddenFields %}
+            <input type="hidden" name="{{hiddenField.name}}" value="{{hiddenField.value}}">
+        {% endfor %}
+
         <h2>Branches</h2>
 
         <p>If no boxes are checked, then the uploads will not be filtered by branch.</p>
