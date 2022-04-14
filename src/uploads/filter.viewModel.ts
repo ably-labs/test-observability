@@ -13,6 +13,7 @@ export class FilterViewModel {
   readonly form = ViewModelHelpers.formViewModelForFilter(
     this.filter,
     this.availableBranches,
+    '',
     {
       formAction: ViewModelURLHelpers.hrefForUploads(this.repo, null),
       submitButton: { text: 'Apply filter' },

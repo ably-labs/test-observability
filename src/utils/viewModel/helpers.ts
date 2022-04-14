@@ -94,13 +94,14 @@ export class ViewModelHelpers {
   static formViewModelForFilter(
     filter: UploadsFilter,
     availableBranches: string[],
+    paramNamePrefix: string,
     options: Pick<FilterFormViewModel, 'formAction' | 'submitButton'>,
   ): FilterFormViewModel {
     return {
       ...options,
       branchOptions: {
         idPrefix: 'branches',
-        name: 'branches[]',
+        name: `${paramNamePrefix}branches[]`,
         checkboxes: availableBranches.map((branch) => ({
           label: branch,
           value: branch,
@@ -109,14 +110,17 @@ export class ViewModelHelpers {
       },
 
       createdBefore: {
+        name: `${paramNamePrefix}createdBefore`,
         value: filter.createdBefore?.toISOString() ?? '',
       },
 
       createdAfter: {
+        name: `${paramNamePrefix}createdAfter`,
         value: filter.createdAfter?.toISOString() ?? '',
       },
 
       failureMessage: {
+        name: `${paramNamePrefix}failureMessage`,
         value: filter.failureMessage ?? '',
       },
     };
