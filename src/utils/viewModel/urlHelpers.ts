@@ -10,8 +10,8 @@ export class ViewModelURLHelpers {
     return `/repos/${this.encodeRepoName(repo)}/uploads`;
   }
 
-  static hrefForUploads(repo: Repo) {
-    return `/repos/${repoSlug(repo)}/uploads`;
+  static hrefForUploads(repo: Repo, filter: UploadsFilter | null) {
+    return this.hrefWithFilter(`/repos/${repoSlug(repo)}/uploads`, filter);
   }
 
   static hrefForUploadDetails(id: string, repo: Repo) {
