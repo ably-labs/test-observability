@@ -1,4 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repo } from 'src/repos/repo';
 import { UploadsFilterWhereClause } from 'src/utils/database/uploadsFilterWhereClause';
 import { Repository } from 'typeorm';
 import { TestCase } from './testCase.entity';
@@ -38,9 +39,15 @@ export class ReportsService {
     private testCasesRepository: Repository<TestCase>,
   ) {}
 
-  async createUploadsReport(filter: UploadsFilter): Promise<UploadsReport> {
+  async createUploadsReport(
+    repo: Repo,
+    filter: UploadsFilter,
+  ): Promise<UploadsReport> {
     const whereClause =
-      UploadsFilterWhereClause.createFromFilterUsingPositionalParams(filter);
+      UploadsFilterWhereClause.createFromFilterUsingPositionalParams(
+        repo,
+        filter,
+      );
 
     const sql = `SELECT
     uploads.id,
@@ -89,10 +96,14 @@ ORDER BY
   }
 
   async createFailuresOverviewReport(
+    repo: Repo,
     filter: UploadsFilter,
   ): Promise<FailuresOverviewReport> {
     const whereClause =
-      UploadsFilterWhereClause.createFromFilterUsingPositionalParams(filter);
+      UploadsFilterWhereClause.createFromFilterUsingPositionalParams(
+        repo,
+        filter,
+      );
 
     // I’ve not written SQL for ages and nothing this complicated for even longer, so let’s think this through…
 
@@ -199,7 +210,7 @@ ORDER BY
     }));
   }
 
-  async fetchSeenBranchNames(filter: UploadsFilter): Promise<string[]> {
+  async fetchSeenBranchNames(repo: Repo): Promise<string[]> {
     // We want github_head_ref if not null, else github_ref_name
     const sql = `SELECT DISTINCT
         COALESCE(uploads.github_head_ref, uploads.github_ref_name) AS branch
@@ -213,7 +224,7 @@ ORDER BY
     // See comment in subsequent method about learning how not to do this manually
     const results: Record<string, any>[] = await this.uploadsRepository.query(
       sql,
-      [filter.owner + '/' + filter.repo],
+      [repo.owner + '/' + repo.name],
     );
 
     /* The result is an array of objects like this:
@@ -227,10 +238,11 @@ ORDER BY
 
   async createTestCaseUploadsReport(
     testCaseId: string,
+    repo: Repo,
     filter: UploadsFilter,
   ): Promise<TestCaseUploadsReport> {
     const whereClause =
-      UploadsFilterWhereClause.createFromFilterUsingNamedParams(filter);
+      UploadsFilterWhereClause.createFromFilterUsingNamedParams(repo, filter);
 
     let queryBuilder = this.uploadsRepository.createQueryBuilder('uploads');
 

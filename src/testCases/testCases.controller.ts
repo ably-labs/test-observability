@@ -9,7 +9,7 @@ import { TestCaseViewModel } from './testCase.viewModel';
 import { TestCasesService } from './testCases.service';
 import { TestCase } from '../uploads/testCase.entity';
 
-@Controller('repos/:owner/:repo/test_cases')
+@Controller('repos/:owner/:name/test_cases')
 export class TestCasesController {
   constructor(
     private readonly testCasesService: TestCasesService,
@@ -19,7 +19,7 @@ export class TestCasesController {
   @Get(':id')
   async failureDetails(
     @Param('owner') owner: string,
-    @Param('repo') repo: string,
+    @Param('name') name: string,
     @Param('id') id: string,
     @Query('branches') branches: string[] | undefined,
     @Query('createdBefore') createdBefore: string | undefined,
@@ -28,15 +28,14 @@ export class TestCasesController {
     @Headers('Accept') accept: string | undefined,
     @Res() res: Response,
   ): Promise<void> {
+    const repo = ControllerUtils.createRepoFromQuery(owner, name);
     const filter = ControllerUtils.createFilterFromQuery(
-      owner,
-      repo,
       branches,
       createdBefore,
       createdAfter,
       failureMessage,
     );
-    const testCase = await this.testCasesService.find(id, filter);
+    const testCase = await this.testCasesService.find(id, repo, filter);
 
     if (accept === 'application/json') {
       res.header('Content-Type', 'application/json');
@@ -45,7 +44,7 @@ export class TestCasesController {
       delete strippedTestCase['failures'];
       res.json(testCase);
     } else {
-      const viewModel = new TestCaseViewModel(testCase, filter);
+      const viewModel = new TestCaseViewModel(repo, testCase, filter);
       res.render('testCases/details', { viewModel });
     }
   }
@@ -53,16 +52,15 @@ export class TestCasesController {
   @Get(':id/uploads')
   async uploads(
     @Param('owner') owner: string,
-    @Param('repo') repo: string,
+    @Param('name') name: string,
     @Param('id') id: string,
     @Query('branches') branches: string[] | undefined,
     @Query('createdBefore') createdBefore: string | undefined,
     @Query('createdAfter') createdAfter: string | undefined,
     @Query('failureMessage') failureMessage: string | undefined,
   ): Promise<TestCaseUploadsReport> {
+    const repo = ControllerUtils.createRepoFromQuery(owner, name);
     const filter = ControllerUtils.createFilterFromQuery(
-      owner,
-      repo,
       branches,
       createdBefore,
       createdAfter,
@@ -71,6 +69,7 @@ export class TestCasesController {
 
     const report = await this.reportsService.createTestCaseUploadsReport(
       id,
+      repo,
       filter,
     );
 

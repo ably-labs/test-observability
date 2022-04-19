@@ -1,3 +1,4 @@
+import { Repo } from 'src/repos/repo';
 import { UploadsFilter } from 'src/uploads/uploads.service';
 
 interface ClauseCreationOptions {
@@ -12,9 +13,11 @@ export class UploadsFilterWhereClause<Params> {
   ) {}
 
   static createFromFilterUsingPositionalParams(
+    repo: Repo,
     filter: UploadsFilter,
   ): UploadsFilterWhereClause<unknown[]> {
     return this.createFromFilter<unknown[]>(
+      repo,
       filter,
       [],
       (i) => `$${i}`,
@@ -26,9 +29,11 @@ export class UploadsFilterWhereClause<Params> {
   }
 
   static createFromFilterUsingNamedParams(
+    repo: Repo,
     filter: UploadsFilter,
   ): UploadsFilterWhereClause<Record<string, unknown>> {
     return this.createFromFilter<Record<string, unknown>>(
+      repo,
       filter,
       {},
       (i) => `:uploadsFilterParam${i}`,
@@ -40,6 +45,7 @@ export class UploadsFilterWhereClause<Params> {
   }
 
   private static createFromFilter<Params>(
+    repo: Repo,
     filter: UploadsFilter,
     initialParams: Params,
     createParamName: (index: number) => string,
@@ -68,7 +74,7 @@ export class UploadsFilterWhereClause<Params> {
     uploadsSubClauses.push(
       `uploads.github_repository = ${createParamName(parameterCount)}`,
     );
-    params = addParam(parameterCount, filter.owner + '/' + filter.repo, params);
+    params = addParam(parameterCount, repo.owner + '/' + repo.name, params);
 
     if (filter.createdBefore) {
       parameterCount += 1;

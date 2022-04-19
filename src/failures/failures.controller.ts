@@ -3,7 +3,7 @@ import { ControllerUtils } from 'src/utils/controller/utils';
 import { FailureViewModel } from './failure.viewModel';
 import { FailuresService } from './failures.service';
 
-@Controller('repos/:owner/:repo/failures')
+@Controller('repos/:owner/:name/failures')
 export class FailuresController {
   constructor(private readonly failuresService: FailuresService) {}
 
@@ -11,7 +11,7 @@ export class FailuresController {
   @Render('failures/details')
   async failureDetails(
     @Param('owner') owner: string,
-    @Param('repo') repo: string,
+    @Param('name') name: string,
     @Param('id') id: string,
     @Query('branches') branches: string[] | undefined,
     @Query('createdBefore') createdBefore: string | undefined,
@@ -20,15 +20,14 @@ export class FailuresController {
   ): Promise<{ viewModel: FailureViewModel }> {
     const failure = await this.failuresService.find(id);
 
+    const repo = ControllerUtils.createRepoFromQuery(owner, name);
     const filter = ControllerUtils.createFilterFromQuery(
-      owner,
-      repo,
       branches,
       createdBefore,
       createdAfter,
       failureMessage,
     );
 
-    return { viewModel: new FailureViewModel(failure, filter) };
+    return { viewModel: new FailureViewModel(repo, failure, filter) };
   }
 }

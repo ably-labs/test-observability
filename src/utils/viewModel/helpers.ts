@@ -1,4 +1,5 @@
 import pluralize from 'pluralize';
+import { Repo } from 'src/repos/repo';
 import { UploadsFilter } from 'src/uploads/uploads.service';
 import { FilterDescriptionViewModel } from '../view/filterDescription';
 import { ViewModelURLHelpers } from './urlHelpers';
@@ -22,23 +23,24 @@ export class ViewModelHelpers {
     return ` (${formattedPercentage})`;
   }
 
-  static viewModelForFilter(filter: UploadsFilter): FilterDescriptionViewModel {
+  static viewModelForFilter(
+    repo: Repo,
+    filter: UploadsFilter,
+  ): FilterDescriptionViewModel {
     return {
-      summary: this.summaryForFilter(filter),
+      summary: this.summaryForFilter(repo, filter),
       filterLink: {
         text: 'Filter results',
-        href: ViewModelURLHelpers.hrefForFilterOptions(filter),
+        href: ViewModelURLHelpers.hrefForFilterOptions(repo, filter),
       },
     };
   }
 
-  private static summaryForFilter(filter: UploadsFilter) {
+  private static summaryForFilter(repo: Repo, filter: UploadsFilter) {
     const uploadsComponents: string[] = [];
     const failuresComponents: string[] = [];
 
-    uploadsComponents.push(
-      `belonging to the ${filter.owner}/${filter.repo} repo`,
-    );
+    uploadsComponents.push(`belonging to the ${repo.owner}/${repo.name} repo`);
 
     if (filter.branches.length > 0) {
       uploadsComponents.push(

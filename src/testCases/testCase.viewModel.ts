@@ -1,4 +1,5 @@
 import pluralize from 'pluralize';
+import { Repo } from 'src/repos/repo';
 import { UploadsFilter } from 'src/uploads/uploads.service';
 import { DescriptionListViewModel } from 'src/utils/view/descriptionList';
 import { ViewModelHelpers } from 'src/utils/viewModel/helpers';
@@ -8,11 +9,15 @@ import { TableViewModel } from '../utils/view/table';
 
 export class TestCaseViewModel {
   constructor(
+    private readonly repo: Repo,
     private readonly testCase: TestCase,
     private readonly filter: UploadsFilter,
   ) {}
 
-  readonly filterDescription = ViewModelHelpers.viewModelForFilter(this.filter);
+  readonly filterDescription = ViewModelHelpers.viewModelForFilter(
+    this.repo,
+    this.filter,
+  );
 
   get heading(): string {
     return `Details of test case ${this.testCase.id}`;
@@ -44,14 +49,14 @@ export class TestCaseViewModel {
       {
         type: 'link',
         text: failure.id,
-        href: ViewModelURLHelpers.hrefForFailure(failure.id, this.filter),
+        href: ViewModelURLHelpers.hrefForFailure(failure.id, this.repo),
       },
       {
         type: 'link',
         text: failure.uploadId,
         href: ViewModelURLHelpers.hrefForUploadDetails(
           failure.uploadId,
-          this.filter,
+          this.repo,
         ),
       },
       { type: 'text', text: failure.upload.createdAt.toISOString() },

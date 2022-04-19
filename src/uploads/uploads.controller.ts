@@ -18,7 +18,7 @@ import { Response } from 'express';
 import { FilterViewModel } from './filter.viewModel';
 import { ControllerUtils } from 'src/utils/controller/utils';
 
-@Controller('repos/:owner/:repo/uploads')
+@Controller('repos/:owner/:name/uploads')
 export class UploadsController {
   constructor(
     private readonly uploadsService: UploadsService,
@@ -29,26 +29,26 @@ export class UploadsController {
   @Render('uploads/overview')
   async overview(
     @Param('owner') owner: string,
-    @Param('repo') repo: string,
+    @Param('name') name: string,
     @Query('branches') branches: string[] | undefined,
     @Query('createdBefore') createdBefore: string | undefined,
     @Query('createdAfter') createdAfter: string | undefined,
     @Query('failureMessage') failureMessage: string | undefined,
   ): Promise<{ viewModel: OverviewViewModel }> {
+    const repo = ControllerUtils.createRepoFromQuery(owner, name);
     const filter = ControllerUtils.createFilterFromQuery(
-      owner,
-      repo,
       branches,
       createdBefore,
       createdAfter,
       failureMessage,
     );
     const [uploadsReport, failuresOverviewReport] = await Promise.all([
-      this.reportsService.createUploadsReport(filter),
-      this.reportsService.createFailuresOverviewReport(filter),
+      this.reportsService.createUploadsReport(repo, filter),
+      this.reportsService.createFailuresOverviewReport(repo, filter),
     ]);
 
     const viewModel = new OverviewViewModel(
+      repo,
       uploadsReport,
       failuresOverviewReport,
       filter,
@@ -60,24 +60,23 @@ export class UploadsController {
   @Render('uploads/filter')
   async filter(
     @Param('owner') owner: string,
-    @Param('repo') repo: string,
+    @Param('name') name: string,
     @Query('branches') branches: string[] | undefined,
     @Query('createdBefore') createdBefore: string | undefined,
     @Query('createdAfter') createdAfter: string | undefined,
     @Query('failureMessage') failureMessage: string | undefined,
   ): Promise<{ viewModel: FilterViewModel }> {
+    const repo = ControllerUtils.createRepoFromQuery(owner, name);
     const filter = ControllerUtils.createFilterFromQuery(
-      owner,
-      repo,
       branches,
       createdBefore,
       createdAfter,
       failureMessage,
     );
     const seenBranchNames = await this.reportsService.fetchSeenBranchNames(
-      filter,
+      repo,
     );
-    const viewModel = new FilterViewModel(filter, seenBranchNames);
+    const viewModel = new FilterViewModel(repo, filter, seenBranchNames);
     return { viewModel };
   }
 
@@ -99,7 +98,7 @@ export class UploadsController {
   async details(
     @Param('id') id: string,
     @Param('owner') owner: string,
-    @Param('repo') repo: string,
+    @Param('name') name: string,
     @Query('branches') branches: string[] | undefined,
     @Query('createdBefore') createdBefore: string | undefined,
     @Query('createdAfter') createdAfter: string | undefined,
@@ -109,9 +108,8 @@ export class UploadsController {
   ): Promise<void> {
     const upload = await this.uploadsService.find(id);
 
+    const repo = ControllerUtils.createRepoFromQuery(owner, name);
     const filter = ControllerUtils.createFilterFromQuery(
-      owner,
-      repo,
       branches,
       createdBefore,
       createdAfter,
@@ -122,7 +120,7 @@ export class UploadsController {
       res.header('Content-Type', 'application/json');
       res.json(upload);
     } else {
-      const viewModel = new UploadDetailsViewModel(upload, filter);
+      const viewModel = new UploadDetailsViewModel(upload, repo, filter);
       res.render('uploads/details', { viewModel });
     }
   }

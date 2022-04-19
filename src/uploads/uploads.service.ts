@@ -7,8 +7,6 @@ import { TestCase } from './testCase.entity';
 import { Upload } from './upload.entity';
 
 export interface UploadsFilter {
-  owner: string;
-  repo: string;
   // empty implies no branches filter
   branches: string[];
   createdBefore: Date | null;

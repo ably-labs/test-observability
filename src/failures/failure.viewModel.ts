@@ -2,9 +2,11 @@ import { DescriptionListViewModel } from '../utils/view/descriptionList';
 import { Failure } from '../uploads/failure.entity';
 import { ViewModelURLHelpers } from 'src/utils/viewModel/urlHelpers';
 import { UploadsFilter } from 'src/uploads/uploads.service';
+import { Repo } from 'src/repos/repo';
 
 export class FailureViewModel {
   constructor(
+    private readonly repo: Repo,
     private readonly failure: Failure,
     private readonly filter: UploadsFilter,
   ) {}
@@ -20,7 +22,7 @@ export class FailureViewModel {
           text: this.failure.uploadId,
           href: ViewModelURLHelpers.hrefForUploadDetails(
             this.failure.uploadId,
-            this.filter,
+            this.repo,
           ),
         },
       },
@@ -31,6 +33,7 @@ export class FailureViewModel {
           text: this.failure.testCase.id,
           href: ViewModelURLHelpers.hrefForTestCase(
             this.failure.testCase.id,
+            this.repo,
             this.filter,
           ),
         },
