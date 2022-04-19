@@ -1,0 +1,51 @@
+{% extends "../base.njk" %}
+
+{% from '../utils/filterDescription.njk' import filterDescription %}
+{% from '../utils/table.njk' import table %}
+
+{% block pageBody %}
+    <h1>Comparison results</h1>
+
+    <p>You are comparing these <em>base uploads</em>:</p>
+
+    {{ filterDescription(viewModel.baseFilterDescription) }}
+
+    <p>with these <em>alternative uploads</em>:</p>
+
+    {{ filterDescription(viewModel.alternativeFilterDescription) }}
+
+    <h2>Overview</h2>
+
+    {{ table(viewModel.overviewTable) }}
+
+    <h2>Failures present in both sets of uploads</h2>
+
+    <p>{{viewModel.sortOrderDescriptionParagraph}}</p>
+
+    <p>
+    <a href="{{viewModel.switchSortOrderLink.href}}">{{viewModel.switchSortOrderLink.text}}</a>
+    </p>
+
+    {% if viewModel.commonFailuresTable.rows | length %}
+        {{ table(viewModel.commonFailuresTable) }}
+    {% else %}
+        <p>There are no failures present in both sets of uploads.</p>
+    {% endif %}
+
+    <h2>Failures introduced in alternative uploads</h2>
+    
+    {% if viewModel.failuresIntroducedInAlternativeTable.rows | length %}
+        {{ table(viewModel.failuresIntroducedInAlternativeTable) }}
+    {% else %}
+        <p>There are no failures introduced in the alternative uploads.</p>
+    {% endif %}
+
+    <h2>Failures absent in alternative uploads</h2>
+
+    {% if viewModel.failuresAbsentInAlternativeTable.rows | length %}
+        {{ table(viewModel.failuresAbsentInAlternativeTable) }}
+    {% else %}
+        <p>There are no failures absent in the alternative uploads.</p>
+    {% endif %}
+
+{% endblock %}

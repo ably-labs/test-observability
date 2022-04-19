@@ -17,7 +17,20 @@ export class OverviewViewModel {
   readonly filterDescription = ViewModelHelpers.viewModelForFilter(
     this.repo,
     this.filter,
+    {
+      displayOverviewLink: false,
+      displayFilterLink: true,
+      fullSentenceSummary: true,
+    },
   );
+
+  readonly compareLink = {
+    text: 'Compare with another set of uploads',
+    href: ViewModelURLHelpers.hrefForChooseFilterForComparison(
+      this.repo,
+      this.filter,
+    ),
+  };
 
   private readonly numberOfUploadsWithFailures = this.uploadsReport.filter(
     (upload) => upload.numberOfFailures > 0,
@@ -117,7 +130,7 @@ export class OverviewViewModel {
           ViewModelHelpers.formatPercentage(
             this.failuresOverviewReport
               .map((entry) => entry.occurrenceCount)
-              .slice(0, index + 1)
+              .slice(0, entry.position + 1)
               .reduce((a, b) => a + b, 0),
             this.totalFailures,
           ) ?? ''

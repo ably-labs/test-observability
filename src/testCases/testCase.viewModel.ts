@@ -17,6 +17,11 @@ export class TestCaseViewModel {
   readonly filterDescription = ViewModelHelpers.viewModelForFilter(
     this.repo,
     this.filter,
+    {
+      displayOverviewLink: true,
+      displayFilterLink: false,
+      fullSentenceSummary: true,
+    },
   );
 
   get heading(): string {

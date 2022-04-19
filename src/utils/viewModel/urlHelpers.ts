@@ -1,4 +1,5 @@
 import { Repo } from 'src/repos/repo';
+import { CommonFailuresSortOrder } from 'src/uploads/reports.service';
 import { UploadsFilter } from 'src/uploads/uploads.service';
 
 function repoSlug(repo: Repo): string {
@@ -63,12 +64,12 @@ export class ViewModelURLHelpers {
     return `/repos/${repoSlug(repo)}/failures/${encodeURIComponent(id)}`;
   }
 
-  static queryFragmentForFilter(
+  static queryComponentsForFilter(
     filter: UploadsFilter | null,
     { paramPrefix }: { paramPrefix: string | null } = { paramPrefix: null },
-  ): string | null {
-    if (!filter) {
-      return null;
+  ): { key: string; value: string }[] {
+    if (filter == null) {
+      return [];
     }
 
     let components: { key: string; value: string }[] = [];
@@ -102,6 +103,25 @@ export class ViewModelURLHelpers {
       }));
     }
 
+    return components;
+  }
+
+  static queryFragmentForFilter(
+    filter: UploadsFilter | null,
+    { paramPrefix }: { paramPrefix: string | null } = { paramPrefix: null },
+  ): string | null {
+    return this.queryForComponents(
+      this.queryComponentsForFilter(filter, { paramPrefix }),
+    );
+  }
+
+  static queryForComponents(
+    components: { key: string; value: string }[],
+  ): string | null {
+    if (components.length === 0) {
+      return null;
+    }
+
     return components
       .map(
         (component) =>
@@ -131,5 +151,40 @@ export class ViewModelURLHelpers {
       `/repos/${repoSlug(repo)}/uploads/filter`,
       filter,
     );
+  }
+
+  static hrefForChooseFilterForComparison(repo: Repo, filter: UploadsFilter) {
+    return this.hrefWithFilter(
+      `/repos/${repoSlug(repo)}/uploads/compare/filter`,
+      filter,
+    );
+  }
+
+  static hrefForCompare(
+    repo: Repo,
+    baseFilter: UploadsFilter | null,
+    alternativeFilter: UploadsFilter | null,
+    commonFailuresSortOrder: CommonFailuresSortOrder | null,
+  ) {
+    let components: { key: string; value: string }[] = [];
+
+    components = components.concat(
+      this.queryComponentsForFilter(baseFilter, { paramPrefix: 'base-' }),
+    );
+    components = components.concat(
+      this.queryComponentsForFilter(alternativeFilter, {
+        paramPrefix: 'alternative-',
+      }),
+    );
+    if (commonFailuresSortOrder !== null) {
+      components.push({
+        key: 'common-failures-order',
+        value: commonFailuresSortOrder,
+      });
+    }
+
+    return `/repos/${repoSlug(repo)}/uploads/compare?${this.queryForComponents(
+      components,
+    )}`;
   }
 }
