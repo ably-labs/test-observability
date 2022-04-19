@@ -2,6 +2,7 @@ import pluralize from 'pluralize';
 import { Repo } from 'src/repos/repo';
 import { UploadsFilter } from 'src/uploads/uploads.service';
 import { FilterDescriptionViewModel } from '../view/filterDescription';
+import { FilterFormViewModel } from '../view/filterForm';
 import { ViewModelURLHelpers } from './urlHelpers';
 
 export class ViewModelHelpers {
@@ -88,5 +89,36 @@ export class ViewModelHelpers {
     ]
       .filter((val) => val !== null)
       .join(', and ')}.`;
+  }
+
+  static formViewModelForFilter(
+    filter: UploadsFilter,
+    availableBranches: string[],
+    options: Pick<FilterFormViewModel, 'formAction' | 'submitButton'>,
+  ): FilterFormViewModel {
+    return {
+      ...options,
+      branchOptions: {
+        idPrefix: 'branches',
+        name: 'branches[]',
+        checkboxes: availableBranches.map((branch) => ({
+          label: branch,
+          value: branch,
+          checked: filter.branches.includes(branch) ?? false,
+        })),
+      },
+
+      createdBefore: {
+        value: filter.createdBefore?.toISOString() ?? '',
+      },
+
+      createdAfter: {
+        value: filter.createdAfter?.toISOString() ?? '',
+      },
+
+      failureMessage: {
+        value: filter.failureMessage ?? '',
+      },
+    };
   }
 }
