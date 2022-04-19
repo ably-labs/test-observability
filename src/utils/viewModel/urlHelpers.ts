@@ -18,7 +18,7 @@ export class ViewModelURLHelpers {
     return `/repos/${repoSlug(repo)}/uploads/${encodeURIComponent(id)}`;
   }
 
-  static hrefForTestCase(id: string, repo: Repo, filter: UploadsFilter) {
+  static hrefForTestCase(id: string, repo: Repo, filter: UploadsFilter | null) {
     return this.hrefWithFilter(
       `/repos/${repoSlug(repo)}/test_cases/${encodeURIComponent(id)}`,
       filter,
@@ -63,7 +63,11 @@ export class ViewModelURLHelpers {
     return `/repos/${repoSlug(repo)}/failures/${encodeURIComponent(id)}`;
   }
 
-  static queryFragmentForFilter(filter: UploadsFilter): string {
+  static queryFragmentForFilter(filter: UploadsFilter | null): string | null {
+    if (!filter) {
+      return null;
+    }
+
     const components: { key: string; value: string }[] = [];
 
     filter.branches.forEach((branchName) => {
@@ -98,7 +102,7 @@ export class ViewModelURLHelpers {
       .join('&');
   }
 
-  static hrefWithFilter(href: string, filter: UploadsFilter) {
+  static hrefWithFilter(href: string, filter: UploadsFilter | null) {
     const query = this.queryFragmentForFilter(filter);
 
     if (query) {
@@ -108,7 +112,7 @@ export class ViewModelURLHelpers {
     }
   }
 
-  static hrefForFilterOptions(repo: Repo, filter: UploadsFilter) {
+  static hrefForFilterOptions(repo: Repo, filter: UploadsFilter | null) {
     return this.hrefWithFilter(
       `/repos/${repoSlug(repo)}/uploads/filter`,
       filter,
