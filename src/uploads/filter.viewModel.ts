@@ -5,7 +5,7 @@ import { ViewModelURLHelpers } from 'src/utils/viewModel/urlHelpers';
 import { UploadsFilter } from './uploads.service';
 
 export class FilterViewModel {
-  readonly formAction = ViewModelURLHelpers.hrefForUploads(this.repo);
+  readonly formAction = ViewModelURLHelpers.hrefForUploads(this.repo, null);
 
   constructor(
     private readonly repo: Repo,
