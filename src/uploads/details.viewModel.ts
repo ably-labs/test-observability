@@ -1,4 +1,5 @@
 import pluralize from 'pluralize';
+import { Repo } from 'src/repos/repo';
 import { DescriptionListViewModel } from 'src/utils/view/descriptionList';
 import { ViewModelURLHelpers } from 'src/utils/viewModel/urlHelpers';
 import { TableViewModel } from '../utils/view/table';
@@ -8,6 +9,7 @@ import { UploadsFilter } from './uploads.service';
 export class UploadDetailsViewModel {
   constructor(
     private readonly upload: Upload,
+    private readonly repo: Repo,
     private readonly filter: UploadsFilter,
   ) {}
 
@@ -32,13 +34,14 @@ export class UploadDetailsViewModel {
       {
         type: 'link',
         text: failure.id,
-        href: ViewModelURLHelpers.hrefForFailure(failure.id, this.filter),
+        href: ViewModelURLHelpers.hrefForFailure(failure.id, this.repo),
       },
       {
         type: 'link',
         text: failure.testCase.id,
         href: ViewModelURLHelpers.hrefForTestCase(
           failure.testCase.id,
+          this.repo,
           this.filter,
         ),
       },
@@ -68,7 +71,7 @@ export class UploadDetailsViewModel {
           text: 'View report',
           href: ViewModelURLHelpers.hrefForJunitReportXml(
             this.upload.id,
-            this.filter,
+            this.repo,
           ),
         },
       },

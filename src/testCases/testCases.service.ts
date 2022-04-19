@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repo } from 'src/repos/repo';
 import { UploadsFilter } from 'src/uploads/uploads.service';
 import { UploadsFilterWhereClause } from 'src/utils/database/uploadsFilterWhereClause';
 import { Repository } from 'typeorm';
@@ -14,9 +15,16 @@ export class TestCasesService {
 
   // Includes failures, but not their uploads (except for createdAt).
   // TODO find a good way to represent this in the type system
-  async find(id: string, failuresFilter: UploadsFilter): Promise<TestCase> {
+  async find(
+    id: string,
+    repo: Repo,
+    failuresFilter: UploadsFilter,
+  ): Promise<TestCase> {
     const whereClause =
-      UploadsFilterWhereClause.createFromFilterUsingNamedParams(failuresFilter);
+      UploadsFilterWhereClause.createFromFilterUsingNamedParams(
+        repo,
+        failuresFilter,
+      );
 
     let queryBuilder = this.testCasesRepository
       .createQueryBuilder('testCase')

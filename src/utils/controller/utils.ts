@@ -1,9 +1,12 @@
+import { Repo } from 'src/repos/repo';
 import { UploadsFilter } from 'src/uploads/uploads.service';
 
 export class ControllerUtils {
+  static createRepoFromQuery(owner: string, name: string): Repo {
+    return { owner, name };
+  }
+
   static createFilterFromQuery(
-    owner: string,
-    repo: string,
     branches: string[] | undefined,
     createdBefore: string | undefined,
     createdAfter: string | undefined,
@@ -25,8 +28,6 @@ export class ControllerUtils {
     }
 
     return {
-      owner: owner,
-      repo: repo,
       branches: branches ?? [],
       createdBefore: createdBeforeDate,
       createdAfter: createdAfterDate,

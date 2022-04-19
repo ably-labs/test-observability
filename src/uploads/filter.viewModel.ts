@@ -1,12 +1,14 @@
+import { Repo } from 'src/repos/repo';
 import { CheckboxesViewModel } from 'src/utils/view/checkboxes';
 import { InputViewModel } from 'src/utils/view/input';
 import { ViewModelURLHelpers } from 'src/utils/viewModel/urlHelpers';
 import { UploadsFilter } from './uploads.service';
 
 export class FilterViewModel {
-  readonly formAction = ViewModelURLHelpers.hrefForUploads(this.filter);
+  readonly formAction = ViewModelURLHelpers.hrefForUploads(this.repo);
 
   constructor(
+    private readonly repo: Repo,
     private readonly filter: UploadsFilter,
     private readonly availableBranches: string[],
   ) {}

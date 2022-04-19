@@ -4,15 +4,20 @@ import { UploadsReport, FailuresOverviewReport } from './reports.service';
 import { UploadsFilter } from './uploads.service';
 import { ViewModelHelpers } from '../utils/viewModel/helpers';
 import { ViewModelURLHelpers } from 'src/utils/viewModel/urlHelpers';
+import { Repo } from 'src/repos/repo';
 
 export class OverviewViewModel {
   constructor(
+    private readonly repo: Repo,
     private readonly uploadsReport: UploadsReport,
     private readonly failuresOverviewReport: FailuresOverviewReport,
     private readonly filter: UploadsFilter,
   ) {}
 
-  readonly filterDescription = ViewModelHelpers.viewModelForFilter(this.filter);
+  readonly filterDescription = ViewModelHelpers.viewModelForFilter(
+    this.repo,
+    this.filter,
+  );
 
   private readonly numberOfUploadsWithFailures = this.uploadsReport.filter(
     (upload) => upload.numberOfFailures > 0,
@@ -35,7 +40,7 @@ export class OverviewViewModel {
           text: entry.upload.id,
           href: ViewModelURLHelpers.hrefForUploadDetails(
             entry.upload.id,
-            this.filter,
+            this.repo,
           ),
         },
         { type: 'text', text: entry.upload.createdAt.toISOString() },
@@ -90,6 +95,7 @@ export class OverviewViewModel {
         text: entry.testCase.id,
         href: ViewModelURLHelpers.hrefForTestCase(
           entry.testCase.id,
+          this.repo,
           this.filter,
         ),
       },
@@ -122,7 +128,7 @@ export class OverviewViewModel {
         text: entry.lastSeenIn.createdAt.toISOString(),
         href: ViewModelURLHelpers.hrefForUploadDetails(
           entry.lastSeenIn.id,
-          this.filter,
+          this.repo,
         ),
       },
     ]),
