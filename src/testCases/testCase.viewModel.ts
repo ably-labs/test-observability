@@ -49,7 +49,7 @@ export class TestCaseViewModel {
   )} of this test case.`;
 
   readonly occurrencesTable: TableViewModel = {
-    headers: ['Failure ID', 'Upload ID', 'Uploaded at', 'Message'],
+    headers: ['Failure ID', 'Upload ID', 'Uploaded at', 'Branch', 'Message'],
     rows: this.testCase.failures.map((failure) => [
       {
         type: 'link',
@@ -65,6 +65,10 @@ export class TestCaseViewModel {
         ),
       },
       { type: 'text', text: failure.upload.createdAt.toISOString() },
+      {
+        type: 'text',
+        text: ViewModelHelpers.branchNameForUpload(failure.upload),
+      },
       { type: 'text', text: failure.message },
     ]),
   };
