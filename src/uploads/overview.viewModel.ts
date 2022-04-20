@@ -59,7 +59,7 @@ export class OverviewViewModel {
         { type: 'text', text: entry.upload.createdAt.toISOString() },
         {
           type: 'text',
-          text: entry.upload.githubHeadRef ?? entry.upload.githubRefName ?? '',
+          text: ViewModelHelpers.branchNameForUpload(entry.upload),
         },
         { type: 'text', text: String(entry.upload.iteration) },
         { type: 'text', text: String(entry.numberOfTests) },
