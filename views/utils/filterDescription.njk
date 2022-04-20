@@ -1,9 +1,11 @@
 {% macro filterDescription(viewModel) %}
     <p>
-    <strong>{{viewModel.summary}}</strong>
+    <strong>{{viewModel.summary}}</strong>{% if viewModel.overviewLink %} (<a href="{{viewModel.overviewLink.href}}">{{viewModel.overviewLink.text}}</a>){% endif %}
     </p>
 
-    <p>
-    <a href="{{viewModel.filterLink.href}}">{{viewModel.filterLink.text}}</a>
-    </p>
+    {% if viewModel.filterLink %}
+        <p>
+        <a href="{{viewModel.filterLink.href}}">{{viewModel.filterLink.text}}</a>
+        </p>
+    {% endif %}
 {% endmacro %}

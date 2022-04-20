@@ -4,6 +4,7 @@ import { UploadsFilter } from 'src/uploads/uploads.service';
 import { FilterDescriptionViewModel } from '../view/filterDescription';
 import { FilterFormViewModel } from '../view/filterForm';
 import { ViewModelURLHelpers } from './urlHelpers';
+import { InputViewModel } from '../view/input';
 
 export class ViewModelHelpers {
   static formatPercentage(amount: number, total: number): string | null {
@@ -27,17 +28,34 @@ export class ViewModelHelpers {
   static viewModelForFilter(
     repo: Repo,
     filter: UploadsFilter,
+    options: {
+      displayOverviewLink: boolean;
+      displayFilterLink: boolean;
+      fullSentenceSummary: boolean;
+    },
   ): FilterDescriptionViewModel {
     return {
-      summary: this.summaryForFilter(repo, filter),
-      filterLink: {
-        text: 'Filter results',
-        href: ViewModelURLHelpers.hrefForFilterOptions(repo, filter),
-      },
+      summary: this.summaryForFilter(repo, filter, options),
+      overviewLink: options.displayOverviewLink
+        ? {
+            text: 'overview',
+            href: ViewModelURLHelpers.hrefForUploads(repo, filter),
+          }
+        : null,
+      filterLink: options.displayFilterLink
+        ? {
+            text: 'Filter results',
+            href: ViewModelURLHelpers.hrefForFilterOptions(repo, filter),
+          }
+        : null,
     };
   }
 
-  private static summaryForFilter(repo: Repo, filter: UploadsFilter) {
+  private static summaryForFilter(
+    repo: Repo,
+    filter: UploadsFilter,
+    options: { fullSentenceSummary: boolean },
+  ) {
     const uploadsComponents: string[] = [];
     const failuresComponents: string[] = [];
 
@@ -83,42 +101,55 @@ export class ViewModelHelpers {
         ? `test failures ${failuresComponents.join(' and ')}`
         : null;
 
-    return `You are currently only viewing ${[
-      uploadsDescription,
-      failuresDescription,
-    ]
+    return `${
+      options.fullSentenceSummary ? 'You are currently only viewing ' : ''
+    }${[uploadsDescription, failuresDescription]
       .filter((val) => val !== null)
-      .join(', and ')}.`;
+      .join(', and ')}${options.fullSentenceSummary ? '.' : ''}`;
   }
 
   static formViewModelForFilter(
-    filter: UploadsFilter,
+    filter: UploadsFilter | null,
     availableBranches: string[],
+    paramNamePrefix: string,
     options: Pick<FilterFormViewModel, 'formAction' | 'submitButton'>,
   ): FilterFormViewModel {
     return {
+      hiddenFields: [],
       ...options,
       branchOptions: {
         idPrefix: 'branches',
-        name: 'branches[]',
+        name: `${paramNamePrefix}branches[]`,
         checkboxes: availableBranches.map((branch) => ({
           label: branch,
           value: branch,
-          checked: filter.branches.includes(branch) ?? false,
+          checked: filter?.branches.includes(branch) ?? false,
         })),
       },
 
       createdBefore: {
-        value: filter.createdBefore?.toISOString() ?? '',
+        name: `${paramNamePrefix}createdBefore`,
+        value: filter?.createdBefore?.toISOString() ?? '',
       },
 
       createdAfter: {
-        value: filter.createdAfter?.toISOString() ?? '',
+        name: `${paramNamePrefix}createdAfter`,
+        value: filter?.createdAfter?.toISOString() ?? '',
       },
 
       failureMessage: {
-        value: filter.failureMessage ?? '',
+        name: `${paramNamePrefix}failureMessage`,
+        value: filter?.failureMessage ?? '',
       },
     };
+  }
+
+  static hiddenFieldsForFilter(
+    filter: UploadsFilter,
+    paramNamePrefix: string,
+  ): InputViewModel[] {
+    return ViewModelURLHelpers.queryComponentsForFilter(filter, {
+      paramPrefix: paramNamePrefix,
+    }).map((component) => ({ name: component.key, value: component.value }));
   }
 }

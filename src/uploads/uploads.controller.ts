@@ -11,12 +11,14 @@ import {
   Res,
 } from '@nestjs/common';
 import { UploadDetailsViewModel } from './details.viewModel';
-import { ReportsService } from './reports.service';
+import { CommonFailuresSortOrder, ReportsService } from './reports.service';
 import { OverviewViewModel } from './overview.viewModel';
 import { UploadsService } from './uploads.service';
 import { Response } from 'express';
 import { FilterViewModel } from './filter.viewModel';
 import { ControllerUtils } from 'src/utils/controller/utils';
+import { ChooseFilterForComparisonViewModel } from './chooseFilterForComparison.viewModel';
+import { CompareViewModel } from './compare.viewModel';
 
 @Controller('repos/:owner/:name/uploads')
 export class UploadsController {
@@ -92,6 +94,58 @@ export class UploadsController {
       `inline; filename="junit_report_${upload.id}.xml"`,
     );
     return upload.junitReportXml;
+  }
+
+  @Get('compare')
+  @Render('uploads/compare')
+  async compare(
+    @Param('owner') owner: string,
+    @Param('name') name: string,
+    @Query('base-branches') baseBranches: string[] | undefined,
+    @Query('base-createdBefore') baseCreatedBefore: string | undefined,
+    @Query('base-createdAfter') baseCreatedAfter: string | undefined,
+    @Query('base-failureMessage') baseFailureMessage: string | undefined,
+    @Query('alternative-branches') alternativeBranches: string[] | undefined,
+    @Query('alternative-createdBefore')
+    alternativeCreatedBefore: string | undefined,
+    @Query('alternative-createdAfter')
+    alternativeCreatedAfter: string | undefined,
+    @Query('alternative-failureMessage')
+    alternativeFailureMessage: string | undefined,
+    @Query('common-failures-order')
+    commonFailuresSortOrder: CommonFailuresSortOrder | undefined,
+  ): Promise<{ viewModel: CompareViewModel }> {
+    const repo = ControllerUtils.createRepoFromQuery(owner, name);
+
+    const baseFilter = ControllerUtils.createFilterFromQuery(
+      baseBranches,
+      baseCreatedBefore,
+      baseCreatedAfter,
+      baseFailureMessage,
+    );
+
+    const alternativeFilter = ControllerUtils.createFilterFromQuery(
+      alternativeBranches,
+      alternativeCreatedBefore,
+      alternativeCreatedAfter,
+      alternativeFailureMessage,
+    );
+
+    const comparisonReport = await this.reportsService.createComparisonReport(
+      repo,
+      baseFilter,
+      alternativeFilter,
+      commonFailuresSortOrder === undefined ? 'base' : commonFailuresSortOrder,
+    );
+
+    return {
+      viewModel: new CompareViewModel(
+        repo,
+        baseFilter,
+        alternativeFilter,
+        comparisonReport,
+      ),
+    };
   }
 
   @Get(':id')
@@ -173,5 +227,38 @@ export class UploadsController {
       iteration,
     });
     return { id: upload.id };
+  }
+
+  @Get('compare/filter')
+  @Render('uploads/chooseFilterForComparison')
+  async chooseFilterForComparison(
+    @Param('owner') owner: string,
+    @Param('name') name: string,
+    @Query('branches') branches: string[] | undefined,
+    @Query('createdBefore') createdBefore: string | undefined,
+    @Query('createdAfter') createdAfter: string | undefined,
+    @Query('failureMessage') failureMessage: string | undefined,
+  ): Promise<{
+    viewModel: ChooseFilterForComparisonViewModel;
+  }> {
+    const repo = ControllerUtils.createRepoFromQuery(owner, name);
+    const filter = ControllerUtils.createFilterFromQuery(
+      branches,
+      createdBefore,
+      createdAfter,
+      failureMessage,
+    );
+
+    const seenBranchNames = await this.reportsService.fetchSeenBranchNames(
+      repo,
+    );
+
+    const viewModel = new ChooseFilterForComparisonViewModel(
+      repo,
+      filter,
+      seenBranchNames,
+    );
+
+    return { viewModel };
   }
 }

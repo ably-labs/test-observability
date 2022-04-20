@@ -18,6 +18,7 @@ type UploadsReportEntry = {
 export type UploadsReport = UploadsReportEntry[];
 
 interface FailuresOverviewReportEntry {
+  position: number; // 0-based
   testCase: Pick<TestCase, 'id' | 'testClassName' | 'testCaseName'>;
   occurrenceCount: number;
   lastSeenIn: Pick<Upload, 'id' | 'createdAt'>;
@@ -31,6 +32,34 @@ interface TestCaseUploadsReportEntry {
 }
 
 export type TestCaseUploadsReport = TestCaseUploadsReportEntry[];
+
+interface ComparisonReportRawReports {
+  uploadsReport: UploadsReport;
+  failuresOverviewReport: FailuresOverviewReport;
+}
+
+type CommonFailuresReportEntry = Pick<
+  FailuresOverviewReportEntry,
+  'testCase'
+> & {
+  base: Omit<FailuresOverviewReportEntry, 'testCase'>;
+  alternative: Omit<FailuresOverviewReportEntry, 'testCase'>;
+};
+
+export type CommonFailuresSortOrder = 'base' | 'alternative';
+
+export interface CommonFailuresReport {
+  order: CommonFailuresSortOrder;
+  entries: CommonFailuresReportEntry[];
+}
+
+export interface ComparisonReport {
+  base: ComparisonReportRawReports;
+  alternative: ComparisonReportRawReports;
+  commonFailures: CommonFailuresReport;
+  failuresIntroducedInAlternative: FailuresOverviewReport;
+  failuresAbsentInAlternative: FailuresOverviewReport;
+}
 
 export class ReportsService {
   constructor(
@@ -196,7 +225,8 @@ ORDER BY
       whereClause.params,
     );
 
-    return results.map((row) => ({
+    return results.map((row, index) => ({
+      position: index,
       testCase: {
         id: row['test_case_id'],
         testClassName: row['test_class_name'],
@@ -297,5 +327,107 @@ ORDER BY
     );
 
     return results.map((row) => row['github_repository']);
+  }
+
+  // A\B, preserves order of A
+  private static difference(
+    a: FailuresOverviewReport,
+    b: FailuresOverviewReport,
+  ): FailuresOverviewReport {
+    return a.filter(
+      (entry) =>
+        !b.some((otherEntry) => otherEntry.testCase.id === entry.testCase.id),
+    );
+  }
+
+  private static commonFailures(
+    base: FailuresOverviewReport,
+    alternative: FailuresOverviewReport,
+    order: CommonFailuresSortOrder,
+  ): CommonFailuresReport {
+    const unsortedWithPossiblyUndefinedAlternative = base.map((entry) => ({
+      base: entry,
+      alternative: alternative.find(
+        (otherEntry) => otherEntry.testCase.id === entry.testCase.id,
+      ),
+    }));
+
+    // a "user-defined type guard"
+    // https://www.benmvp.com/blog/filtering-undefined-elements-from-array-typescript/
+    const isDefined = (entry: {
+      base: FailuresOverviewReportEntry;
+      alternative: FailuresOverviewReportEntry | undefined;
+    }): entry is {
+      base: FailuresOverviewReportEntry;
+      alternative: FailuresOverviewReportEntry;
+    } => {
+      return !!entry.alternative;
+    };
+
+    const unsorted = unsortedWithPossiblyUndefinedAlternative.filter(isDefined);
+
+    const sorted = unsorted.sort((entry1, entry2) => {
+      switch (order) {
+        case 'base':
+          return entry1.base.position - entry2.base.position;
+        case 'alternative':
+          return entry1.alternative.position - entry2.alternative.position;
+      }
+    });
+
+    return {
+      entries: sorted.map((entry) => ({
+        ...entry,
+        testCase: entry.base.testCase,
+      })),
+      order,
+    };
+  }
+
+  async createComparisonReport(
+    repo: Repo,
+    baseFilter: UploadsFilter,
+    alternativeFilter: UploadsFilter,
+    commonFailuresSortOrder: CommonFailuresSortOrder,
+  ): Promise<ComparisonReport> {
+    const [
+      baseUploadsReport,
+      baseFailuresOverviewReport,
+      alternativeUploadsReport,
+      alternativeFailuresOverviewReport,
+    ] = await Promise.all([
+      this.createUploadsReport(repo, baseFilter),
+      this.createFailuresOverviewReport(repo, baseFilter),
+      this.createUploadsReport(repo, alternativeFilter),
+      this.createFailuresOverviewReport(repo, alternativeFilter),
+    ]);
+
+    const commonFailures = ReportsService.commonFailures(
+      baseFailuresOverviewReport,
+      alternativeFailuresOverviewReport,
+      commonFailuresSortOrder,
+    );
+    const failuresIntroducedInAlternative = ReportsService.difference(
+      alternativeFailuresOverviewReport,
+      baseFailuresOverviewReport,
+    );
+    const failuresAbsentInAlternative = ReportsService.difference(
+      baseFailuresOverviewReport,
+      alternativeFailuresOverviewReport,
+    );
+
+    return {
+      base: {
+        uploadsReport: baseUploadsReport,
+        failuresOverviewReport: baseFailuresOverviewReport,
+      },
+      alternative: {
+        uploadsReport: alternativeUploadsReport,
+        failuresOverviewReport: alternativeFailuresOverviewReport,
+      },
+      commonFailures,
+      failuresIntroducedInAlternative,
+      failuresAbsentInAlternative,
+    };
   }
 }
