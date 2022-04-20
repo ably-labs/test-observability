@@ -13,7 +13,7 @@ export class TestCasesService {
     private testCasesRepository: Repository<TestCase>,
   ) {}
 
-  // Includes failures, but not their uploads (except for createdAt).
+  // Includes failures, but not their uploads (except for createdAt, githubHeadRef, and githubRefName).
   // TODO find a good way to represent this in the type system
   async find(
     id: string,
@@ -31,7 +31,11 @@ export class TestCasesService {
       .where('testCase.id = :id', { id })
       .leftJoinAndSelect('testCase.failures', 'failures')
       .innerJoin('failures.upload', 'uploads')
-      .addSelect('uploads.createdAt')
+      .addSelect([
+        'uploads.createdAt',
+        'uploads.githubHeadRef',
+        'uploads.githubRefName',
+      ])
       .orderBy('uploads.createdAt', 'ASC');
 
     const fragment = whereClause.uploadsAndFailuresClause({

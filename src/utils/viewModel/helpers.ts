@@ -5,6 +5,7 @@ import { FilterDescriptionViewModel } from '../view/filterDescription';
 import { FilterFormViewModel } from '../view/filterForm';
 import { ViewModelURLHelpers } from './urlHelpers';
 import { InputViewModel } from '../view/input';
+import { Upload } from 'src/uploads/upload.entity';
 
 export class ViewModelHelpers {
   static formatPercentage(amount: number, total: number): string | null {
@@ -151,5 +152,11 @@ export class ViewModelHelpers {
     return ViewModelURLHelpers.queryComponentsForFilter(filter, {
       paramPrefix: paramNamePrefix,
     }).map((component) => ({ name: component.key, value: component.value }));
+  }
+
+  static branchNameForUpload(
+    upload: Pick<Upload, 'githubHeadRef' | 'githubRefName'>,
+  ) {
+    return upload.githubHeadRef ?? upload.githubRefName ?? '';
   }
 }
