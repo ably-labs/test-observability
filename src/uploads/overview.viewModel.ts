@@ -88,8 +88,8 @@ export class OverviewViewModel {
       'Cumulative percentage of total failures',
       'Last seen',
     ],
-    rows: this.failuresOverviewReport.map((entry, index) => [
-      { type: 'text', text: String(index + 1) },
+    rows: this.failuresOverviewReport.map((entry) => [
+      { type: 'text', text: String(entry.position + 1) },
       {
         type: 'link',
         text: entry.testCase.id,

@@ -18,6 +18,7 @@ type UploadsReportEntry = {
 export type UploadsReport = UploadsReportEntry[];
 
 interface FailuresOverviewReportEntry {
+  position: number; // 0-based
   testCase: Pick<TestCase, 'id' | 'testClassName' | 'testCaseName'>;
   occurrenceCount: number;
   lastSeenIn: Pick<Upload, 'id' | 'createdAt'>;
@@ -196,7 +197,8 @@ ORDER BY
       whereClause.params,
     );
 
-    return results.map((row) => ({
+    return results.map((row, index) => ({
+      position: index,
       testCase: {
         id: row['test_case_id'],
         testClassName: row['test_class_name'],
