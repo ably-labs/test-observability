@@ -1,5 +1,12 @@
 import { Controller, Headers, Body, Post } from '@nestjs/common';
-import { UploadsService } from './uploads.service';
+import { UploadCreationCrashReport, UploadsService } from './uploads.service';
+
+interface CrashReportDTO {
+  filename: string;
+  test_class_name: string;
+  test_case_name: string;
+  data: string; // base64
+}
 
 @Controller('uploads')
 export class PostUploadsController {
@@ -22,6 +29,8 @@ export class PostUploadsController {
     @Body('github_head_ref') githubHeadRef: string | null,
     @Body('github_job') githubJob: string,
     @Body('iteration') iteration: number,
+    @Body('crash_reports')
+    crashReportDtos: CrashReportDTO[] | undefined /* backwards compatibility */,
   ): Promise<{ id: string }> {
     if (contentType !== 'application/json') {
       throw new Error('Expected Content-Type of body to be application/json.');
@@ -37,21 +46,34 @@ export class PostUploadsController {
       'utf8',
     );
 
-    const upload = await this.uploadsService.create({
-      junitReportXml,
-      githubRepository,
-      githubSha,
-      githubRefName,
-      githubRetentionDays,
-      githubAction,
-      githubRunNumber,
-      githubRunAttempt,
-      githubRunId,
-      githubBaseRef,
-      githubHeadRef,
-      githubJob,
-      iteration,
-    });
+    let crashReports: UploadCreationCrashReport[] | null = null;
+    if (crashReportDtos !== undefined) {
+      crashReports = crashReportDtos.map((dto) => ({
+        filename: dto.filename,
+        testCaseName: dto.test_case_name,
+        testClassName: dto.test_class_name,
+        data: Buffer.from(dto.data, 'base64'),
+      }));
+    }
+
+    const upload = await this.uploadsService.create(
+      {
+        junitReportXml,
+        githubRepository,
+        githubSha,
+        githubRefName,
+        githubRetentionDays,
+        githubAction,
+        githubRunNumber,
+        githubRunAttempt,
+        githubRunId,
+        githubBaseRef,
+        githubHeadRef,
+        githubJob,
+        iteration,
+      },
+      crashReports,
+    );
     return { id: upload.id };
   }
 }

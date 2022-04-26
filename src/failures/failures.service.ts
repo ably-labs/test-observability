@@ -9,11 +9,11 @@ export class FailuresService {
     @InjectRepository(Failure) private failuresRepository: Repository<Failure>,
   ) {}
 
-  // Includes the test case.
+  // Includes the test case and crash reports.
   async find(id: string): Promise<Failure> {
     const results = await this.failuresRepository.find({
       where: { id },
-      relations: ['testCase'],
+      relations: ['testCase', 'crashReports'],
     });
     return results[0];
   }

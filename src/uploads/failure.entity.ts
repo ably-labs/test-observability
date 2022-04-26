@@ -4,10 +4,12 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { TestCase } from './testCase.entity';
 import { Upload } from './upload.entity';
+import { CrashReport } from './crashReport.entity';
 
 @Entity({ name: 'failures', orderBy: { order: 'ASC' } })
 @Index(['id', 'order'], { unique: true })
@@ -35,4 +37,7 @@ export class Failure {
 
   @Column()
   message!: string;
+
+  @OneToMany(() => CrashReport, (crashReport) => crashReport.failure)
+  crashReports!: CrashReport[];
 }

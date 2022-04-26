@@ -8,6 +8,7 @@ import { TestCase } from './uploads/testCase.entity';
 import { TestCasesModule } from './testCases/testCases.module';
 import { FailuresModule } from './failures/failures.module';
 import { ReposModule } from './repos/repos.module';
+import { CrashReport } from './uploads/crashReport.entity';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { ReposModule } from './repos/repos.module';
         : false, // This is a bit messy; I want SSL for Heroku and not locally
       migrations: ['dist/migration/*.js'],
       migrationsRun: true,
-      entities: [Upload, Failure, TestCase],
+      entities: [Upload, Failure, TestCase, CrashReport],
       // TODO use Nest logger
       logging: 'all',
       logger: 'advanced-console',

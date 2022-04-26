@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CrashReport } from './crashReport.entity';
 import { Failure } from './failure.entity';
 import { JUnitReport } from './junitReport';
 import { TestCase } from './testCase.entity';
@@ -15,6 +16,13 @@ export interface UploadsFilter {
   failureMessage: string | null;
 }
 
+export interface UploadCreationCrashReport {
+  filename: string;
+  testClassName: string;
+  testCaseName: string;
+  data: Buffer;
+}
+
 @Injectable()
 export class UploadsService {
   constructor(
@@ -22,6 +30,8 @@ export class UploadsService {
     @InjectRepository(TestCase)
     private testCasesRepository: Repository<TestCase>,
     @InjectRepository(Failure) private failuresRepository: Repository<Failure>,
+    @InjectRepository(CrashReport)
+    private crashReportsRepository: Repository<CrashReport>,
   ) {}
 
   findAll(): Promise<Upload[]> {
@@ -39,6 +49,7 @@ export class UploadsService {
 
   async create(
     params: Omit<Upload, 'id' | 'createdAt' | 'failures' | 'numberOfTests'>,
+    crashReports: UploadCreationCrashReport[] | null,
   ): Promise<Upload> {
     const upload = new Upload();
     Object.assign(upload, params);
@@ -49,7 +60,11 @@ export class UploadsService {
     // I'm saving this so that I have an ID for the failures?
     await this.uploadsRepository.save(upload);
 
-    await this.populateFailuresForUpload(upload, junitReport);
+    const failures = await this.populateFailuresForUpload(upload, junitReport);
+
+    if (crashReports !== null) {
+      await this.populateCrashReportsForFailures(failures, crashReports);
+    }
 
     return upload;
   }
@@ -57,7 +72,8 @@ export class UploadsService {
   async populateFailuresForUpload(
     upload: Upload,
     junitReport: JUnitReport,
-  ): Promise<void> {
+  ): Promise<Failure[]> {
+    const failures: Failure[] = [];
     // TODO how to avoid n+1 here
     // TODO a transaction – no idea how to do that, since you apparently need to directly use a connection / entity manager
     // TODO race issues for the find-or-create?
@@ -85,6 +101,41 @@ export class UploadsService {
       failure.message = junitReportFailure.message;
 
       await this.failuresRepository.save(failure);
+
+      failures.push(failure);
+    }
+
+    return failures;
+  }
+
+  async populateCrashReportsForFailures(
+    failures: Failure[],
+    crashReports: UploadCreationCrashReport[],
+  ): Promise<void> {
+    // TODO same concerns as in populateFailuresForUpload
+    for (let i = 0; i < crashReports.length; i++) {
+      const uploadCreationCrashReport = crashReports[i];
+
+      const failure = failures.find(
+        (failure) =>
+          failure.testCase.testClassName ==
+            uploadCreationCrashReport.testClassName &&
+          failure.testCase.testCaseName ==
+            uploadCreationCrashReport.testCaseName,
+      );
+
+      if (!failure) {
+        throw new Error(
+          `No failure found with testClassName ${uploadCreationCrashReport.testClassName} and testCaseName ${uploadCreationCrashReport.testCaseName}`,
+        );
+      }
+
+      const crashReport = new CrashReport();
+      crashReport.filename = uploadCreationCrashReport.filename;
+      crashReport.data = uploadCreationCrashReport.data.toString('utf8');
+      crashReport.failure = failure;
+
+      await this.crashReportsRepository.save(crashReport);
     }
   }
 
