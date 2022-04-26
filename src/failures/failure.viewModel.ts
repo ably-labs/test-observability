@@ -4,6 +4,11 @@ import { ViewModelURLHelpers } from 'src/utils/viewModel/urlHelpers';
 import { UploadsFilter } from 'src/uploads/uploads.service';
 import { Repo } from 'src/repos/repo';
 
+interface CrashReportViewModel {
+  title: string;
+  report: string;
+}
+
 export class FailureViewModel {
   constructor(
     private readonly repo: Repo,
@@ -44,4 +49,11 @@ export class FailureViewModel {
       },
     ],
   };
+
+  readonly crashReports: CrashReportViewModel[] = this.failure.crashReports.map(
+    (crashReport) => ({
+      title: crashReport.filename,
+      report: crashReport.data,
+    }),
+  );
 }

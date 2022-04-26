@@ -6,4 +6,16 @@
     <h1>{{ viewModel.title }}</h1>
 
     {{ descriptionList(viewModel.metadataDescriptionList) }}
+
+    <h2>Crash reports</h2>
+
+    {% if viewModel.crashReports | length %}
+        {% for crashReport in viewModel.crashReports %}
+            <h3>{{ crashReport.title }}</h3>
+
+            <pre>{{crashReport.report}}</pre>
+        {% endfor %}
+    {% else %}
+        <p>There are no crash reports for this failure.</p>
+    {% endif %}
 {% endblock %}
