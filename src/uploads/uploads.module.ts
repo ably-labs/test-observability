@@ -7,9 +7,10 @@ import { Upload } from './upload.entity';
 import { Failure } from './failure.entity';
 import { TestCase } from './testCase.entity';
 import { ReportsService } from './reports.service';
+import { CrashReport } from './crashReport.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Upload, Failure, TestCase])],
+  imports: [TypeOrmModule.forFeature([Upload, Failure, TestCase, CrashReport])],
   controllers: [UploadsController, PostUploadsController],
   providers: [UploadsService, ReportsService],
 })
