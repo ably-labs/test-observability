@@ -17,6 +17,8 @@ export class FailuresController {
     @Query('createdBefore') createdBefore: string | undefined,
     @Query('createdAfter') createdAfter: string | undefined,
     @Query('failureMessage') failureMessage: string | undefined,
+    @Query('onlyFailuresWithCrashReports')
+    onlyFailuresWithCrashReports: string | undefined,
   ): Promise<{ viewModel: FailureViewModel }> {
     const failure = await this.failuresService.find(id);
 
@@ -26,6 +28,7 @@ export class FailuresController {
       createdBefore,
       createdAfter,
       failureMessage,
+      onlyFailuresWithCrashReports,
     );
 
     return { viewModel: new FailureViewModel(repo, failure, filter) };

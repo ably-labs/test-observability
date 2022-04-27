@@ -13,4 +13,5 @@ export interface FilterFormViewModel {
   createdBefore: InputViewModel;
   createdAfter: InputViewModel;
   failureMessage: InputViewModel;
+  onlyFailuresWithCrashReports: CheckboxesViewModel;
 }

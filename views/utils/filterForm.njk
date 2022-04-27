@@ -31,6 +31,10 @@
             <input type="text" id="failureMessage" name="{{viewModel.failureMessage.name}}" value="{{viewModel.failureMessage.value}}">
         </fieldset>
 
+        <h2>Crash reports</h2>
+
+        {{ checkboxes(viewModel.onlyFailuresWithCrashReports) }}
+
         <button type="submit">{{viewModel.submitButton.text}}</button>
     </form>
 {% endmacro %}
