@@ -96,6 +96,10 @@ export class ViewModelURLHelpers {
       components.push({ key: 'failureMessage', value: filter.failureMessage });
     }
 
+    if (filter.onlyFailuresWithCrashReports) {
+      components.push({ key: 'onlyFailuresWithCrashReports', value: 'true' });
+    }
+
     if (paramPrefix !== null) {
       components = components.map((component) => ({
         ...component,

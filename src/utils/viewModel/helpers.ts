@@ -89,6 +89,10 @@ export class ViewModelHelpers {
       );
     }
 
+    if (filter.onlyFailuresWithCrashReports) {
+      failuresComponents.push('that have a crash report attached');
+    }
+
     if (uploadsComponents.length == 0 && failuresComponents.length == 0) {
       return '';
     }
@@ -141,6 +145,18 @@ export class ViewModelHelpers {
       failureMessage: {
         name: `${paramNamePrefix}failureMessage`,
         value: filter?.failureMessage ?? '',
+      },
+
+      onlyFailuresWithCrashReports: {
+        idPrefix: 'onlyFailuresWithCrashReports',
+        name: 'onlyFailuresWithCrashReports',
+        checkboxes: [
+          {
+            label: 'Only show test failures that have a crash report attached',
+            value: 'true',
+            checked: filter?.onlyFailuresWithCrashReports ?? false,
+          },
+        ],
       },
     };
   }

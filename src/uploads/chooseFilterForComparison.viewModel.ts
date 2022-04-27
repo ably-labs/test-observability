@@ -17,6 +17,7 @@ export class ChooseFilterForComparisonViewModel {
         createdBefore: null,
         createdAfter: null,
         failureMessage: null,
+        onlyFailuresWithCrashReports: false,
       },
       this.availableBranches,
       'alternative-',

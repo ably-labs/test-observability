@@ -14,6 +14,7 @@ export interface UploadsFilter {
   createdAfter: Date | null;
   // case-insensitive contains
   failureMessage: string | null;
+  onlyFailuresWithCrashReports: boolean;
 }
 
 export interface UploadCreationCrashReport {

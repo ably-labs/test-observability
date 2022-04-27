@@ -36,6 +36,8 @@ export class UploadsController {
     @Query('createdBefore') createdBefore: string | undefined,
     @Query('createdAfter') createdAfter: string | undefined,
     @Query('failureMessage') failureMessage: string | undefined,
+    @Query('onlyFailuresWithCrashReports')
+    onlyFailuresWithCrashReports: string | undefined,
   ): Promise<{ viewModel: OverviewViewModel }> {
     const repo = ControllerUtils.createRepoFromQuery(owner, name);
     const filter = ControllerUtils.createFilterFromQuery(
@@ -43,6 +45,7 @@ export class UploadsController {
       createdBefore,
       createdAfter,
       failureMessage,
+      onlyFailuresWithCrashReports,
     );
     const [uploadsReport, failuresOverviewReport] = await Promise.all([
       this.reportsService.createUploadsReport(repo, filter),
@@ -67,6 +70,8 @@ export class UploadsController {
     @Query('createdBefore') createdBefore: string | undefined,
     @Query('createdAfter') createdAfter: string | undefined,
     @Query('failureMessage') failureMessage: string | undefined,
+    @Query('onlyFailuresWithCrashReports')
+    onlyFailuresWithCrashReports: string | undefined,
   ): Promise<{ viewModel: FilterViewModel }> {
     const repo = ControllerUtils.createRepoFromQuery(owner, name);
     const filter = ControllerUtils.createFilterFromQuery(
@@ -74,6 +79,7 @@ export class UploadsController {
       createdBefore,
       createdAfter,
       failureMessage,
+      onlyFailuresWithCrashReports,
     );
     const seenBranchNames = await this.reportsService.fetchSeenBranchNames(
       repo,
@@ -105,6 +111,8 @@ export class UploadsController {
     @Query('base-createdBefore') baseCreatedBefore: string | undefined,
     @Query('base-createdAfter') baseCreatedAfter: string | undefined,
     @Query('base-failureMessage') baseFailureMessage: string | undefined,
+    @Query('base-onlyFailuresWithCrashReports')
+    baseOnlyFailuresWithCrashReports: string | undefined,
     @Query('alternative-branches') alternativeBranches: string[] | undefined,
     @Query('alternative-createdBefore')
     alternativeCreatedBefore: string | undefined,
@@ -112,6 +120,8 @@ export class UploadsController {
     alternativeCreatedAfter: string | undefined,
     @Query('alternative-failureMessage')
     alternativeFailureMessage: string | undefined,
+    @Query('alternative-onlyFailuresWithCrashReports')
+    alternativeOnlyFailuresWithCrashReports: string | undefined,
     @Query('common-failures-order')
     commonFailuresSortOrder: CommonFailuresSortOrder | undefined,
   ): Promise<{ viewModel: CompareViewModel }> {
@@ -122,6 +132,7 @@ export class UploadsController {
       baseCreatedBefore,
       baseCreatedAfter,
       baseFailureMessage,
+      baseOnlyFailuresWithCrashReports,
     );
 
     const alternativeFilter = ControllerUtils.createFilterFromQuery(
@@ -129,6 +140,7 @@ export class UploadsController {
       alternativeCreatedBefore,
       alternativeCreatedAfter,
       alternativeFailureMessage,
+      alternativeOnlyFailuresWithCrashReports,
     );
 
     const comparisonReport = await this.reportsService.createComparisonReport(
@@ -157,6 +169,8 @@ export class UploadsController {
     @Query('createdBefore') createdBefore: string | undefined,
     @Query('createdAfter') createdAfter: string | undefined,
     @Query('failureMessage') failureMessage: string | undefined,
+    @Query('onlyFailuresWithCrashReports')
+    onlyFailuresWithCrashReports: string | undefined,
     @Headers('Accept') accept: string | undefined,
     @Res() res: Response,
   ): Promise<void> {
@@ -168,6 +182,7 @@ export class UploadsController {
       createdBefore,
       createdAfter,
       failureMessage,
+      onlyFailuresWithCrashReports,
     );
 
     if (accept === 'application/json') {
@@ -188,6 +203,8 @@ export class UploadsController {
     @Query('createdBefore') createdBefore: string | undefined,
     @Query('createdAfter') createdAfter: string | undefined,
     @Query('failureMessage') failureMessage: string | undefined,
+    @Query('onlyFailuresWithCrashReports')
+    onlyFailuresWithCrashReports: string | undefined,
   ): Promise<{
     viewModel: ChooseFilterForComparisonViewModel;
   }> {
@@ -197,6 +214,7 @@ export class UploadsController {
       createdBefore,
       createdAfter,
       failureMessage,
+      onlyFailuresWithCrashReports,
     );
 
     const seenBranchNames = await this.reportsService.fetchSeenBranchNames(

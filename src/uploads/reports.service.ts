@@ -89,7 +89,12 @@ export class ReportsService {
 FROM
     uploads
     LEFT JOIN failures ON (uploads.id = failures.upload_id)
-${whereClause.uploadsAndFailuresClause({ includeWhereKeyword: true }) ?? ''}
+    LEFT JOIN crash_reports ON (failures.id = crash_reports.failure_id)
+${
+  whereClause.uploadsAndFailuresAndCrashReportsClause({
+    includeWhereKeyword: true,
+  }) ?? ''
+}
 GROUP BY
     uploads.id
 ORDER BY
@@ -178,8 +183,9 @@ ORDER BY
               test_cases
               JOIN failures ON test_cases.id = failures.test_case_id
               JOIN uploads ON failures.upload_id = uploads.id
+              LEFT JOIN crash_reports on crash_reports.failure_id = failures.id
           ${
-            whereClause.uploadsAndFailuresClause({
+            whereClause.uploadsAndFailuresAndCrashReportsClause({
               includeWhereKeyword: true,
             }) ?? ''
           }
@@ -193,8 +199,9 @@ ORDER BY
                   test_cases
                   JOIN failures ON test_cases.id = failures.test_case_id
                   JOIN uploads ON failures.upload_id = uploads.id
+                  LEFT JOIN crash_reports on crash_reports.failure_id = failures.id
               ${
-                whereClause.uploadsAndFailuresClause({
+                whereClause.uploadsAndFailuresAndCrashReportsClause({
                   includeWhereKeyword: true,
                 }) ?? ''
               }
@@ -291,9 +298,10 @@ ORDER BY
         'failures.test_case_id = :testCaseId',
         { testCaseId },
       )
-      .addSelect('failures.id');
+      .addSelect('failures.id')
+      .leftJoin('failures.crashReports', 'crash_reports');
 
-    const fragment = whereClause.uploadsAndFailuresClause({
+    const fragment = whereClause.uploadsAndFailuresAndCrashReportsClause({
       includeWhereKeyword: false,
     });
     if (fragment !== null) {

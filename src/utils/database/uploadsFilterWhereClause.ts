@@ -8,7 +8,7 @@ interface ClauseCreationOptions {
 export class UploadsFilterWhereClause<Params> {
   constructor(
     private readonly uploadsSubClauses: string[],
-    private readonly failuresSubClauses: string[],
+    private readonly failuresAndCrashReportsSubClauses: string[],
     readonly params: Params,
   ) {}
 
@@ -52,7 +52,7 @@ export class UploadsFilterWhereClause<Params> {
     addParam: (index: number, value: unknown, currentParams: Params) => Params,
   ) {
     const uploadsSubClauses: string[] = [];
-    const failuresSubClauses: string[] = [];
+    const failuresAndCrashReportsSubClauses: string[] = [];
     let params = initialParams;
 
     let parameterCount = 0;
@@ -95,7 +95,7 @@ export class UploadsFilterWhereClause<Params> {
     if (filter.failureMessage) {
       parameterCount += 1;
       // The ::text cast is to avoid an error from Postgres that I don’t really understand: "could not determine data type of parameter $1"
-      failuresSubClauses.push(
+      failuresAndCrashReportsSubClauses.push(
         `failures.message ILIKE CONCAT('%', ${createParamName(
           parameterCount,
         )}::text, '%')`,
@@ -106,7 +106,17 @@ export class UploadsFilterWhereClause<Params> {
       params = addParam(parameterCount, escapedFailureMessage, params);
     }
 
-    return new this(uploadsSubClauses, failuresSubClauses, params);
+    if (filter.onlyFailuresWithCrashReports) {
+      parameterCount += 1;
+
+      failuresAndCrashReportsSubClauses.push('crash_reports.id IS NOT NULL');
+    }
+
+    return new this(
+      uploadsSubClauses,
+      failuresAndCrashReportsSubClauses,
+      params,
+    );
   }
 
   private createClause(
@@ -126,9 +136,11 @@ export class UploadsFilterWhereClause<Params> {
     return this.createClause(this.uploadsSubClauses, options);
   }
 
-  uploadsAndFailuresClause(options: ClauseCreationOptions): string | null {
+  uploadsAndFailuresAndCrashReportsClause(
+    options: ClauseCreationOptions,
+  ): string | null {
     return this.createClause(
-      this.uploadsSubClauses.concat(this.failuresSubClauses),
+      this.uploadsSubClauses.concat(this.failuresAndCrashReportsSubClauses),
       options,
     );
   }

@@ -25,6 +25,8 @@ export class TestCasesController {
     @Query('createdBefore') createdBefore: string | undefined,
     @Query('createdAfter') createdAfter: string | undefined,
     @Query('failureMessage') failureMessage: string | undefined,
+    @Query('onlyFailuresWithCrashReports')
+    onlyFailuresWithCrashReports: string | undefined,
     @Headers('Accept') accept: string | undefined,
     @Res() res: Response,
   ): Promise<void> {
@@ -34,6 +36,7 @@ export class TestCasesController {
       createdBefore,
       createdAfter,
       failureMessage,
+      onlyFailuresWithCrashReports,
     );
     const testCase = await this.testCasesService.find(id, repo, filter);
 
@@ -58,6 +61,8 @@ export class TestCasesController {
     @Query('createdBefore') createdBefore: string | undefined,
     @Query('createdAfter') createdAfter: string | undefined,
     @Query('failureMessage') failureMessage: string | undefined,
+    @Query('onlyFailuresWithCrashReports')
+    onlyFailuresWithCrashReports: string | undefined,
   ): Promise<TestCaseUploadsReport> {
     const repo = ControllerUtils.createRepoFromQuery(owner, name);
     const filter = ControllerUtils.createFilterFromQuery(
@@ -65,6 +70,7 @@ export class TestCasesController {
       createdBefore,
       createdAfter,
       failureMessage,
+      onlyFailuresWithCrashReports,
     );
 
     const report = await this.reportsService.createTestCaseUploadsReport(

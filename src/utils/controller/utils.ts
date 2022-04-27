@@ -11,6 +11,7 @@ export class ControllerUtils {
     createdBefore: string | undefined,
     createdAfter: string | undefined,
     failureMessage: string | undefined,
+    onlyFailuresWithCrashReports: string | undefined,
   ): UploadsFilter {
     let createdBeforeDate: Date | null = null;
     if (createdBefore !== undefined && createdBefore.length > 0) {
@@ -27,11 +28,17 @@ export class ControllerUtils {
       failureMessageOrNull = failureMessage;
     }
 
+    let onlyFailuresWithCrashReportsBoolean = false;
+    if (onlyFailuresWithCrashReports == 'true') {
+      onlyFailuresWithCrashReportsBoolean = true;
+    }
+
     return {
       branches: branches ?? [],
       createdBefore: createdBeforeDate,
       createdAfter: createdAfterDate,
       failureMessage: failureMessageOrNull,
+      onlyFailuresWithCrashReports: onlyFailuresWithCrashReportsBoolean,
     };
   }
 }
