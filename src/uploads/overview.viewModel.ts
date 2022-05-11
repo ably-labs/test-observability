@@ -97,6 +97,7 @@ export class OverviewViewModel {
       'Test class',
       'Test case',
       'Number of occurrences',
+      'Percentage of uploads',
       'Percentage of total failures',
       'Cumulative percentage of total failures',
       'Last seen',
@@ -115,6 +116,14 @@ export class OverviewViewModel {
       { type: 'text', text: entry.testCase.testClassName },
       { type: 'text', text: entry.testCase.testCaseName },
       { type: 'text', text: String(entry.occurrenceCount) },
+      {
+        type: 'text',
+        text:
+          ViewModelHelpers.formatPercentage(
+            entry.occurrenceCount,
+            this.uploadsReport.length,
+          ) ?? '',
+      },
       {
         type: 'text',
         text: `${
