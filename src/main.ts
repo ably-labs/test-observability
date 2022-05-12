@@ -4,6 +4,7 @@ import { json } from 'body-parser';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { configure } from 'nunjucks';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   if (!process.env.TEST_OBSERVABILITY_AUTH_KEY) {
@@ -32,6 +33,8 @@ async function bootstrap() {
   );
 
   app.setViewEngine('njk');
+
+  app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(parseInt(process.env.PORT ?? '3000', 10));
 }
