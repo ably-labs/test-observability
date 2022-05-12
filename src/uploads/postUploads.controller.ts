@@ -1,4 +1,11 @@
-import { Controller, Headers, Body, Post } from '@nestjs/common';
+import {
+  Controller,
+  Headers,
+  Body,
+  Post,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import {
   IsArray,
   IsNumber,
@@ -87,12 +94,16 @@ export class PostUploadsController {
     @Body() body: CreateUploadDTO,
   ): Promise<{ id: string }> {
     if (contentType !== 'application/json') {
-      throw new Error('Expected Content-Type of body to be application/json.');
+      throw new HttpException(
+        'Expected Content-Type of body to be application/json.',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     if (authKey !== process.env.TEST_OBSERVABILITY_AUTH_KEY) {
-      throw new Error(
+      throw new HttpException(
         'Incorrect value provided in Test-Observability-Auth-Key header.',
+        HttpStatus.BAD_REQUEST,
       );
     }
 
