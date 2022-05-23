@@ -60,7 +60,10 @@ It’s ready to be deployed to [Heroku](https://www.heroku.com). You just need t
 
 ## How to upload results to it
 
-See the [`local_dev_upload_test_results.sh`](https://github.com/ably/ably-cocoa/blob/main/Scripts/local_dev_upload_test_results.sh) and [`upload_test_results.sh`](https://github.com/ably/ably-cocoa/blob/main/Scripts/upload_test_results.sh) scripts in https://github.com/ably/ably-cocoa for an example.
+A couple of examples:
+
+- [test-observability-action](https://github.com/ably-labs/test-observability-action/) is a GitHub action for uploading a JUnit report to an instance of this server
+- the [`local_dev_upload_test_results.sh`](https://github.com/ably/ably-cocoa/blob/main/Scripts/local_dev_upload_test_results.sh) and [`upload_test_results.sh`](https://github.com/ably/ably-cocoa/blob/main/Scripts/upload_test_results.sh) scripts in [ably-cocoa](https://github.com/ably/ably-cocoa)
 
 ## Development tips
 
