@@ -8,7 +8,7 @@
   },
   "keywords": [],
   "author": "Ably",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "description": "Publish test results to ably test observability",
   "dependencies": {
     "@actions/core": "^1.6.0",

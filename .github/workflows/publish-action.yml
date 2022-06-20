@@ -4,7 +4,7 @@ name: Publish Action
 on: workflow_dispatch
 
 jobs:
-  publish-go:
+  publish-action:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
