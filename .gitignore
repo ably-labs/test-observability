@@ -1,6 +1,8 @@
 # compiled output
 /dist
 /node_modules
+/action/dist
+/action/node_modules
 
 # Logs
 logs
