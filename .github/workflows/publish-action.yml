@@ -26,7 +26,7 @@ jobs:
           git config --global user.name "Ably Test Observability Action [bot]"
           git config --global user.email "ably-test-observability-action[bot]@noreply.ably.com"
           git clone git@github.com:ably/test-observability-action
-          cp -a dist test-observability-action
+          cp -a dist action.yml test-observability-action
           git -C test-observability-action add dist
           if git diff --cached --exit-code; then
             git -C test-observability-action commit -m "Update generated code"
