@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint .",
-    "package": "ncc build index.js -o dist --source-map --license licenses.txt"
+    "lint": "eslint . --ext .ts",
+    "package": "tsc && ncc build index.js -o dist --source-map --license licenses.txt"
   },
   "keywords": [],
   "author": "Ably",

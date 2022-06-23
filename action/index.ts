@@ -1,9 +1,9 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
-const glob = require('@actions/glob');
-const fs = require('fs');
-const path = require('path');
-const {got} = require('got');
+import * as core from '@actions/core';
+import * as github from '@actions/github';
+import * as glob from '@actions/glob';
+import fs from 'fs';
+import path from 'path';
+import {got} from 'got';
 
 // eslint-disable-next-line require-jsdoc
 async function main() {
@@ -33,10 +33,10 @@ async function main() {
       github_job: github.context.job,
       github_retention_days: process.env.GITHUB_RETENTION_DAYS,
       iteration: i + 1,
+      github_base_ref: process.env.GITHUB_BASE_REF || null,
+      github_head_ref: process.env.GITHUB_HEAD_REF || null,
     };
 
-    body.github_base_ref = process.env.GITHUB_BASE_REF || null;
-    body.github_head_ref = process.env.GITHUB_HEAD_REF || null;
 
     const headers = {
       'Test-Observability-Auth-Key': auth,
@@ -51,8 +51,7 @@ async function main() {
       console.log('Uploading test results failed:');
       const msg = 'Server returned code ' + response.statusCode;
       console.log(msg);
-      const body = await response.json();
-      console.log(body);
+      console.log(response.body);
       core.setFailed(msg);
       return;
     }
