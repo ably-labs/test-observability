@@ -10,15 +10,16 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Generate JS distribution file
+        working-directory: action
         run: |
           npm install
           npm run package
 
       - name: Publish
+        working-directory: action
         env:
           SSH_PRIVATE_KEY: ${{ secrets.ABLY_TEST_OBSERVABILITY_SSH_KEY }}
         run: |
-          cd action
           echo "$SSH_PRIVATE_KEY" > ssh-private-key.pem
           chmod 400 ssh-private-key.pem
           eval $(ssh-agent -s)
