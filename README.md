@@ -62,6 +62,10 @@ It’s ready to be deployed to [Heroku](https://www.heroku.com). You just need t
 
 See the [`local_dev_upload_test_results.sh`](https://github.com/ably/ably-cocoa/blob/main/Scripts/local_dev_upload_test_results.sh) and [`upload_test_results.sh`](https://github.com/ably/ably-cocoa/blob/main/Scripts/upload_test_results.sh) scripts in https://github.com/ably/ably-cocoa for an example.
 
+### Action
+
+Results can also be uploaded using the [upload action](https://github.com/ably/test-observability-action).
+
 ## Development tips
 
 ### How to generate a migration

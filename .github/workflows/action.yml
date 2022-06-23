@@ -1,0 +1,26 @@
+name: Test Action
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  action:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Package
+        run: |
+          cd action
+          npm install
+          npm run package
+
+      - name: Test action
+        uses: ./action/
+        with:
+          server-url: 'https://test-observability.herokuapp.com'
+          server-auth: ${{ secrets.TEST_OBSERVABILITY_SERVER_AUTH }}
+          path: 'action/junit'
