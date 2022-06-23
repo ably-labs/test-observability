@@ -3,7 +3,7 @@ const github = require('@actions/github');
 const glob = require('@actions/glob');
 const fs = require('fs');
 const path = require('path');
-const request = require('request');
+const {got} = require('got');
 
 // eslint-disable-next-line require-jsdoc
 async function main() {
@@ -16,7 +16,7 @@ async function main() {
 
   url.pathname = path.join(url.pathname, 'uploads');
 
-  results.forEach((file, i) => {
+  for (const [i, file] of results.entries()) {
     const data = fs.readFileSync(file);
     const b64 = Buffer.from(data).toString('base64');
     const owner = github.context.repo.owner;
@@ -42,32 +42,23 @@ async function main() {
       'Test-Observability-Auth-Key': auth,
     };
 
-    const options = {
-      method: 'post',
-      url: url.toString(),
+    const response = await got.post(url.toString(), {
       headers,
       json: body,
-    };
-
-    request(options, function(err, response, body) {
-      if (err) {
-        console.log('Uploading test results failed:');
-        console.log(err);
-        console.log(body);
-        core.setFailed(err.toString());
-        return;
-      }
-      if (response.statusCode < 200 || response.statusCode > 299) {
-        console.log('Uploading test results failed:');
-        const msg = 'Server returned code ' + response.statusCode;
-        console.log(msg);
-        console.log(body);
-        core.setFailed(msg);
-        return;
-      }
-      console.log('Test results uploaded successfully');
     });
-  });
+
+    if (response.statusCode < 200 || response.statusCode > 299) {
+      console.log('Uploading test results failed:');
+      const msg = 'Server returned code ' + response.statusCode;
+      console.log(msg);
+      const body = await response.json();
+      console.log(body);
+      core.setFailed(msg);
+      return;
+    }
+
+    console.log('Test results uploaded successfully');
+  };
 }
 
 main().catch((err) => {
