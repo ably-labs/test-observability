@@ -1,16 +1,18 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
-const glob = require('glob');
+const glob = require('@actions/glob');
 const fs = require('fs');
 const path = require('path');
 const request = require('request');
 
-try {
+// eslint-disable-next-line require-jsdoc
+async function main() {
   const auth = core.getInput('server-auth', {required: true});
   const url = new URL(core.getInput('server-url', {required: true}));
   const reportPath = core.getInput('path', {required: true});
 
-  const results = glob.sync(path.join(reportPath, '*.junit'));
+  const globber = await glob.create(path.join(reportPath, '*.junit'));
+  const results = await globber.glob();
 
   url.pathname = path.join(url.pathname, 'uploads');
 
@@ -66,6 +68,8 @@ try {
       console.log('Test results uploaded successfully');
     });
   });
-} catch (error) {
-  core.setFailed(error.toString());
 }
+
+main().catch((err) => {
+  core.setFailed(err.message);
+});
