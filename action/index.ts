@@ -16,6 +16,13 @@ async function main() {
 
   url.pathname = path.join(url.pathname, 'uploads');
 
+  if (results.length === 0) {
+    throw new Error(
+        `Could not find any files matching '*.junit' in ${reportPath}`,
+    );
+  }
+
+
   for (const [i, file] of results.entries()) {
     const data = fs.readFileSync(file);
     const b64 = Buffer.from(data).toString('base64');
