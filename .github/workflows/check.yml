@@ -5,7 +5,7 @@ on:
       - main
 
 jobs:
-  lint-server:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -17,21 +17,6 @@ jobs:
       - run: npm ci
       - run: npm run lint:check
       - run: npm run format:check
-  lint-action:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js version specified in .nvmrc
-        uses: actions/setup-node@v2
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
-      - run: |
-          cd action
-          npm ci
-      - run: |
-          cd action
-          npm run lint
 
   build:
     runs-on: ubuntu-latest
