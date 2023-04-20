@@ -3,7 +3,6 @@
 /node_modules
 /action/dist
 /action/node_modules
-index.js
 
 # Logs
 logs
