@@ -5,7 +5,8 @@ import { UploadsFilter } from 'src/uploads/uploads.service';
 import { Repo } from 'src/repos/repo';
 
 interface CrashReportViewModel {
-  title: string;
+  id: string;
+  metadataDescriptionList: DescriptionListViewModel;
   report: string;
 }
 
@@ -52,7 +53,19 @@ export class FailureViewModel {
 
   readonly crashReports: CrashReportViewModel[] = this.failure.crashReports.map(
     (crashReport) => ({
-      title: crashReport.filename,
+      id: crashReport.id,
+      originalFilename: crashReport.filename,
+      metadataDescriptionList: {
+        items: [
+          {
+            term: 'Original filename',
+            description: {
+              type: 'text',
+              text: crashReport.filename,
+            },
+          },
+        ],
+      },
       report: crashReport.data,
     }),
   );
