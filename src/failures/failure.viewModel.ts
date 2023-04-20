@@ -8,6 +8,7 @@ interface CrashReportViewModel {
   id: string;
   metadataDescriptionList: DescriptionListViewModel;
   report: string;
+  downloadHref: string;
 }
 
 export class FailureViewModel {
@@ -67,6 +68,10 @@ export class FailureViewModel {
         ],
       },
       report: crashReport.data,
+      downloadHref: ViewModelURLHelpers.hrefForCrashReportDownload(
+        crashReport.id,
+        this.repo,
+      ),
     }),
   );
 }

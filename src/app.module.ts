@@ -9,6 +9,7 @@ import { TestCasesModule } from './testCases/testCases.module';
 import { FailuresModule } from './failures/failures.module';
 import { ReposModule } from './repos/repos.module';
 import { CrashReport } from './uploads/crashReport.entity';
+import { CrashReportsModule } from './crashReports/crashReports.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { CrashReport } from './uploads/crashReport.entity';
     TestCasesModule,
     FailuresModule,
     ReposModule,
+    CrashReportsModule,
   ],
   controllers: [AppController],
 })

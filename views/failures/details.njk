@@ -11,7 +11,7 @@
 
     {% if viewModel.crashReports | length %}
         {% for crashReport in viewModel.crashReports %}
-            <h3>{{ crashReport.id }}</h3>
+            <h3>{{ crashReport.id }} (<a href="{{ crashReport.downloadHref }}">Download</a>)</h3>
 
             {{ descriptionList(crashReport.metadataDescriptionList) }}
 
