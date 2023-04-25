@@ -64,6 +64,12 @@ export class ViewModelURLHelpers {
     return `/repos/${repoSlug(repo)}/failures/${encodeURIComponent(id)}`;
   }
 
+  static hrefForCrashReportDownload(id: string, repo: Repo) {
+    return `/repos/${repoSlug(repo)}/crash_reports/${encodeURIComponent(
+      id,
+    )}/download`;
+  }
+
   static queryComponentsForFilter(
     filter: UploadsFilter | null,
     { paramPrefix }: { paramPrefix: string | null } = { paramPrefix: null },
