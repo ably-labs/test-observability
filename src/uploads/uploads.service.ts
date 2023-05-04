@@ -24,6 +24,8 @@ export interface UploadCreationCrashReport {
   data: Buffer;
 }
 
+export class CrashReportWithoutFailureError extends Error {}
+
 @Injectable()
 export class UploadsService {
   constructor(
@@ -126,8 +128,8 @@ export class UploadsService {
       );
 
       if (!failure) {
-        throw new Error(
-          `No failure found with testClassName ${uploadCreationCrashReport.testClassName} and testCaseName ${uploadCreationCrashReport.testCaseName}`,
+        throw new CrashReportWithoutFailureError(
+          `There is no test failure corresponding to the crash report with testClassName ${uploadCreationCrashReport.testClassName} and testCaseName ${uploadCreationCrashReport.testCaseName}`,
         );
       }
 

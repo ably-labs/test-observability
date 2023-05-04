@@ -14,7 +14,11 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { UploadCreationCrashReport, UploadsService } from './uploads.service';
+import {
+  CrashReportWithoutFailureError,
+  UploadCreationCrashReport,
+  UploadsService,
+} from './uploads.service';
 
 class CreateUploadDTO {
   @IsString()
@@ -122,24 +126,32 @@ export class PostUploadsController {
       }));
     }
 
-    const upload = await this.uploadsService.create(
-      {
-        junitReportXml,
-        githubRepository: body.github_repository,
-        githubSha: body.github_sha,
-        githubRefName: body.github_ref_name,
-        githubRetentionDays: body.github_retention_days,
-        githubAction: body.github_action,
-        githubRunNumber: body.github_run_number,
-        githubRunAttempt: body.github_run_attempt,
-        githubRunId: body.github_run_id,
-        githubBaseRef: body.github_base_ref,
-        githubHeadRef: body.github_head_ref,
-        githubJob: body.github_job,
-        iteration: body.iteration,
-      },
-      crashReports,
-    );
-    return { id: upload.id };
+    try {
+      const upload = await this.uploadsService.create(
+        {
+          junitReportXml,
+          githubRepository: body.github_repository,
+          githubSha: body.github_sha,
+          githubRefName: body.github_ref_name,
+          githubRetentionDays: body.github_retention_days,
+          githubAction: body.github_action,
+          githubRunNumber: body.github_run_number,
+          githubRunAttempt: body.github_run_attempt,
+          githubRunId: body.github_run_id,
+          githubBaseRef: body.github_base_ref,
+          githubHeadRef: body.github_head_ref,
+          githubJob: body.github_job,
+          iteration: body.iteration,
+        },
+        crashReports,
+      );
+
+      return { id: upload.id };
+    } catch (err) {
+      if (err instanceof CrashReportWithoutFailureError) {
+        throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+      }
+      throw err;
+    }
   }
 }
