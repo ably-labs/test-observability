@@ -1,9 +1,7 @@
 import {
   Controller,
   Get,
-  Post,
   Headers,
-  Body,
   Render,
   Param,
   Query,
