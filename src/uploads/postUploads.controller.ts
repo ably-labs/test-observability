@@ -62,6 +62,14 @@ class CreateUploadDTO {
   @IsString()
   github_job!: string;
 
+  @ValidateIf((_, value: unknown) => value !== null && value !== undefined)
+  @IsString()
+  github_job_api_url!: string | null | undefined; /* backwards compatibility */
+
+  @ValidateIf((_, value: unknown) => value !== null && value !== undefined)
+  @IsString()
+  github_job_html_url!: string | null | undefined; /* backwards compatibility */
+
   @IsNumber()
   @Type(() => Number)
   iteration!: number;
@@ -141,6 +149,8 @@ export class PostUploadsController {
           githubBaseRef: body.github_base_ref,
           githubHeadRef: body.github_head_ref,
           githubJob: body.github_job,
+          githubJobApiUrl: body.github_job_api_url ?? null,
+          githubJobHtmlUrl: body.github_job_html_url ?? null,
           iteration: body.iteration,
         },
         crashReports,

@@ -64,6 +64,14 @@ export class Upload {
   @Column({ name: 'github_job' })
   githubJob!: string;
 
+  // The URL of a GitHub REST API endpoint describing the job that performed this upload.
+  @Column({ name: 'github_job_api_url', nullable: true, type: 'varchar' })
+  githubJobApiUrl!: string | null;
+
+  // The URL of a GitHub web page describing the job that performed this upload.
+  @Column({ name: 'github_job_html_url', nullable: true, type: 'varchar' })
+  githubJobHtmlUrl!: string | null;
+
   // If running the tests multiple times inside a single CI job, this is the number of the current iteration.
   @Column()
   iteration!: number;
