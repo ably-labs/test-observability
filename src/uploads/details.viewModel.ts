@@ -163,6 +163,17 @@ export class UploadDetailsViewModel {
         description: { type: 'text', text: this.upload.githubJob },
       },
       {
+        term: 'GitHub job URL',
+        description:
+          this.upload.githubJobHtmlUrl == null
+            ? { type: 'text', text: 'Not known' }
+            : {
+                type: 'link',
+                text: this.upload.githubJobHtmlUrl,
+                href: this.upload.githubJobHtmlUrl,
+              },
+      },
+      {
         term: 'Loop iteration',
         description: { type: 'text', text: this.upload.iteration.toString() },
       },
