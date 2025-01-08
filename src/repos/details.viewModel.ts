@@ -7,4 +7,5 @@ export class RepoDetailsViewModel {
 
   readonly title = ViewModelHelpers.descriptionForRepo(this.repo);
   readonly uploadsHref = URLHelpers.hrefForUploads(this.repo, null);
+  readonly failuresHref = URLHelpers.hrefForFailures(this.repo, null);
 }

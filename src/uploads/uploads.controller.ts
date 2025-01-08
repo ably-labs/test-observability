@@ -10,13 +10,14 @@ import {
 } from '@nestjs/common';
 import { UploadDetailsViewModel } from './details.viewModel';
 import { CommonFailuresSortOrder, ReportsService } from './reports.service';
-import { OverviewViewModel } from './overview.viewModel';
+import { UploadsIndexViewModel } from './index.viewModel';
 import { UploadsService } from './uploads.service';
 import { Response } from 'express';
 import { FilterViewModel } from './filter.viewModel';
 import { ControllerUtils } from 'src/utils/controller/utils';
 import { ChooseFilterForComparisonViewModel } from './chooseFilterForComparison.viewModel';
 import { CompareViewModel } from './compare.viewModel';
+import { URLHelpers } from 'src/utils/urlHelpers';
 
 @Controller('repos/:owner/:name/uploads')
 export class UploadsController {
@@ -26,8 +27,8 @@ export class UploadsController {
   ) {}
 
   @Get()
-  @Render('uploads/overview')
-  async overview(
+  @Render('uploads/index')
+  async index(
     @Param('owner') owner: string,
     @Param('name') name: string,
     @Query('branches') branches: string[] | undefined,
@@ -36,7 +37,7 @@ export class UploadsController {
     @Query('failureMessage') failureMessage: string | undefined,
     @Query('onlyFailuresWithCrashReports')
     onlyFailuresWithCrashReports: string | undefined,
-  ): Promise<{ viewModel: OverviewViewModel }> {
+  ): Promise<{ viewModel: UploadsIndexViewModel }> {
     const repo = ControllerUtils.createRepoFromQuery(owner, name);
     const filter = ControllerUtils.createFilterFromQuery(
       branches,
@@ -45,17 +46,12 @@ export class UploadsController {
       failureMessage,
       onlyFailuresWithCrashReports,
     );
-    const [uploadsReport, failuresOverviewReport] = await Promise.all([
-      this.reportsService.createUploadsReport(repo, filter),
-      this.reportsService.createFailuresOverviewReport(repo, filter),
-    ]);
-
-    const viewModel = new OverviewViewModel(
+    const uploadsReport = await this.reportsService.createUploadsReport(
       repo,
-      uploadsReport,
-      failuresOverviewReport,
       filter,
     );
+
+    const viewModel = new UploadsIndexViewModel(repo, uploadsReport, filter);
     return { viewModel };
   }
 
@@ -82,7 +78,11 @@ export class UploadsController {
     const seenBranchNames = await this.reportsService.fetchSeenBranchNames(
       repo,
     );
-    const viewModel = new FilterViewModel(repo, filter, seenBranchNames);
+    const viewModel = new FilterViewModel(
+      filter,
+      seenBranchNames,
+      URLHelpers.hrefForUploads(repo, null),
+    );
     return { viewModel };
   }
 

@@ -24,7 +24,7 @@ export class CompareViewModel {
     this.baseFilter,
     {
       displayOverviewLink: true,
-      displayFilterLink: false,
+      filterHref: null,
       fullSentenceSummary: false,
     },
   );
@@ -33,7 +33,7 @@ export class CompareViewModel {
     this.alternativeFilter,
     {
       displayOverviewLink: true,
-      displayFilterLink: false,
+      filterHref: null,
       fullSentenceSummary: false,
     },
   );

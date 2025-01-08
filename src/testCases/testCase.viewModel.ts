@@ -19,7 +19,7 @@ export class TestCaseViewModel {
     this.filter,
     {
       displayOverviewLink: true,
-      displayFilterLink: false,
+      filterHref: null,
       fullSentenceSummary: true,
     },
   );

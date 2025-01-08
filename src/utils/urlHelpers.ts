@@ -15,6 +15,10 @@ export class URLHelpers {
     return this.hrefWithFilter(`/repos/${repoSlug(repo)}/uploads`, filter);
   }
 
+  static hrefForFailures(repo: Repo, filter: UploadsFilter | null) {
+    return this.hrefWithFilter(`/repos/${repoSlug(repo)}/failures`, filter);
+  }
+
   static hrefForUploadDetails(id: string, repo: Repo) {
     return `/repos/${repoSlug(repo)}/uploads/${encodeURIComponent(id)}`;
   }
@@ -156,9 +160,19 @@ export class URLHelpers {
     }
   }
 
-  static hrefForFilterOptions(repo: Repo, filter: UploadsFilter | null) {
+  static hrefForUploadsFilterOptions(repo: Repo, filter: UploadsFilter | null) {
     return this.hrefWithFilter(
       `/repos/${repoSlug(repo)}/uploads/filter`,
+      filter,
+    );
+  }
+
+  static hrefForFailuresFilterOptions(
+    repo: Repo,
+    filter: UploadsFilter | null,
+  ) {
+    return this.hrefWithFilter(
+      `/repos/${repoSlug(repo)}/failures/filter`,
       filter,
     );
   }

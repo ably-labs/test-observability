@@ -31,7 +31,7 @@ export class ViewModelHelpers {
     filter: UploadsFilter,
     options: {
       displayOverviewLink: boolean;
-      displayFilterLink: boolean;
+      filterHref: string | null;
       fullSentenceSummary: boolean;
     },
   ): FilterDescriptionViewModel {
@@ -43,12 +43,13 @@ export class ViewModelHelpers {
             href: URLHelpers.hrefForUploads(repo, filter),
           }
         : null,
-      filterLink: options.displayFilterLink
-        ? {
-            text: 'Filter results',
-            href: URLHelpers.hrefForFilterOptions(repo, filter),
-          }
-        : null,
+      filterLink:
+        options.filterHref !== null
+          ? {
+              text: 'Filter results',
+              href: options.filterHref,
+            }
+          : null,
     };
   }
 

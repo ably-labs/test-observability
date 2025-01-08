@@ -1,0 +1,18 @@
+{% extends "../base.njk" %}
+
+{% from '../utils/table.njk' import table %}
+{% from '../utils/filterDescription.njk' import filterDescription %}
+
+{% block pageBody %}
+    <h1>Occurrences of failures</h2>
+
+    {{ filterDescription(viewModel.filterDescription) }}
+
+    <p>
+    <a href="{{viewModel.compareLink.href}}">{{viewModel.compareLink.text}}</a>
+    </p>
+
+    <p>{{ viewModel.failureOccurrencesTableIntroText }}</p>
+
+    {{ table(viewModel.failureOccurrencesTable) }}
+{% endblock %}
