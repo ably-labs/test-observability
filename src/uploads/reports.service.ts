@@ -98,7 +98,7 @@ ${
 GROUP BY
     uploads.id
 ORDER BY
-    uploads.created_at ASC`;
+    uploads.created_at DESC`;
 
     // See comment in subsequent method about learning how not to do this manually
     const results: Record<string, any>[] = await this.uploadsRepository.query(
