@@ -3,7 +3,7 @@ import { TableViewModel } from '../utils/view/table';
 import { UploadsReport, FailuresOverviewReport } from './reports.service';
 import { UploadsFilter } from './uploads.service';
 import { ViewModelHelpers } from '../utils/viewModel/helpers';
-import { ViewModelURLHelpers } from 'src/utils/viewModel/urlHelpers';
+import { URLHelpers } from 'src/utils/urlHelpers';
 import { Repo } from 'src/repos/repo';
 
 export class OverviewViewModel {
@@ -26,10 +26,7 @@ export class OverviewViewModel {
 
   readonly compareLink = {
     text: 'Compare with another set of uploads',
-    href: ViewModelURLHelpers.hrefForChooseFilterForComparison(
-      this.repo,
-      this.filter,
-    ),
+    href: URLHelpers.hrefForChooseFilterForComparison(this.repo, this.filter),
   };
 
   private readonly numberOfUploadsWithFailures = this.uploadsReport.filter(
@@ -51,10 +48,7 @@ export class OverviewViewModel {
         {
           type: 'link',
           text: entry.upload.id,
-          href: ViewModelURLHelpers.hrefForUploadDetails(
-            entry.upload.id,
-            this.repo,
-          ),
+          href: URLHelpers.hrefForUploadDetails(entry.upload.id, this.repo),
         },
         { type: 'text', text: entry.upload.createdAt.toISOString() },
         {
@@ -107,7 +101,7 @@ export class OverviewViewModel {
       {
         type: 'link',
         text: entry.testCase.id,
-        href: ViewModelURLHelpers.hrefForTestCase(
+        href: URLHelpers.hrefForTestCase(
           entry.testCase.id,
           this.repo,
           this.filter,
@@ -148,10 +142,7 @@ export class OverviewViewModel {
       {
         type: 'link',
         text: entry.lastSeenIn.createdAt.toISOString(),
-        href: ViewModelURLHelpers.hrefForUploadDetails(
-          entry.lastSeenIn.id,
-          this.repo,
-        ),
+        href: URLHelpers.hrefForUploadDetails(entry.lastSeenIn.id, this.repo),
       },
     ]),
   };

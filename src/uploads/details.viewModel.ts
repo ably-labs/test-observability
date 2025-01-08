@@ -1,7 +1,7 @@
 import pluralize from 'pluralize';
 import { Repo } from 'src/repos/repo';
 import { DescriptionListViewModel } from 'src/utils/view/descriptionList';
-import { ViewModelURLHelpers } from 'src/utils/viewModel/urlHelpers';
+import { URLHelpers } from 'src/utils/urlHelpers';
 import { TableViewModel } from '../utils/view/table';
 import { Upload } from './upload.entity';
 import { UploadsFilter } from './uploads.service';
@@ -34,12 +34,12 @@ export class UploadDetailsViewModel {
       {
         type: 'link',
         text: failure.id,
-        href: ViewModelURLHelpers.hrefForFailure(failure.id, this.repo),
+        href: URLHelpers.hrefForFailure(failure.id, this.repo),
       },
       {
         type: 'link',
         text: failure.testCase.id,
-        href: ViewModelURLHelpers.hrefForTestCase(
+        href: URLHelpers.hrefForTestCase(
           failure.testCase.id,
           this.repo,
           this.filter,
@@ -69,10 +69,7 @@ export class UploadDetailsViewModel {
         description: {
           type: 'link',
           text: 'View report',
-          href: ViewModelURLHelpers.hrefForJunitReportXml(
-            this.upload.id,
-            this.repo,
-          ),
+          href: URLHelpers.hrefForJunitReportXml(this.upload.id, this.repo),
         },
       },
       {
@@ -80,7 +77,7 @@ export class UploadDetailsViewModel {
         description: {
           type: 'link',
           text: this.upload.githubRepository,
-          href: ViewModelURLHelpers.hrefForGitHubRepository(
+          href: URLHelpers.hrefForGitHubRepository(
             this.upload.githubRepository,
           ),
         },
@@ -90,7 +87,7 @@ export class UploadDetailsViewModel {
         description: {
           type: 'link',
           text: this.upload.githubSha.substring(0, 7),
-          href: ViewModelURLHelpers.hrefForGitHubCommit(
+          href: URLHelpers.hrefForGitHubCommit(
             this.upload.githubRepository,
             this.upload.githubSha,
           ),
@@ -130,7 +127,7 @@ export class UploadDetailsViewModel {
         description: {
           type: 'link',
           text: this.upload.githubRunId,
-          href: ViewModelURLHelpers.hrefForGitHubRunId(
+          href: URLHelpers.hrefForGitHubRunId(
             this.upload.githubRepository,
             this.upload.githubRunId,
           ),
@@ -144,7 +141,7 @@ export class UploadDetailsViewModel {
             : {
                 type: 'link',
                 text: this.upload.githubRunAttempt.toString(),
-                href: ViewModelURLHelpers.hrefForGitHubRunAttempt(
+                href: URLHelpers.hrefForGitHubRunAttempt(
                   this.upload.githubRepository,
                   this.upload.githubRunId,
                   this.upload.githubRunAttempt,

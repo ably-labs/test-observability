@@ -1,6 +1,6 @@
 import { Repo } from 'src/repos/repo';
 import { ViewModelHelpers } from 'src/utils/viewModel/helpers';
-import { ViewModelURLHelpers } from 'src/utils/viewModel/urlHelpers';
+import { URLHelpers } from 'src/utils/urlHelpers';
 import { UploadsFilter } from './uploads.service';
 
 export class FilterViewModel {
@@ -15,7 +15,7 @@ export class FilterViewModel {
     this.availableBranches,
     '',
     {
-      formAction: ViewModelURLHelpers.hrefForUploads(this.repo, null),
+      formAction: URLHelpers.hrefForUploads(this.repo, null),
       submitButton: { text: 'Apply filter' },
     },
   );

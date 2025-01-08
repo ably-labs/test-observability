@@ -6,7 +6,7 @@ function repoSlug(repo: Repo): string {
   return encodeURIComponent(repo.owner) + '/' + encodeURIComponent(repo.name);
 }
 
-export class ViewModelURLHelpers {
+export class URLHelpers {
   static hrefForRepo(repo: string) {
     return `/repos/${this.encodeRepoName(repo)}`;
   }

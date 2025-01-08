@@ -3,7 +3,7 @@ import { Repo } from 'src/repos/repo';
 import { UploadsFilter } from 'src/uploads/uploads.service';
 import { DescriptionListViewModel } from 'src/utils/view/descriptionList';
 import { ViewModelHelpers } from 'src/utils/viewModel/helpers';
-import { ViewModelURLHelpers } from 'src/utils/viewModel/urlHelpers';
+import { URLHelpers } from 'src/utils/urlHelpers';
 import { TestCase } from '../uploads/testCase.entity';
 import { TableViewModel } from '../utils/view/table';
 
@@ -54,15 +54,12 @@ export class TestCaseViewModel {
       {
         type: 'link',
         text: failure.id,
-        href: ViewModelURLHelpers.hrefForFailure(failure.id, this.repo),
+        href: URLHelpers.hrefForFailure(failure.id, this.repo),
       },
       {
         type: 'link',
         text: failure.uploadId,
-        href: ViewModelURLHelpers.hrefForUploadDetails(
-          failure.uploadId,
-          this.repo,
-        ),
+        href: URLHelpers.hrefForUploadDetails(failure.uploadId, this.repo),
       },
       { type: 'text', text: failure.upload.createdAt.toISOString() },
       {
