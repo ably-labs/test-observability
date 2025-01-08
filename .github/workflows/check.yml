@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js version specified in .nvmrc
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
@@ -23,10 +23,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js version specified in .nvmrc
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
-          working-directory: action
       - run: npm ci
       - run: npm run-script build

@@ -1,5 +1,8 @@
 {
   "name": "test-observability",
+  "engines": {
+    "node": "22.x"
+  },
   "version": "0.0.1",
   "description": "",
   "author": "",
