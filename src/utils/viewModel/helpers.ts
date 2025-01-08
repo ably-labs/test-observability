@@ -60,7 +60,9 @@ export class ViewModelHelpers {
     const uploadsComponents: string[] = [];
     const failuresComponents: string[] = [];
 
-    uploadsComponents.push(`belonging to the ${repo.owner}/${repo.name} repo`);
+    uploadsComponents.push(
+      `belonging to the ${this.descriptionForRepo(repo)} repo`,
+    );
 
     if (filter.branches.length > 0) {
       uploadsComponents.push(
@@ -174,5 +176,9 @@ export class ViewModelHelpers {
     upload: Pick<Upload, 'githubHeadRef' | 'githubRefName'>,
   ) {
     return upload.githubHeadRef ?? upload.githubRefName ?? '';
+  }
+
+  static descriptionForRepo(repo: Repo) {
+    return `${repo.owner}/${repo.name}`;
   }
 }

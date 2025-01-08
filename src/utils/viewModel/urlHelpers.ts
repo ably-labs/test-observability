@@ -7,8 +7,8 @@ function repoSlug(repo: Repo): string {
 }
 
 export class ViewModelURLHelpers {
-  static repoToUploads(repo: string) {
-    return `/repos/${this.encodeRepoName(repo)}/uploads`;
+  static hrefForRepo(repo: string) {
+    return `/repos/${this.encodeRepoName(repo)}`;
   }
 
   static hrefForUploads(repo: Repo, filter: UploadsFilter | null) {

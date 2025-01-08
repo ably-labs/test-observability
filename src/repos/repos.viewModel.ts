@@ -11,7 +11,7 @@ export class ReposViewModel {
   constructor(repoStrs: string[]) {
     this.repos = repoStrs.map((repo) => ({
       title: repo,
-      href: ViewModelURLHelpers.repoToUploads(repo),
+      href: ViewModelURLHelpers.hrefForRepo(repo),
     }));
   }
 }
