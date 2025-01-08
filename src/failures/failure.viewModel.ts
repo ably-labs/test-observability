@@ -1,6 +1,6 @@
 import { DescriptionListViewModel } from '../utils/view/descriptionList';
 import { Failure } from '../uploads/failure.entity';
-import { ViewModelURLHelpers } from 'src/utils/viewModel/urlHelpers';
+import { URLHelpers } from 'src/utils/urlHelpers';
 import { UploadsFilter } from 'src/uploads/uploads.service';
 import { Repo } from 'src/repos/repo';
 
@@ -27,7 +27,7 @@ export class FailureViewModel {
         description: {
           type: 'link',
           text: this.failure.uploadId,
-          href: ViewModelURLHelpers.hrefForUploadDetails(
+          href: URLHelpers.hrefForUploadDetails(
             this.failure.uploadId,
             this.repo,
           ),
@@ -38,7 +38,7 @@ export class FailureViewModel {
         description: {
           type: 'link',
           text: this.failure.testCase.id,
-          href: ViewModelURLHelpers.hrefForTestCase(
+          href: URLHelpers.hrefForTestCase(
             this.failure.testCase.id,
             this.repo,
             this.filter,
@@ -68,7 +68,7 @@ export class FailureViewModel {
         ],
       },
       report: crashReport.data,
-      downloadHref: ViewModelURLHelpers.hrefForCrashReportDownload(
+      downloadHref: URLHelpers.hrefForCrashReportDownload(
         crashReport.id,
         this.repo,
       ),

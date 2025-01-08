@@ -8,7 +8,7 @@ import {
   UploadsReport,
 } from './reports.service';
 import { TableViewModel } from 'src/utils/view/table';
-import { ViewModelURLHelpers } from 'src/utils/viewModel/urlHelpers';
+import { URLHelpers } from 'src/utils/urlHelpers';
 import { Repo } from 'src/repos/repo';
 
 export class CompareViewModel {
@@ -24,7 +24,7 @@ export class CompareViewModel {
     this.baseFilter,
     {
       displayOverviewLink: true,
-      displayFilterLink: false,
+      filterHref: null,
       fullSentenceSummary: false,
     },
   );
@@ -33,7 +33,7 @@ export class CompareViewModel {
     this.alternativeFilter,
     {
       displayOverviewLink: true,
-      displayFilterLink: false,
+      filterHref: null,
       fullSentenceSummary: false,
     },
   );
@@ -114,11 +114,7 @@ export class CompareViewModel {
         {
           type: 'link',
           text: entry.testCase.id,
-          href: ViewModelURLHelpers.hrefForTestCase(
-            entry.testCase.id,
-            repo,
-            filter,
-          ),
+          href: URLHelpers.hrefForTestCase(entry.testCase.id, repo, filter),
         },
         { type: 'text', text: entry.testCase.testClassName },
         { type: 'text', text: entry.testCase.testCaseName },
@@ -127,15 +123,12 @@ export class CompareViewModel {
         {
           type: 'link',
           text: entry.base.lastSeenIn.createdAt.toISOString(),
-          href: ViewModelURLHelpers.hrefForUploadDetails(
-            entry.base.lastSeenIn.id,
-            repo,
-          ),
+          href: URLHelpers.hrefForUploadDetails(entry.base.lastSeenIn.id, repo),
         },
         {
           type: 'link',
           text: entry.alternative.lastSeenIn.createdAt.toISOString(),
-          href: ViewModelURLHelpers.hrefForUploadDetails(
+          href: URLHelpers.hrefForUploadDetails(
             entry.alternative.lastSeenIn.id,
             repo,
           ),
@@ -164,11 +157,7 @@ export class CompareViewModel {
         {
           type: 'link',
           text: entry.testCase.id,
-          href: ViewModelURLHelpers.hrefForTestCase(
-            entry.testCase.id,
-            repo,
-            filter,
-          ),
+          href: URLHelpers.hrefForTestCase(entry.testCase.id, repo, filter),
         },
         { type: 'text', text: entry.testCase.testClassName },
         { type: 'text', text: entry.testCase.testCaseName },
@@ -176,10 +165,7 @@ export class CompareViewModel {
         {
           type: 'link',
           text: entry.lastSeenIn.createdAt.toISOString(),
-          href: ViewModelURLHelpers.hrefForUploadDetails(
-            entry.lastSeenIn.id,
-            repo,
-          ),
+          href: URLHelpers.hrefForUploadDetails(entry.lastSeenIn.id, repo),
         },
       ]),
     };
@@ -193,7 +179,7 @@ export class CompareViewModel {
         ? 'base'
         : 'alternative';
     return {
-      href: ViewModelURLHelpers.hrefForCompare(
+      href: URLHelpers.hrefForCompare(
         this.repo,
         this.baseFilter,
         this.alternativeFilter,

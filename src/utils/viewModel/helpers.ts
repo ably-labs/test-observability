@@ -3,7 +3,7 @@ import { Repo } from 'src/repos/repo';
 import { UploadsFilter } from 'src/uploads/uploads.service';
 import { FilterDescriptionViewModel } from '../view/filterDescription';
 import { FilterFormViewModel } from '../view/filterForm';
-import { ViewModelURLHelpers } from './urlHelpers';
+import { URLHelpers } from '../urlHelpers';
 import { InputViewModel } from '../view/input';
 import { Upload } from 'src/uploads/upload.entity';
 
@@ -31,7 +31,7 @@ export class ViewModelHelpers {
     filter: UploadsFilter,
     options: {
       displayOverviewLink: boolean;
-      displayFilterLink: boolean;
+      filterHref: string | null;
       fullSentenceSummary: boolean;
     },
   ): FilterDescriptionViewModel {
@@ -40,15 +40,16 @@ export class ViewModelHelpers {
       overviewLink: options.displayOverviewLink
         ? {
             text: 'overview',
-            href: ViewModelURLHelpers.hrefForUploads(repo, filter),
+            href: URLHelpers.hrefForUploads(repo, filter),
           }
         : null,
-      filterLink: options.displayFilterLink
-        ? {
-            text: 'Filter results',
-            href: ViewModelURLHelpers.hrefForFilterOptions(repo, filter),
-          }
-        : null,
+      filterLink:
+        options.filterHref !== null
+          ? {
+              text: 'Filter results',
+              href: options.filterHref,
+            }
+          : null,
     };
   }
 
@@ -60,7 +61,9 @@ export class ViewModelHelpers {
     const uploadsComponents: string[] = [];
     const failuresComponents: string[] = [];
 
-    uploadsComponents.push(`belonging to the ${repo.owner}/${repo.name} repo`);
+    uploadsComponents.push(
+      `belonging to the ${this.descriptionForRepo(repo)} repo`,
+    );
 
     if (filter.branches.length > 0) {
       uploadsComponents.push(
@@ -165,7 +168,7 @@ export class ViewModelHelpers {
     filter: UploadsFilter,
     paramNamePrefix: string,
   ): InputViewModel[] {
-    return ViewModelURLHelpers.queryComponentsForFilter(filter, {
+    return URLHelpers.queryComponentsForFilter(filter, {
       paramPrefix: paramNamePrefix,
     }).map((component) => ({ name: component.key, value: component.value }));
   }
@@ -174,5 +177,9 @@ export class ViewModelHelpers {
     upload: Pick<Upload, 'githubHeadRef' | 'githubRefName'>,
   ) {
     return upload.githubHeadRef ?? upload.githubRefName ?? '';
+  }
+
+  static descriptionForRepo(repo: Repo) {
+    return `${repo.owner}/${repo.name}`;
   }
 }

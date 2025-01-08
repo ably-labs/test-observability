@@ -1,4 +1,4 @@
-import { ViewModelURLHelpers } from 'src/utils/viewModel/urlHelpers';
+import { URLHelpers } from 'src/utils/urlHelpers';
 
 interface RepoViewModel {
   title: string;
@@ -11,7 +11,7 @@ export class ReposViewModel {
   constructor(repoStrs: string[]) {
     this.repos = repoStrs.map((repo) => ({
       title: repo,
-      href: ViewModelURLHelpers.repoToUploads(repo),
+      href: URLHelpers.hrefForRepo(repo),
     }));
   }
 }

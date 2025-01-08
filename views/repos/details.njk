@@ -1,0 +1,8 @@
+{% extends "../base.njk" %}
+
+{% block pageBody %}
+    <h1>{{ viewModel.title }}</h1>
+
+    <p><a href="{{ viewModel.uploadsHref }}">Uploads</a></p>
+    <p><a href="{{ viewModel.failuresHref }}">Failures</a></p>
+{% endblock %}

@@ -6,13 +6,17 @@ function repoSlug(repo: Repo): string {
   return encodeURIComponent(repo.owner) + '/' + encodeURIComponent(repo.name);
 }
 
-export class ViewModelURLHelpers {
-  static repoToUploads(repo: string) {
-    return `/repos/${this.encodeRepoName(repo)}/uploads`;
+export class URLHelpers {
+  static hrefForRepo(repo: string) {
+    return `/repos/${this.encodeRepoName(repo)}`;
   }
 
   static hrefForUploads(repo: Repo, filter: UploadsFilter | null) {
     return this.hrefWithFilter(`/repos/${repoSlug(repo)}/uploads`, filter);
+  }
+
+  static hrefForFailures(repo: Repo, filter: UploadsFilter | null) {
+    return this.hrefWithFilter(`/repos/${repoSlug(repo)}/failures`, filter);
   }
 
   static hrefForUploadDetails(id: string, repo: Repo) {
@@ -156,9 +160,19 @@ export class ViewModelURLHelpers {
     }
   }
 
-  static hrefForFilterOptions(repo: Repo, filter: UploadsFilter | null) {
+  static hrefForUploadsFilterOptions(repo: Repo, filter: UploadsFilter | null) {
     return this.hrefWithFilter(
       `/repos/${repoSlug(repo)}/uploads/filter`,
+      filter,
+    );
+  }
+
+  static hrefForFailuresFilterOptions(
+    repo: Repo,
+    filter: UploadsFilter | null,
+  ) {
+    return this.hrefWithFilter(
+      `/repos/${repoSlug(repo)}/failures/filter`,
       filter,
     );
   }
