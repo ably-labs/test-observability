@@ -21,8 +21,8 @@ It’s written in [TypeScript](https://www.typescriptlang.org/), and uses the [N
 
 The instructions here are for macOS only, but should be similar on other platforms.
 
-- [Node.js](https://nodejs.org/en/) version 16.14.0
-  - install using, for example, [nvm](https://github.com/nvm-sh/nvm) or `brew install node@16`
+- [Node.js](https://nodejs.org/en/) version 22.13.0
+  - install using, for example, [nvm](https://github.com/nvm-sh/nvm) or `brew install node@22`
 - [PostgreSQL server](https://www.postgresql.org/)
   - install using `brew install postgresql`
 
