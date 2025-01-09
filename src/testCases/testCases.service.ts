@@ -37,7 +37,7 @@ export class TestCasesService {
         'uploads.githubRefName',
       ])
       .leftJoin('failures.crashReports', 'crash_reports')
-      .orderBy('uploads.createdAt', 'ASC');
+      .orderBy('uploads.createdAt', 'DESC');
 
     const fragment = whereClause.uploadsAndFailuresAndCrashReportsClause({
       includeWhereKeyword: false,
